@@ -2,8 +2,8 @@
   <img 
     src="https://github.com/ruslanlesko/digestwave/raw/main/logo/main.png" 
     alt="Digestwave logo"
-    width="256"
-    height="256"
+    width="216"
+    height="216"
   />
 </p>
 
