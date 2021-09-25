@@ -1,5 +1,10 @@
 <p align="center">
-  <img src="https://github.com/ruslanlesko/digestwave/raw/main/logo/main.png" alt="Digestwave logo"/>
+  <img 
+    src="https://github.com/ruslanlesko/digestwave/raw/main/logo/main.png" 
+    alt="Digestwave logo"
+    width="256"
+    height="256"
+  />
 </p>
 
 <h1 align="center">Digestwave</h1>
