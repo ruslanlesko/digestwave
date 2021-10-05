@@ -11,6 +11,8 @@
 
 News aggregator which doesn't spy on you and allows adding new sources by committing into the source code.
 
+[digestwave.com](https://digestwave.com/)
+
 Created by [Ruslan Lesko](https://leskor.com)
 
 ## The goal of the project
@@ -27,7 +29,7 @@ To summarize, Digestwave has a goal of obtaining 2 main properties:
 
 Having used some *one-size-fits-all* solutions, I decided to try implementing a native experience for each of the following platforms:
 
-* Web (HTML, CSS, vanilla JS?)
+* Web (HTML, CSS, vanilla JS?) - [digestwave.com](https://digestwave.com/)
 * iOS (SwiftUI)
 * Android (Jetpack Compose)
 
