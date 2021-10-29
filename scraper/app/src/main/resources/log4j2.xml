@@ -10,7 +10,7 @@
         <Root level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Root>
-        <Logger name="Application" level="info" additivity="false">
+        <Logger name="Application" level="${env:SCR_LOGGING_LEVEL:-info}" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
     </Loggers>

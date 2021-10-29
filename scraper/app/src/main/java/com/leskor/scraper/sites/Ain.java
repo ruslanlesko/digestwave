@@ -39,7 +39,7 @@ public class Ain {
             }
 
             List<URI> postURIs = extractPostURIsfromPage(response.body());
-            postURIs.forEach(uri -> logger.info(uri.toString()));
+            postURIs.forEach(uri -> logger.debug(uri.toString()));
         } catch (IOException e) {
             logger.error("IO failed", e);
         } catch (InterruptedException e) {
