@@ -1,5 +1,7 @@
 package com.leskor.scraper.sites;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leskor.scraper.dto.ReadabilityResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Ain {
     private static final Logger logger = LoggerFactory.getLogger("Application");
@@ -38,8 +41,16 @@ public class Ain {
                 return;
             }
 
-            List<URI> postURIs = extractPostURIsfromPage(response.body());
-            postURIs.forEach(uri -> logger.debug(uri.toString()));
+            List<URI> postURIs = extractPostURIsFromPage(response.body());
+            var readablePosts = postURIs.stream()
+                    .filter(Objects::nonNull)
+                    .map(this::makeReadable)
+                    .toList();
+            if (readablePosts.size() > 0) {
+                logger.debug("Title of the first post is '{}'", readablePosts.get(0).title());
+            } else {
+                logger.warn("No readable posts");
+            }
         } catch (IOException e) {
             logger.error("IO failed", e);
         } catch (InterruptedException e) {
@@ -54,7 +65,7 @@ public class Ain {
                 .build();
     }
 
-    private List<URI> extractPostURIsfromPage(String page) {
+    private List<URI> extractPostURIsFromPage(String page) {
         Document document = Jsoup.parse(page);
         var elements = document.getElementsByClass("post-item ordinary-post");
         int limit = 10;
@@ -75,5 +86,33 @@ public class Ain {
             if (limit <= 0) break;
         }
         return result;
+    }
+
+    private ReadabilityResponse makeReadable(URI uri) {
+        logger.debug("Reading {}", uri);
+        HttpRequest request = buildReadabilityRequest(uri);
+        try {
+            var response = httpClient.send(request, BodyHandlers.ofString(StandardCharsets.UTF_8));
+            if (response.statusCode() != 200) {
+                logger.error("Cannot invoke readability, status {}", response.statusCode());
+                return null;
+            }
+            String body = response.body();
+            var mapper = new ObjectMapper();
+            return mapper.readValue(body, ReadabilityResponse.class);
+        } catch (IOException e) {
+            logger.error("Failed to invoke readability", e);
+        } catch (InterruptedException e) {
+            logger.error("Interrupted Exception", e);
+        }
+        return null;
+    }
+
+    private HttpRequest buildReadabilityRequest(URI uri) {
+        return HttpRequest.newBuilder(URI.create("http://localhost:3009")) // Expects this service https://github.com/phpdocker-io/readability-js-server
+                .POST(HttpRequest.BodyPublishers.ofString(String.format("{\"url\": \"%S\"}", uri.toString())))
+                .header("Content-Type", "application/json")
+                .timeout(Duration.ofSeconds(10))
+                .build();
     }
 }
