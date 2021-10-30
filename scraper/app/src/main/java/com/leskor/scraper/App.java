@@ -16,7 +16,7 @@ public class App {
         logger.info("Starting Scraper {}", VERSION);
 
         var ain = new Ain(createHttpClient());
-        ain.process();
+        ain.fetchPosts().forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
     }
 
     private static HttpClient createHttpClient() {
