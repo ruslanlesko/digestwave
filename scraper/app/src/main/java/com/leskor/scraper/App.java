@@ -7,6 +7,9 @@ import org.slf4j.LoggerFactory;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Redirect;
 import java.time.Duration;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class App {
     private static final Logger logger = LoggerFactory.getLogger("Application");
@@ -15,14 +18,21 @@ public class App {
     public static void main(String[] args) {
         logger.info("Starting Scraper {}", VERSION);
 
-        var ain = new Ain(createHttpClient());
-        ain.fetchPosts().forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
+        ExecutorService pool = Executors.newFixedThreadPool(16);
+
+        var ain = new Ain(createHttpClient(pool));
+        ain.fetchPosts()
+                .join()
+                .forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
+
+        pool.shutdown();
     }
 
-    private static HttpClient createHttpClient() {
+    private static HttpClient createHttpClient(Executor executor) {
         return HttpClient.newBuilder()
                 .followRedirects(Redirect.NEVER)
                 .connectTimeout(Duration.ofSeconds(10))
+                .executor(executor)
                 .build();
     }
 }
