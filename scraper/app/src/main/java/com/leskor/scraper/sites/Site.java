@@ -27,7 +27,7 @@ public abstract class Site {
 
     protected static final String MOZILLA_AGENT =
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:93.0) Gecko/20100101 Firefox/93.0";
-    protected static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(10);
+    protected static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(20);
     protected static final URI READABILITY_URI = URI.create(
             getenv("SCR_READABILITY_URI") == null ? "http://localhost:3009"
                     : getenv("SCR_READABILITY_URI"));
