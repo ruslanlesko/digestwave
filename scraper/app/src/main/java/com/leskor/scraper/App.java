@@ -1,6 +1,6 @@
 package com.leskor.scraper;
 
-import com.leskor.scraper.sites.RootNation;
+import com.leskor.scraper.sites.Itc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +30,13 @@ public class App {
 //                .join()
 //                .forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
 
-        var rootNation = new RootNation(createHttpClient(pool));
-        rootNation.fetchPosts()
+//        var rootNation = new RootNation(createHttpClient(pool));
+//        rootNation.fetchPosts()
+//                .join()
+//                .forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
+
+        var itc = new Itc(createHttpClient(pool));
+        itc.fetchPosts()
                 .join()
                 .forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
 
