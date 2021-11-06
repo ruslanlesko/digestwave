@@ -1,6 +1,6 @@
 package com.leskor.scraper;
 
-import com.leskor.scraper.sites.Keddr;
+import com.leskor.scraper.sites.RootNation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +25,13 @@ public class App {
 //                .join()
 //                .forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
 
-        var keddr = new Keddr(createHttpClient(pool));
-        keddr.fetchPosts()
+//        var keddr = new Keddr(createHttpClient(pool));
+//        keddr.fetchPosts()
+//                .join()
+//                .forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
+
+        var rootNation = new RootNation(createHttpClient(pool));
+        rootNation.fetchPosts()
                 .join()
                 .forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
 
