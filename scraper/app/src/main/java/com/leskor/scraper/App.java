@@ -1,9 +1,10 @@
 package com.leskor.scraper;
 
-import com.leskor.scraper.sites.Itc;
+import com.leskor.scraper.sites.RSSSite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Redirect;
 import java.time.Duration;
@@ -35,8 +36,13 @@ public class App {
 //                .join()
 //                .forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
 
-        var itc = new Itc(createHttpClient(pool));
-        itc.fetchPosts()
+//        var itc = new Itc(createHttpClient(pool));
+//        itc.fetchPosts()
+//                .join()
+//                .forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
+
+        var gagadget = new RSSSite(URI.create("https://gagadget.com/rss/"), "GGT", createHttpClient(pool), Duration.ofSeconds(10), null);
+        gagadget.fetchPosts()
                 .join()
                 .forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
 
