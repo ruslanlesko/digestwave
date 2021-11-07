@@ -1,0 +1,33 @@
+[
+  {
+    "uri": "https://keddr.com/feed/",
+    "code": "KDR",
+    "timeout": 60,
+    "titleSuffixToTrim": "|",
+    "excludedCategories": [
+      "Подкаст"
+    ]
+  },
+  {
+    "uri": "https://gagadget.com/rss/",
+    "code": "GGT"
+  },
+  {
+    "uri": "https://feeds.feedburner.com/itcua",
+    "code": "ITC",
+    "titleSuffixToTrim": "- ITC.ua"
+  },
+  {
+    "uri": "https://root-nation.com/ru/feed/",
+    "code": "RNA",
+    "titleSuffixToTrim": "- Root Nation"
+  },
+  {
+    "uri": "https://ain.ua/feed/",
+    "code": "AIN",
+    "excludedCategories": [
+      "пиар",
+      "Спецпроекты"
+    ]
+  }
+]

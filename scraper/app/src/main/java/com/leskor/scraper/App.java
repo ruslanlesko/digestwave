@@ -1,10 +1,10 @@
 package com.leskor.scraper;
 
-import com.leskor.scraper.sites.RSSSite;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
+import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Redirect;
 import java.time.Duration;
@@ -21,30 +21,17 @@ public class App {
 
         ExecutorService pool = Executors.newFixedThreadPool(16);
 
-//        var ain = new Ain(createHttpClient(pool));
-//        ain.fetchPosts()
-//                .join()
-//                .forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
-
-//        var keddr = new Keddr(createHttpClient(pool));
-//        keddr.fetchPosts()
-//                .join()
-//                .forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
-
-//        var rootNation = new RootNation(createHttpClient(pool));
-//        rootNation.fetchPosts()
-//                .join()
-//                .forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
-
-//        var itc = new Itc(createHttpClient(pool));
-//        itc.fetchPosts()
-//                .join()
-//                .forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
-
-        var gagadget = new RSSSite(URI.create("https://gagadget.com/rss/"), "GGT", createHttpClient(pool), Duration.ofSeconds(10), null);
-        gagadget.fetchPosts()
-                .join()
-                .forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
+        var rssFactory = new RSSFactory(new ObjectMapper(), "rss.json", createHttpClient(pool));
+        try {
+            var rssSites = rssFactory.createSites();
+            for (var site : rssSites) {
+                site.fetchPosts()
+                        .join()
+                        .forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
+            }
+        } catch (IOException e) {
+            logger.error("Failed to create RSS sites", e);
+        }
 
         pool.shutdown();
     }

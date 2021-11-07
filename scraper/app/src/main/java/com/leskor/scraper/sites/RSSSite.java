@@ -43,8 +43,8 @@ public class RSSSite extends Site {
             Set<String> excludedCategories
     ) {
         super(homePageUri, siteCode, httpClient, homePageTimeoutDuration);
-        this.titleSuffixToTrim = titleSuffixToTrim;
-        this.excludedCategories = excludedCategories;
+        this.titleSuffixToTrim = titleSuffixToTrim == null ? "" : titleSuffixToTrim;
+        this.excludedCategories = excludedCategories == null ? Set.of() : excludedCategories;
     }
 
     protected List<CompletableFuture<Post>> extractPostsBasedOnPage(String page) {
