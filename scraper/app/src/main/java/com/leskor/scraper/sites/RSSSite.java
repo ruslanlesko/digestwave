@@ -21,6 +21,8 @@ import java.util.concurrent.CompletableFuture;
 import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
 
 public class RSSSite extends Site {
+    private static final int POSTS_LIMIT = 10;
+
     private final String titleSuffixToTrim;
     private final Set<String> excludedCategories;
 
@@ -57,7 +59,7 @@ public class RSSSite extends Site {
     private List<URIWithPublicationTime> extractPostURIsWithPublicationTimeFromPage(String page) {
         Document document = Jsoup.parse(page, Parser.xmlParser());
         var postElements = document.getElementsByTag("item");
-        int limit = 12;
+        int limit = POSTS_LIMIT;
         List<URIWithPublicationTime> result = new ArrayList<>();
         for (var elem : postElements) {
             if (limit <= 0) break;
@@ -93,7 +95,7 @@ public class RSSSite extends Site {
 
         CompletableFuture<ReadabilityResponse> readabilityFuture = retrieveReadabilityResponse(uri)
                 .thenApply(r -> {
-                    if (titleSuffixToTrim != null && !titleSuffixToTrim.isBlank()) {
+                    if (r != null && titleSuffixToTrim != null && !titleSuffixToTrim.isBlank()) {
                         String cleanedUpTitle = r.title().contains(titleSuffixToTrim) ?
                                 r.title().substring(0, r.title().indexOf(titleSuffixToTrim)).strip() : r.title().strip();
                         return ReadabilityResponse.fromTitleAndExistingResponse(cleanedUpTitle, r);
