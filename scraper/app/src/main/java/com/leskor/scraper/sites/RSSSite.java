@@ -31,16 +31,6 @@ public class RSSSite extends Site {
             String siteCode,
             HttpClient httpClient,
             Duration homePageTimeoutDuration,
-            String titleSuffixToTrim
-    ) {
-        this(homePageUri, siteCode, httpClient, homePageTimeoutDuration, titleSuffixToTrim, Set.of());
-    }
-
-    public RSSSite(
-            URI homePageUri,
-            String siteCode,
-            HttpClient httpClient,
-            Duration homePageTimeoutDuration,
             String titleSuffixToTrim,
             Set<String> excludedCategories
     ) {

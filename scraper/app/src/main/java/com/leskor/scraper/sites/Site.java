@@ -37,10 +37,6 @@ public abstract class Site {
     protected final HttpClient httpClient;
     protected final Duration homePageTimeoutDuration;
 
-    protected Site(URI homePageUri, String siteCode, HttpClient httpClient) {
-        this(homePageUri, siteCode, httpClient, DEFAULT_TIMEOUT);
-    }
-
     protected Site(URI homePageUri, String siteCode, HttpClient httpClient, Duration homePageTimeoutDuration) {
         this.homePageUri = homePageUri;
         this.siteCode = siteCode;
@@ -53,6 +49,10 @@ public abstract class Site {
                 .thenApply(response -> {
                     if (response.statusCode() != 200) {
                         logger.warn("Cannot fetchPosts, status {}", response.statusCode());
+                        return List.of();
+                    }
+                    if (response.body() == null || response.body().isBlank()) {
+                        logger.warn("Cannot fetchPosts, body is blank");
                         return List.of();
                     }
                     return waitForPostFutures(extractPostsBasedOnPage(response.body()));
@@ -85,6 +85,10 @@ public abstract class Site {
                         logger.error("Cannot invoke readability, status {}", response.statusCode());
                         return null;
                     }
+                    if (response.body() == null || response.body().isBlank()) {
+                        logger.warn("Cannot parse readability response, body is blank");
+                        return null;
+                    }
                     try {
                         return new ObjectMapper().readValue(response.body(), ReadabilityResponse.class);
                     } catch (JsonProcessingException e) {
@@ -98,13 +102,6 @@ public abstract class Site {
         return HttpRequest.newBuilder(homePageUri)
                 .setHeader("User-Agent", MOZILLA_AGENT)
                 .timeout(timeout)
-                .build();
-    }
-
-    protected final HttpRequest buildPostRequest(URI uri) {
-        return HttpRequest.newBuilder(uri)
-                .header("User-Agent", MOZILLA_AGENT)
-                .timeout(DEFAULT_TIMEOUT)
                 .build();
     }
 
