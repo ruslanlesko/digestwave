@@ -19,7 +19,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static java.lang.System.getenv;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public abstract class Site {
@@ -28,17 +27,22 @@ public abstract class Site {
     protected static final String MOZILLA_AGENT =
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:93.0) Gecko/20100101 Firefox/93.0";
     protected static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(20);
-    protected static final URI READABILITY_URI = URI.create(
-            getenv("SCR_READABILITY_URI") == null ? "http://localhost:3009"
-                    : getenv("SCR_READABILITY_URI"));
 
     protected final URI indexPageUri;
+    protected final URI readabilityUri;
     protected final String siteCode;
     protected final HttpClient httpClient;
     protected final Duration indexPageTimeoutDuration;
 
-    protected Site(URI indexPageUri, String siteCode, HttpClient httpClient, Duration indexPageTimeoutDuration) {
+    protected Site(
+            URI indexPageUri,
+            URI readabilityUri,
+            String siteCode,
+            HttpClient httpClient,
+            Duration indexPageTimeoutDuration
+    ) {
         this.indexPageUri = indexPageUri;
+        this.readabilityUri = readabilityUri;
         this.siteCode = siteCode;
         this.httpClient = httpClient;
         this.indexPageTimeoutDuration = indexPageTimeoutDuration;
@@ -106,7 +110,7 @@ public abstract class Site {
     }
 
     private HttpRequest buildReadabilityRequest(URI uri) {
-        return HttpRequest.newBuilder(READABILITY_URI)
+        return HttpRequest.newBuilder(readabilityUri)
                 .POST(HttpRequest.BodyPublishers.ofString(String.format("{\"url\": \"%S\"}", uri.toString())))
                 .header("Content-Type", "application/json")
                 .timeout(DEFAULT_TIMEOUT)

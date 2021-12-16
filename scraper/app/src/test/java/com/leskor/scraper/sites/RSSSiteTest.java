@@ -35,6 +35,7 @@ import static org.mockito.Mockito.when;
 
 class RSSSiteTest {
     private static final URI INDEX_PAGE_URI = URI.create("https://digestwave.com");
+    private static final URI READABILITY_PAGE_URI = URI.create("https://readability.digestwave.com");
     private static final String SITE_CODE = "DWV";
     private static final Duration INDEX_PAGE_TIMEOUT_DURATION = Duration.ofSeconds(1);
     private static final String TITLE_SUFFIX_TO_TRIM = "| Digestwave";
@@ -48,6 +49,7 @@ class RSSSiteTest {
         httpClient = mock(HttpClient.class);
         rssSite = new RSSSite(
                 INDEX_PAGE_URI,
+                READABILITY_PAGE_URI,
                 SITE_CODE,
                 httpClient,
                 INDEX_PAGE_TIMEOUT_DURATION,
@@ -88,7 +90,7 @@ class RSSSiteTest {
 
         when(httpClient.sendAsync(
                 argThat(r -> r != null
-                        && r.uri().equals(URI.create("http://localhost:3009"))
+                        && r.uri().equals(READABILITY_PAGE_URI)
                         && r.bodyPublisher().isPresent()
                 ),
                 notNull()
@@ -149,7 +151,7 @@ class RSSSiteTest {
 
         when(httpClient.sendAsync(
                 argThat(r -> r != null
-                        && r.uri().equals(URI.create("http://localhost:3009"))
+                        && r.uri().equals(READABILITY_PAGE_URI)
                         && r.bodyPublisher().isPresent()
                 ),
                 notNull()

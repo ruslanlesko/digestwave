@@ -28,13 +28,14 @@ public class RSSSite extends Site {
 
     public RSSSite(
             URI indexPageUri,
+            URI readabilityUri,
             String siteCode,
             HttpClient httpClient,
             Duration indexPageTimeoutDuration,
             String titleSuffixToTrim,
             Set<String> excludedCategories
     ) {
-        super(indexPageUri, siteCode, httpClient, indexPageTimeoutDuration);
+        super(indexPageUri, readabilityUri, siteCode, httpClient, indexPageTimeoutDuration);
         this.titleSuffixToTrim = titleSuffixToTrim == null ? "" : titleSuffixToTrim;
         this.excludedCategories = excludedCategories == null ? Set.of() : excludedCategories;
     }
