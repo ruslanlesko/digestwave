@@ -69,8 +69,20 @@ class RSSSiteTest {
                         <category><![CDATA[Interview]]></category>
                     </item>
                     <item>
+                        <link>MALFORMED LINK</link>
+                        <pubDate>Tue, 14 Dec 2021 12:05:30 GMT</pubDate>
+                        <category><![CDATA[Review]]></category>
+                        <category><![CDATA[Laptops]]></category>
+                    </item>
+                    <item>
                         <link>https://digestwave.com/post/42</link>
                         <pubDate>Tue, 14 Dec 2021 11:05:30 GMT</pubDate>
+                        <category><![CDATA[Review]]></category>
+                        <category><![CDATA[Laptops]]></category>
+                    </item>
+                    <item>
+                        <link>https://digestwave.com/post/69</link>
+                        <pubDate>MALFORMED DATE</pubDate>
                         <category><![CDATA[Review]]></category>
                         <category><![CDATA[Laptops]]></category>
                     </item>
@@ -156,6 +168,36 @@ class RSSSiteTest {
                 ),
                 notNull()
         )).thenReturn(completedFuture(createHttpResponseWithBodyAndStatus(body, status)));
+
+        CompletableFuture<List<Post>> resultFuture = rssSite.fetchPosts();
+        List<Post> result = resultFuture.get(2, SECONDS);
+
+        assertTrue(result.isEmpty(), "Encountered non-empty list of posts");
+    }
+
+    @Test
+    void fetchPostsReturnsEmptyListWhenAllPostPagesAreCompletedWithExceptions() throws Exception {
+        var indexPageResponse = """
+                <xml>
+                    <item>
+                        <link>https://digestwave.com/post/42</link>
+                        <pubDate>Tue, 14 Dec 2021 11:05:30 GMT</pubDate>
+                        <category><![CDATA[Review]]></category>
+                        <category><![CDATA[Laptops]]></category>
+                    </item>
+                </xml>
+                """;
+
+        when(httpClient.sendAsync(argThat(r -> r != null && r.uri().equals(INDEX_PAGE_URI)), notNull()))
+                .thenReturn(completedFuture(createHttpResponseWithBody(indexPageResponse)));
+
+        when(httpClient.sendAsync(
+                argThat(r -> r != null
+                        && r.uri().equals(READABILITY_PAGE_URI)
+                        && r.bodyPublisher().isPresent()
+                ),
+                notNull()
+        )).thenReturn(CompletableFuture.failedFuture(new NullPointerException()));
 
         CompletableFuture<List<Post>> resultFuture = rssSite.fetchPosts();
         List<Post> result = resultFuture.get(2, SECONDS);
