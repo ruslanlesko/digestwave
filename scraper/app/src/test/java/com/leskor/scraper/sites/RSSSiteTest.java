@@ -34,9 +34,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class RSSSiteTest {
-    private static final URI HOME_PAGE_URI = URI.create("https://digestwave.com");
+    private static final URI INDEX_PAGE_URI = URI.create("https://digestwave.com");
     private static final String SITE_CODE = "DWV";
-    private static final Duration HOME_PAGE_TIMEOUT_DURATION = Duration.ofSeconds(1);
+    private static final Duration INDEX_PAGE_TIMEOUT_DURATION = Duration.ofSeconds(1);
     private static final String TITLE_SUFFIX_TO_TRIM = "| Digestwave";
 
     private HttpClient httpClient;
@@ -47,10 +47,10 @@ class RSSSiteTest {
     void setUp() {
         httpClient = mock(HttpClient.class);
         rssSite = new RSSSite(
-                HOME_PAGE_URI,
+                INDEX_PAGE_URI,
                 SITE_CODE,
                 httpClient,
-                HOME_PAGE_TIMEOUT_DURATION,
+                INDEX_PAGE_TIMEOUT_DURATION,
                 TITLE_SUFFIX_TO_TRIM,
                 Set.of("Ad")
         );
@@ -58,7 +58,7 @@ class RSSSiteTest {
 
     @Test
     void fetchPosts() throws Exception {
-        var homePageResponse = """
+        var indexPageResponse = """
                 <xml>
                     <item>
                         <link>https://digestwave.com/post/21</link>
@@ -83,8 +83,8 @@ class RSSSiteTest {
                 ""
         );
 
-        when(httpClient.sendAsync(argThat(r -> r != null && r.uri().equals(HOME_PAGE_URI)), notNull()))
-                .thenReturn(completedFuture(createHttpResponseWithBody(homePageResponse)));
+        when(httpClient.sendAsync(argThat(r -> r != null && r.uri().equals(INDEX_PAGE_URI)), notNull()))
+                .thenReturn(completedFuture(createHttpResponseWithBody(indexPageResponse)));
 
         when(httpClient.sendAsync(
                 argThat(r -> r != null
@@ -120,8 +120,8 @@ class RSSSiteTest {
 
     @ParameterizedTest
     @MethodSource("bodyAndStatusForUnavailablePage")
-    void fetchPostsReturnsEmptyListWhenHomePageIsNotAvailable(String body, int status) throws Exception {
-        when(httpClient.sendAsync(argThat(r -> r != null && r.uri().equals(HOME_PAGE_URI)), notNull()))
+    void fetchPostsReturnsEmptyListWhenIndexPageIsNotAvailable(String body, int status) throws Exception {
+        when(httpClient.sendAsync(argThat(r -> r != null && r.uri().equals(INDEX_PAGE_URI)), notNull()))
                 .thenReturn(completedFuture(createHttpResponseWithBodyAndStatus(body, status)));
 
         CompletableFuture<List<Post>> resultFuture = rssSite.fetchPosts();
@@ -133,7 +133,7 @@ class RSSSiteTest {
     @ParameterizedTest
     @MethodSource("bodyAndStatusForUnavailablePage")
     void fetchPostsReturnsEmptyListWhenAllPostPagesAreFailedToProcess(String body, int status) throws Exception {
-        var homePageResponse = """
+        var indexPageResponse = """
                 <xml>
                     <item>
                         <link>https://digestwave.com/post/42</link>
@@ -144,8 +144,8 @@ class RSSSiteTest {
                 </xml>
                 """;
 
-        when(httpClient.sendAsync(argThat(r -> r != null && r.uri().equals(HOME_PAGE_URI)), notNull()))
-                .thenReturn(completedFuture(createHttpResponseWithBody(homePageResponse)));
+        when(httpClient.sendAsync(argThat(r -> r != null && r.uri().equals(INDEX_PAGE_URI)), notNull()))
+                .thenReturn(completedFuture(createHttpResponseWithBody(indexPageResponse)));
 
         when(httpClient.sendAsync(
                 argThat(r -> r != null

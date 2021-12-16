@@ -32,20 +32,20 @@ public abstract class Site {
             getenv("SCR_READABILITY_URI") == null ? "http://localhost:3009"
                     : getenv("SCR_READABILITY_URI"));
 
-    protected final URI homePageUri;
+    protected final URI indexPageUri;
     protected final String siteCode;
     protected final HttpClient httpClient;
-    protected final Duration homePageTimeoutDuration;
+    protected final Duration indexPageTimeoutDuration;
 
-    protected Site(URI homePageUri, String siteCode, HttpClient httpClient, Duration homePageTimeoutDuration) {
-        this.homePageUri = homePageUri;
+    protected Site(URI indexPageUri, String siteCode, HttpClient httpClient, Duration indexPageTimeoutDuration) {
+        this.indexPageUri = indexPageUri;
         this.siteCode = siteCode;
         this.httpClient = httpClient;
-        this.homePageTimeoutDuration = homePageTimeoutDuration;
+        this.indexPageTimeoutDuration = indexPageTimeoutDuration;
     }
 
     public final CompletableFuture<List<Post>> fetchPosts() {
-        return httpClient.sendAsync(buildHomePageRequest(homePageTimeoutDuration), BodyHandlers.ofString(UTF_8))
+        return httpClient.sendAsync(buildIndexPageRequest(indexPageTimeoutDuration), BodyHandlers.ofString(UTF_8))
                 .thenApply(response -> {
                     if (response.statusCode() != 200) {
                         logger.warn("Cannot fetchPosts, status {}", response.statusCode());
@@ -98,8 +98,8 @@ public abstract class Site {
                 });
     }
 
-    protected final HttpRequest buildHomePageRequest(Duration timeout) {
-        return HttpRequest.newBuilder(homePageUri)
+    protected final HttpRequest buildIndexPageRequest(Duration timeout) {
+        return HttpRequest.newBuilder(indexPageUri)
                 .setHeader("User-Agent", MOZILLA_AGENT)
                 .timeout(timeout)
                 .build();
