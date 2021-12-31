@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Redirect;
 import java.time.Duration;
@@ -15,13 +14,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static java.lang.System.getenv;
-
 public class App {
     private static final Logger logger = LoggerFactory.getLogger("Application");
-    private static final URI READABILITY_URI = URI.create(
-            getenv("SCR_READABILITY_URI") == null ? "http://localhost:3009"
-                    : getenv("SCR_READABILITY_URI"));
 
     private static final String VERSION = "0.1.0";
     private static final long INTERVAL_SECONDS = 20;
@@ -34,9 +28,9 @@ public class App {
                 new ObjectMapper(),
                 "rss.json",
                 createHttpClient(pool),
-                READABILITY_URI
+                Config.getReadabilityURI()
         );
-        
+
         try {
             var rssSites = rssFactory.createSites();
             while (true) {

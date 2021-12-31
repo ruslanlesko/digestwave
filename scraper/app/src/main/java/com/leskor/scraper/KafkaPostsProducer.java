@@ -13,21 +13,18 @@ import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static java.lang.System.getenv;
 import static org.apache.kafka.clients.producer.ProducerConfig.*;
 
 public class KafkaPostsProducer {
     private static final Logger logger = LoggerFactory.getLogger("Application");
 
-    private static final String KAFKA_ADDRESS = getenv("SCR_KAFKA_ADDRESS") == null ?
-            "localhost:9092" : getenv("SCR_KAFKA_ADDRESS");
     private static final String TOPIC = "posts";
 
     private final Producer<String, String> producer;
 
     public KafkaPostsProducer() {
         Properties props = new Properties();
-        props.put(BOOTSTRAP_SERVERS_CONFIG, KAFKA_ADDRESS);
+        props.put(BOOTSTRAP_SERVERS_CONFIG, Config.getKafkaAddress());
         props.put(ACKS_CONFIG, "all");
         props.put(KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
