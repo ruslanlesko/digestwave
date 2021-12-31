@@ -33,8 +33,9 @@ This will run Kafka (with Zookeeper) on port 9092 and Readability on port 3009. 
 Scraper has default values for its configuration. However, you may want to substitute some parameters for your specific
 needs. Scraper is configured via environment variables.
 
-| Name                | Default               | Meaning                                                                             | 
-|---------------------|-----------------------|-------------------------------------------------------------------------------------|
-| SCR_READABILITY_URI | http://localhost:3009 | URI of [Readability service](https://github.com/phpdocker-io/readability-js-server) |
-| SCR_KAFKA_ADDRESS   | localhost:9092        | Address of Kafka broker                                                             |
-| SCR_LOGGING_LEVEL   | info                  | Logging level                                                                       |
+| Name                 | Default               | Meaning                                                                              | 
+|----------------------|-----------------------|--------------------------------------------------------------------------------------|
+| SCR_READABILITY_URI  | http://localhost:3009 | URI of [Readability service](https://github.com/phpdocker-io/readability-js-server)  |
+| SCR_KAFKA_ADDRESS    | localhost:9092        | Address of Kafka broker                                                              |
+| SCR_LOGGING_LEVEL    | info                  | Logging level                                                                        |
+| SCR_POLLING_INTERVAL | 20                    | Polling interval seconds                                                             |

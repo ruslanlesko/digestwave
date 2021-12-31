@@ -24,4 +24,5 @@ services:
     environment:
       SCR_READABILITY_URI: "http://readability:3000"
       SCR_KAFKA_ADDRESS: "kafka:9092"
+      SCR_POLLING_INTERVAL: "15"
       SCR_LOGGING_LEVEL: "debug"

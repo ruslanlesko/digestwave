@@ -18,7 +18,6 @@ public class App {
     private static final Logger logger = LoggerFactory.getLogger("Application");
 
     private static final String VERSION = "0.1.0";
-    private static final long INTERVAL_SECONDS = 20;
 
     public static void main(String[] args) {
         logger.info("Starting Scraper {}", VERSION);
@@ -31,11 +30,13 @@ public class App {
                 Config.getReadabilityURI()
         );
 
+        final int pollingInterval = Config.getPollingInterval();
+
         try {
             var rssSites = rssFactory.createSites();
             while (true) {
                 handleSites(rssSites);
-                Thread.sleep(1000 * INTERVAL_SECONDS);
+                Thread.sleep(1000L * pollingInterval);
             }
         } catch (IOException e) {
             logger.error("Failed to create RSS sites", e);

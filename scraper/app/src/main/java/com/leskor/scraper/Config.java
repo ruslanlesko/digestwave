@@ -19,4 +19,9 @@ public final class Config {
         return getenv("SCR_KAFKA_ADDRESS") == null ?
                 "localhost:9092" : getenv("SCR_KAFKA_ADDRESS");
     }
+
+    public static int getPollingInterval() {
+        return getenv("SCR_POLLING_INTERVAL") == null ?
+                20 : Integer.parseInt(getenv("SCR_POLLING_INTERVAL"));
+    }
 }
