@@ -22,6 +22,12 @@ java -jar build/libs/app.jar
 
 This will build a Docker image for scraper and run it with Kafka
 
+## Running Kafka and Readability dockerized
+
+`docker-compose -f .\docker-compose-deps.yml up -d`
+
+This will run Kafka (with Zookeeper) on port 9092 and Readability on port 3009. Useful for local debugging.
+
 ## Environemnt varialbes
 
 Scraper has default values for its configuration. However, you may want to substitute some parameters for your specific
