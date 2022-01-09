@@ -1,5 +1,7 @@
 package com.leskor.scraper;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leskor.scraper.entities.Post;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -33,11 +35,12 @@ public class KafkaPostsProducer {
 
     public void sendPosts(List<Post> posts) {
         final var countDownLatch = new CountDownLatch(posts.size());
+        final var objectMapper = new ObjectMapper();
 
         try {
             for (Post post : posts) {
                 final ProducerRecord<String, String> record =
-                        new ProducerRecord<>(TOPIC, post.title());
+                        new ProducerRecord<>(TOPIC, objectMapper.writeValueAsString(post));
                 producer.send(record, (metadata, exception) -> {
                     if (metadata != null) {
                         logger.debug("sent record(key={} value={}) meta(partition={}, offset={})",
@@ -53,6 +56,8 @@ public class KafkaPostsProducer {
             }
         } catch (InterruptedException e) {
             logger.error("Interrupted", e);
+        } catch (JsonProcessingException e) {
+            logger.error("Cannot generate JSON", e);
         } finally {
             producer.flush();
         }
