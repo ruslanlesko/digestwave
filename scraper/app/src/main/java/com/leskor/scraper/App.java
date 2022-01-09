@@ -1,6 +1,7 @@
 package com.leskor.scraper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.sites.Site;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,8 @@ public class App {
     private static final Logger logger = LoggerFactory.getLogger("Application");
 
     private static final String VERSION = "0.1.0";
+
+    private static final DuplicatesCache DUPLICATES_CACHE = new DuplicatesCache();
 
     public static void main(String[] args) {
         logger.info("Starting Scraper {}", VERSION);
@@ -52,11 +55,22 @@ public class App {
         KafkaPostsProducer kafkaPostsProducer = new KafkaPostsProducer();
         for (var site : sites) {
             var posts = site.fetchPosts().join();
+            logger.debug("Processing duplicates");
+            var filteredPosts = posts.stream().filter(App::processDuplicateCache).toList();
             logger.debug("Sending posts:");
-            posts.forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
-            kafkaPostsProducer.sendPosts(posts);
+            filteredPosts.forEach(p -> logger.debug("{} -> {}", p.publicationTime(), p.title()));
+            kafkaPostsProducer.sendPosts(filteredPosts);
         }
         kafkaPostsProducer.close();
+    }
+
+    private static boolean processDuplicateCache(Post post) {
+        if (DUPLICATES_CACHE.contains(post.hash())) {
+            logger.debug("Duplicate: {}", post.title());
+            return false;
+        }
+        DUPLICATES_CACHE.add(post.hash());
+        return true;
     }
 
     private static HttpClient createHttpClient(Executor executor) {

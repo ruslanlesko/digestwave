@@ -5,7 +5,7 @@ import com.leskor.scraper.dto.ReadabilityResponse;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
-public record Post(String siteCode, ZonedDateTime publicationTime, String title, String content) {
+public record Post(String siteCode, ZonedDateTime publicationTime, String title, String content, String hash) {
     public static Post from(String siteCode, ZonedDateTime publicationTime, ReadabilityResponse readabilityResponse) {
         Objects.requireNonNull(siteCode, "Post requires site code");
         Objects.requireNonNull(publicationTime, "Post requires publication time");
@@ -17,6 +17,8 @@ public record Post(String siteCode, ZonedDateTime publicationTime, String title,
             throw new IllegalArgumentException("Post is too short");
         }
 
-        return new Post(siteCode, publicationTime, readabilityResponse.title(), readabilityResponse.textContent());
+        final String hash = String.valueOf(readabilityResponse.textContent().hashCode());
+
+        return new Post(siteCode, publicationTime, readabilityResponse.title(), readabilityResponse.textContent(), hash);
     }
 }
