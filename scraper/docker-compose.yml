@@ -10,7 +10,10 @@ services:
     image: wurstmeister/kafka:2.13-2.7.1
     container_name: kafka
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_A://kafka:9092
+      KAFKA_LISTENERS: LISTENER_A://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_A:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_A
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CREATE_TOPICS: "posts:1:1"
 
@@ -21,8 +24,18 @@ services:
   scraper:
     build: .
     container_name: scraper
+    restart: "always"
     environment:
       SCR_READABILITY_URI: "http://readability:3000"
       SCR_KAFKA_ADDRESS: "kafka:9092"
+      SCR_SCHEMA_REGISTRY_ADDRESS: "http://schema:8081"
       SCR_POLLING_INTERVAL: "15"
       SCR_LOGGING_LEVEL: "debug"
+
+  schema:
+    image: confluentinc/cp-schema-registry:7.0.1
+    container_name: schema
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092

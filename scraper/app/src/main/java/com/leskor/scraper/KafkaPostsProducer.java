@@ -1,8 +1,7 @@
 package com.leskor.scraper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leskor.scraper.entities.Post;
+import io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -22,25 +21,25 @@ public class KafkaPostsProducer {
 
     private static final String TOPIC = "posts";
 
-    private final Producer<String, String> producer;
+    private final Producer<String, Post> producer;
 
     public KafkaPostsProducer() {
         Properties props = new Properties();
         props.put(BOOTSTRAP_SERVERS_CONFIG, Config.getKafkaAddress());
         props.put(ACKS_CONFIG, "all");
         props.put(KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        props.put(VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        props.put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaJsonSchemaSerializer.class.getName());
+        props.put("schema.registry.url", Config.getSchemaRegistryAddress());
         this.producer = new KafkaProducer<>(props);
     }
 
     public void sendPosts(List<Post> posts) {
         final var countDownLatch = new CountDownLatch(posts.size());
-        final var objectMapper = new ObjectMapper();
 
         try {
             for (Post post : posts) {
-                final ProducerRecord<String, String> record =
-                        new ProducerRecord<>(TOPIC, objectMapper.writeValueAsString(post));
+                final ProducerRecord<String, Post> record =
+                        new ProducerRecord<>(TOPIC, post);
                 producer.send(record, (metadata, exception) -> {
                     if (metadata != null) {
                         logger.debug("sent record(key={} value={}) meta(partition={}, offset={})",
@@ -56,8 +55,6 @@ public class KafkaPostsProducer {
             }
         } catch (InterruptedException e) {
             logger.error("Interrupted", e);
-        } catch (JsonProcessingException e) {
-            logger.error("Cannot generate JSON", e);
         } finally {
             producer.flush();
         }
