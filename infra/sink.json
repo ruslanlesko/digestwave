@@ -8,9 +8,9 @@
         "value.converter": "io.confluent.connect.json.JsonSchemaConverter",
         "value.converter.schema.registry.url": "http://schema:8081",
         "auto.create": "false",
-        "insert.mode": "insert",
+        "insert.mode": "upsert",
         "delete.enabled": "false",
-        "pk.fields": "none",
-        "pk.mode": "none"
+        "pk.fields": "hash",
+        "pk.mode": "record_value"
     }
 }
