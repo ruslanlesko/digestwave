@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+
+  kafka:
+    image: wurstmeister/kafka:2.13-2.7.1
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "19092:19092"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_A://kafka:9092,LISTENER_B://localhost:19092
+      KAFKA_LISTENERS: LISTENER_A://0.0.0.0:9092,LISTENER_B://0.0.0.0:19092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_A:PLAINTEXT,LISTENER_B:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_A
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "posts:1:1"
+
+  schema:
+    image: confluentinc/cp-schema-registry:7.0.1
+    container_name: schema
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
+
+  readability:
+    image: phpdockerio/readability-js-server
+    container_name: readability
+    ports:
+      - "3009:3000"
+
+  db:
+    build: postsdb
+    ports:
+      - "5432:5432"
+    container_name: postsdb
+    environment:
+      POSTGRES_PASSWORD: connectpass
+      POSTGRES_USER: connect
+      POSTGRES_DB: digestwave
+
+  connect:
+    build: debezium-jdbc
+    ports:
+      - "8083:8083"
+      - "5005:5005"
+    container_name: connect
+    environment:
+      BOOTSTRAP_SERVERS: kafka:9092
+      GROUP_ID: 1
+      CONFIG_STORAGE_TOPIC: connect_configs
+      OFFSET_STORAGE_TOPIC: connect_offsets
+      STATUS_STORAGE_TOPIC: connect_statuses
