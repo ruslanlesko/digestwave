@@ -30,7 +30,9 @@ if l == []:
             "insert.mode": "upsert",
             "delete.enabled": "false",
             "pk.fields": "hash",
-            "pk.mode": "record_value"
+            "pk.mode": "record_value",
+            "batch.size": "10",
+            "dialect.name": "PostgreSqlDatabaseDialect"
         }
     }
     r = requests.post(base + "/connectors", json = body)
