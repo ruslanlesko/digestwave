@@ -14,8 +14,14 @@ java {
     targetCompatibility = 17
 }
 
+def springVersion = "2.6.6"
+
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web:2.6.6'
+    implementation "org.springframework.boot:spring-boot-starter-web:${springVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa:${springVersion}"
+
+    implementation 'org.postgresql:postgresql:42.3.3'
+
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
 }
 
