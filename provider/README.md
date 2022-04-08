@@ -13,3 +13,7 @@ Service for providing REST API for entire system.
 ./gradlew jar
 java -jar app/build/libs/app.jar
 ```
+
+## API Reference
+
+Documentation for API is available in Swagger form at `localhost:8080/swagger-ui.html`
