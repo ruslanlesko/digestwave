@@ -1,6 +1,7 @@
 package com.leskor.provider.web;
 
 import com.leskor.provider.entities.Article;
+import com.leskor.provider.entities.ArticlePreview;
 import com.leskor.provider.services.ArticlesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,5 +28,10 @@ public class ArticlesController {
     @GetMapping(value = "/v1/articles", produces = APPLICATION_JSON_VALUE)
     public List<Article> fetchArticles() {
         return articlesService.fetchArticles();
+    }
+
+    @GetMapping(value = "/v1/preview/articles", produces = APPLICATION_JSON_VALUE)
+    public List<ArticlePreview> fetchArticlePreviews() {
+        return articlesService.fetchArticlePreviews();
     }
 }
