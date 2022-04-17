@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ArticlesService {
@@ -29,5 +30,13 @@ public class ArticlesService {
 
     public List<ArticlePreview> fetchArticlePreviews() {
         return fetchArticles().stream().map(ArticlePreview::from).toList();
+    }
+
+    public Optional<Article> fetchArticleById(String articleId) {
+        String postId = articleId.substring(1);
+        if (articleId.startsWith("n")) {
+            postId = "-" + postId;
+        }
+        return postsRepository.findById(postId).map(p -> Article.from(p, sitesService::siteForCode));
     }
 }
