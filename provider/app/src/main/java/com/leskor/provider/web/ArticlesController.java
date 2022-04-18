@@ -5,6 +5,7 @@ import com.leskor.provider.entities.ArticlePreview;
 import com.leskor.provider.exceptions.NotFoundException;
 import com.leskor.provider.services.ArticlesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@CrossOrigin(origins = "http://localhost:8091", maxAge = 3600)
 @RestController
 public class ArticlesController {
     private final ArticlesService articlesService;
