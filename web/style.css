@@ -1,0 +1,15 @@
+#articlesList {
+    margin: 0.2em 0.2em 0.2em 0.2em;
+}
+
+#content {
+    margin: 0.2em 0.2em 0.2em 0.2em;
+}
+
+.articlePreview {
+    margin: 1em 0em 1em 0em;
+}
+
+.articlePreview a {
+    color: black;
+}
