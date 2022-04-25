@@ -1,9 +1,19 @@
 const ARTICLE_URL = 'http://localhost:8080/v1/articles/';
+const ARTICLE_IMAGE_URL = 'http://localhost:8080/v1/articles/';
 const HEADERS = { 'Accept': 'application/json' }
 
 function displayArticle(article) {
     document.getElementsByTagName('h2')[0].innerHTML += article.title;
     document.getElementsByTagName('title')[0].innerHTML = article.title;
+
+    const content = document.getElementById('content');
+
+    if (article.hasCoverImage) {
+        const newImg = document.createElement('img');
+        newImg.setAttribute("src", ARTICLE_IMAGE_URL + article.id + "/image");
+        newImg.setAttribute('width', '120px');
+        content.appendChild(newImg);
+    }
 
     article.content
         .split('\n')
@@ -11,7 +21,7 @@ function displayArticle(article) {
         .forEach(p => {
             const newP = document.createElement('p');
             newP.innerHTML += p.trim();
-            document.getElementById('content').appendChild(newP);
+            content.appendChild(newP);
         });
 }
 

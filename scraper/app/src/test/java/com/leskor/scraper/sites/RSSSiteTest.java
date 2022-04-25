@@ -116,7 +116,8 @@ class RSSSiteTest {
                 ZonedDateTime.of(2021, 12, 14, 11, 5, 30, 0, ZoneId.of("Z")),
                 "Nice article",
                 "Hello. Long story short",
-                "123"
+                "123",
+                ""
         );
 
         assertFalse(result.isEmpty(), "List of posts is empty");

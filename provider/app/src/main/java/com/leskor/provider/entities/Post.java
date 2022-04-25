@@ -20,6 +20,9 @@ public class Post {
     public String title;
     public String content;
 
+    @Column(name = "image_url")
+    public String imageURL;
+
     public String getHash() {
         return hash;
     }
@@ -58,5 +61,13 @@ public class Post {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 }

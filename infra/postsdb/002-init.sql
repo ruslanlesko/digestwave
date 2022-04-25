@@ -7,7 +7,8 @@ CREATE TABLE "public".posts (
     hash VARCHAR(16) PRIMARY KEY,
     publication_time BIGINT,
     title TEXT,
-    content TEXT
+    content TEXT,
+    image_url TEXT
 );
 
 SELECT cron.schedule('0 */6 * * *', $$WITH latest AS (

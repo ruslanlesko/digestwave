@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.leskor.scraper.dto.ReadabilityResponse;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.parser.Parser;
 
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -18,7 +21,9 @@ public record Post(
         @JsonProperty
         String content,
         @JsonProperty
-        String hash
+        String hash,
+        @JsonProperty("image_url")
+        String imageURL
 ) {
     public static Post from(String siteCode, ZonedDateTime publicationTime, ReadabilityResponse readabilityResponse) {
         Objects.requireNonNull(siteCode, "Post requires site code");
@@ -32,8 +37,25 @@ public record Post(
         }
 
         final String hash = String.valueOf(readabilityResponse.textContent().hashCode());
+        final String imageURL = extractImageURL(readabilityResponse.content());
 
-        return new Post(siteCode, publicationTime, readabilityResponse.title(), readabilityResponse.textContent(), hash);
+        return new Post(siteCode, publicationTime, readabilityResponse.title(), readabilityResponse.textContent(), hash, imageURL);
+    }
+
+    private static String extractImageURL(String content) {
+        Document document = Jsoup.parse(content, Parser.xmlParser());
+        var images = document.getElementsByTag("img");
+        if (images.isEmpty()) {
+            return null;
+        }
+
+        for (var image : images) {
+            if (image.attributes().hasKey("src")) {
+                return image.attributes().getIgnoreCase("src");
+            }
+        }
+
+        return null;
     }
 
     @JsonGetter("publication_time")

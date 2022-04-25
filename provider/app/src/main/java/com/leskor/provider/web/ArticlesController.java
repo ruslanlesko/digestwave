@@ -5,10 +5,8 @@ import com.leskor.provider.entities.ArticlePreview;
 import com.leskor.provider.exceptions.NotFoundException;
 import com.leskor.provider.services.ArticlesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,6 +35,11 @@ public class ArticlesController {
     @GetMapping(value = "/v1/articles/{articleId}", produces = APPLICATION_JSON_VALUE)
     public Article fetchArticle(@PathVariable String articleId) {
         return articlesService.fetchArticleById(articleId).orElseThrow(NotFoundException::new);
+    }
+
+    @GetMapping(value = "/v1/articles/{articleId}/image", produces = MediaType.IMAGE_JPEG_VALUE)
+    public @ResponseBody byte[] fetchImage(@PathVariable String articleId) {
+        return articlesService.fetchCoverImageByArticleId(articleId).orElseThrow(NotFoundException::new);
     }
 
     @GetMapping(value = "/v1/preview/articles", produces = APPLICATION_JSON_VALUE)
