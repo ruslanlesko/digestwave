@@ -8,6 +8,7 @@
 
 .articlePreview {
     margin: 1.4em 0em 0em 0em;
+    min-height: 120px;
 }
 
 .articlePreview a {
@@ -15,7 +16,12 @@
 }
 
 .articlePreview img {
-    display: block;
+    float: left;
+    margin-right: 1em;
+}
+
+img {
+    border-radius: 8px;
 }
 
 .site {
