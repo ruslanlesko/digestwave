@@ -7,9 +7,17 @@
 }
 
 .articlePreview {
-    margin: 1em 0em 1em 0em;
+    margin: 1.4em 0em 0em 0em;
 }
 
 .articlePreview a {
     color: black;
+}
+
+.articlePreview img {
+    display: block;
+}
+
+.site {
+    margin-bottom: 1em;
 }

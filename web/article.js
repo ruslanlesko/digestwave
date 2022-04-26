@@ -12,8 +12,14 @@ function displayArticle(article) {
         const newImg = document.createElement('img');
         newImg.setAttribute("src", ARTICLE_IMAGE_URL + article.id + "/image");
         newImg.setAttribute('width', '120px');
+        newImg.setAttribute('alt', 'Article cover image');
         content.appendChild(newImg);
     }
+
+    const site = document.createElement('div');
+    site.className = 'site';
+    site.innerHTML = article.site;
+    content.appendChild(site);
 
     article.content
         .split('\n')

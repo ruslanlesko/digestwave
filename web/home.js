@@ -5,17 +5,24 @@ const HEADERS = { 'Accept': 'application/json' }
 function displayArticlePreview(articlePreview) {
     const parent = document.getElementById('articlesList');
 
+    const newDiv = document.createElement('div');
+    newDiv.className = 'articlePreview';
+    parent.appendChild(newDiv);
+
     if (articlePreview.hasCoverImage) {
         const newImg = document.createElement('img');
         newImg.setAttribute("src", ARTICLE_IMAGE_URL + articlePreview.id + "/image");
+        newImg.setAttribute('alt', 'Article cover image');
         newImg.setAttribute('width', '120px');
-        parent.appendChild(newImg);
+        newDiv.appendChild(newImg);
     }
 
-    const newDiv = document.createElement('div');
-    newDiv.className = 'articlePreview';
     newDiv.innerHTML += `<a href="/article.html?id=${articlePreview.id}">${articlePreview.title}</a>`;
-    parent.appendChild(newDiv);
+
+    const site = document.createElement('div');
+    site.className = 'site';
+    site.innerHTML = articlePreview.site;
+    newDiv.appendChild(site);
 }
 
 function fetchArticlesList() {
