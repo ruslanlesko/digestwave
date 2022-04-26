@@ -4,6 +4,21 @@
 
 #content {
     margin: 0.2em 0.2em 0.2em 0.2em;
+    font-size: 1.4em;
+    line-height: 1.6em;
+}
+
+#content p {
+    text-align: justify;
+}
+
+#center {
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    -ms-transform: translate(-50%, 0%);
+    transform: translate(-50%, 0%);
+    font-family: 'Manrope', sans-serif;
 }
 
 .articlePreview {
@@ -26,4 +41,12 @@ img {
 
 .site {
     margin-bottom: 1em;
+}
+
+h1 {
+    font-size: 2.2em;
+}
+
+h2 {
+    font-size: 1.8em;
 }
