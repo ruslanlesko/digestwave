@@ -71,3 +71,14 @@ services:
       SCR_SCHEMA_REGISTRY_ADDRESS: "http://schema:8081"
       SCR_POLLING_INTERVAL: "3600"
       SCR_LOGGING_LEVEL: "info"
+
+  provider:
+    build: ../provider
+    container_name: provider
+    restart: "always"
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: "db"
+      DB_USER: "connect"
+      DB_PWD: "connectpass"
