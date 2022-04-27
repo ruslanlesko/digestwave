@@ -26,8 +26,21 @@
     min-height: 120px;
 }
 
-.articlePreview a {
+a {
     color: black;
+    font-weight: bolder;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.site a {
+    font-weight: lighter;
 }
 
 .articlePreview img {

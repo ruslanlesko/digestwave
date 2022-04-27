@@ -21,7 +21,7 @@ function displayArticlePreview(articlePreview) {
 
     const site = document.createElement('div');
     site.className = 'site';
-    site.innerHTML = articlePreview.site;
+    site.innerHTML = `<a href="https://${articlePreview.site}">${articlePreview.site}</a>`;
     newDiv.appendChild(site);
 }
 
