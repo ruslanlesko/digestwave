@@ -3,13 +3,17 @@
 }
 
 #content {
-    margin: 0.2em 0.2em 0.2em 0.2em;
-    font-size: 1.4em;
-    line-height: 1.6em;
+    margin: 0.2em 0em 0.2em 0em;
+    font-size: 1.2em;
+    line-height: 1.4em;
 }
 
 #content p {
     text-align: justify;
+}
+
+#content .site {
+    margin-bottom: 2em;
 }
 
 #center {
@@ -22,7 +26,7 @@
 }
 
 .articlePreview {
-    margin: 1.4em 0em 0em 0em;
+    margin-bottom: 1em;
     min-height: 120px;
 }
 
@@ -54,6 +58,7 @@ img {
 
 .site {
     margin-bottom: 1em;
+    font-size: 1em;
 }
 
 h1 {
@@ -61,5 +66,10 @@ h1 {
 }
 
 h2 {
-    font-size: 1.8em;
+    font-size: 1.6em;
+    line-height: 1.2em;
+}
+
+.coverImage {
+    float: right;
 }

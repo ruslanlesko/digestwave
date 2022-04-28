@@ -3,22 +3,27 @@ const ARTICLE_IMAGE_URL = 'http://localhost:8080/v1/articles/';
 const HEADERS = { 'Accept': 'application/json' }
 
 function displayArticle(article) {
-    document.getElementsByTagName('h2')[0].innerHTML += article.title;
     document.getElementsByTagName('title')[0].innerHTML = article.title;
 
     const content = document.getElementById('content');
 
+    const newTitle = document.createElement('h2');
+    newTitle.innerHTML = article.title;
+
     if (article.hasCoverImage) {
         const newImg = document.createElement('img');
         newImg.setAttribute("src", ARTICLE_IMAGE_URL + article.id + "/image");
-        newImg.setAttribute('width', '120px');
+        newImg.setAttribute('width', '220px');
         newImg.setAttribute('alt', 'Article cover image');
+        newImg.className = 'coverImage'
         content.appendChild(newImg);
     }
 
+    content.appendChild(newTitle);
+
     const site = document.createElement('div');
     site.className = 'site';
-    site.innerHTML = article.site;
+    site.innerHTML = `<a href="https://${article.site}">${article.site}</a>`;
     content.appendChild(site);
 
     article.content
