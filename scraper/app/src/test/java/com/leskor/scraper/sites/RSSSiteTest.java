@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leskor.scraper.dto.ReadabilityResponse;
 import com.leskor.scraper.entities.Post;
+import com.leskor.scraper.entities.Topic;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -51,6 +52,7 @@ class RSSSiteTest {
                 INDEX_PAGE_URI,
                 READABILITY_PAGE_URI,
                 SITE_CODE,
+                Topic.TECH,
                 httpClient,
                 INDEX_PAGE_TIMEOUT_DURATION,
                 TITLE_SUFFIX_TO_TRIM,
@@ -117,7 +119,8 @@ class RSSSiteTest {
                 "Nice article",
                 "Hello. Long story short",
                 "123",
-                ""
+                "",
+                Topic.TECH
         );
 
         assertFalse(result.isEmpty(), "List of posts is empty");

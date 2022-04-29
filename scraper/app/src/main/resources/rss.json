@@ -2,6 +2,7 @@
   {
     "uri": "https://keddr.com/feed/",
     "code": "KDR",
+    "topic": "TECH",
     "timeout": 60,
     "titleSuffixToTrim": "|",
     "excludedCategories": [
@@ -10,21 +11,25 @@
   },
   {
     "uri": "https://gagadget.com/rss/",
-    "code": "GGT"
+    "code": "GGT",
+    "topic": "TECH"
   },
   {
     "uri": "https://feeds.feedburner.com/itcua",
     "code": "ITC",
+    "topic": "TECH",
     "titleSuffixToTrim": "- ITC.ua"
   },
   {
     "uri": "https://root-nation.com/ru/feed/",
     "code": "RNA",
+    "topic": "TECH",
     "titleSuffixToTrim": "- Root Nation"
   },
   {
     "uri": "https://ain.ua/feed/",
     "code": "AIN",
+    "topic": "TECH",
     "excludedCategories": [
       "пиар",
       "Спецпроекты"

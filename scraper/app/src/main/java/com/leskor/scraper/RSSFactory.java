@@ -1,6 +1,7 @@
 package com.leskor.scraper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leskor.scraper.entities.Topic;
 import com.leskor.scraper.sites.RSSSite;
 
 import java.io.IOException;
@@ -40,12 +41,13 @@ public class RSSFactory {
     private RSSSite configToRSSSite(SiteConfig siteConfig) {
         var uri = URI.create(siteConfig.uri());
         Duration timeout = siteConfig.timeout() <= 0 ? Duration.ofSeconds(10) : Duration.ofSeconds(siteConfig.timeout());
-        return new RSSSite(uri, readabilityUri, siteConfig.code(), httpClient, timeout, siteConfig.titleSuffixToTrim(), siteConfig.excludedCategories());
+        return new RSSSite(uri, readabilityUri, siteConfig.code(), siteConfig.topic(), httpClient, timeout, siteConfig.titleSuffixToTrim(), siteConfig.excludedCategories());
     }
 
     private record SiteConfig(
             String uri,
             String code,
+            Topic topic,
             long timeout,
             String titleSuffixToTrim,
             Set<String> excludedCategories

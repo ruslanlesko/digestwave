@@ -2,6 +2,7 @@ package com.leskor.scraper.sites;
 
 import com.leskor.scraper.dto.ReadabilityResponse;
 import com.leskor.scraper.entities.Post;
+import com.leskor.scraper.entities.Topic;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -30,12 +31,13 @@ public class RSSSite extends Site {
             URI indexPageUri,
             URI readabilityUri,
             String siteCode,
+            Topic topic,
             HttpClient httpClient,
             Duration indexPageTimeoutDuration,
             String titleSuffixToTrim,
             Set<String> excludedCategories
     ) {
-        super(indexPageUri, readabilityUri, siteCode, httpClient, indexPageTimeoutDuration);
+        super(indexPageUri, readabilityUri, siteCode, httpClient, indexPageTimeoutDuration, topic);
         this.titleSuffixToTrim = titleSuffixToTrim == null ? "" : titleSuffixToTrim;
         this.excludedCategories = excludedCategories == null ? Set.of() : excludedCategories;
     }
@@ -98,7 +100,7 @@ public class RSSSite extends Site {
             if (readabilityResponse == null) {
                 return null;
             }
-            return Post.from(siteCode, publicationTime, readabilityResponse);
+            return Post.from(siteCode, topic, publicationTime, readabilityResponse);
         });
     }
 

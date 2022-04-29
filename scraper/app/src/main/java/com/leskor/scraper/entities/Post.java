@@ -23,9 +23,11 @@ public record Post(
         @JsonProperty
         String hash,
         @JsonProperty("image_url")
-        String imageURL
+        String imageURL,
+        @JsonProperty
+        Topic topic
 ) {
-    public static Post from(String siteCode, ZonedDateTime publicationTime, ReadabilityResponse readabilityResponse) {
+    public static Post from(String siteCode, Topic topic, ZonedDateTime publicationTime, ReadabilityResponse readabilityResponse) {
         Objects.requireNonNull(siteCode, "Post requires site code");
         Objects.requireNonNull(publicationTime, "Post requires publication time");
         Objects.requireNonNull(readabilityResponse, "Post requires readability response");
@@ -39,7 +41,7 @@ public record Post(
         final String hash = String.valueOf(readabilityResponse.textContent().hashCode());
         final String imageURL = extractImageURL(readabilityResponse.content());
 
-        return new Post(siteCode, publicationTime, readabilityResponse.title(), readabilityResponse.textContent(), hash, imageURL);
+        return new Post(siteCode, publicationTime, readabilityResponse.title(), readabilityResponse.textContent(), hash, imageURL, topic);
     }
 
     private static String extractImageURL(String content) {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leskor.scraper.dto.ReadabilityResponse;
 import com.leskor.scraper.entities.Post;
+import com.leskor.scraper.entities.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,19 +34,22 @@ public abstract class Site {
     protected final String siteCode;
     protected final HttpClient httpClient;
     protected final Duration indexPageTimeoutDuration;
+    protected final Topic topic;
 
     protected Site(
             URI indexPageUri,
             URI readabilityUri,
             String siteCode,
             HttpClient httpClient,
-            Duration indexPageTimeoutDuration
+            Duration indexPageTimeoutDuration,
+            Topic topic
     ) {
         this.indexPageUri = indexPageUri;
         this.readabilityUri = readabilityUri;
         this.siteCode = siteCode;
         this.httpClient = httpClient;
         this.indexPageTimeoutDuration = indexPageTimeoutDuration;
+        this.topic = topic;
     }
 
     public final CompletableFuture<List<Post>> fetchPosts() {

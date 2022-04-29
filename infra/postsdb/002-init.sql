@@ -4,6 +4,7 @@ ALTER SYSTEM SET cron.use_background_workers = 'on';
 
 CREATE TABLE "public".posts (
     site_code VARCHAR(8),
+    topic VARCHAR(16),
     hash VARCHAR(16) PRIMARY KEY,
     publication_time BIGINT,
     title TEXT,

@@ -9,6 +9,7 @@ public record Article(
         String content,
         long publicationTime,
         String site,
+        String topic,
         boolean hasCoverImage
 ) {
     public static Article from(Post post, Function<String, String> siteCodeResolverFunction) {
@@ -17,6 +18,6 @@ public record Article(
         String id = hash.startsWith("-") ? "n" + hash.substring(1) : "p" + hash;
         String site = siteCodeResolverFunction.apply(post.getSiteCode());
         boolean hasCoverImage = post.getImageURL() != null && !post.getImageURL().isBlank();
-        return new Article(id, post.getTitle(), post.getContent(), post.getPublicationTime(), site, hasCoverImage);
+        return new Article(id, post.getTitle(), post.getContent(), post.getPublicationTime(), site, post.getTopic(), hasCoverImage);
     }
 }

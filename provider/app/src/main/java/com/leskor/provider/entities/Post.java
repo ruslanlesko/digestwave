@@ -23,6 +23,16 @@ public class Post {
     @Column(name = "image_url")
     public String imageURL;
 
+    public String topic;
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
     public String getHash() {
         return hash;
     }
