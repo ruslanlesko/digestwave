@@ -115,7 +115,7 @@ public abstract class Site {
 
     private HttpRequest buildReadabilityRequest(URI uri) {
         return HttpRequest.newBuilder(readabilityUri)
-                .POST(HttpRequest.BodyPublishers.ofString(String.format("{\"url\": \"%S\"}", uri.toString())))
+                .POST(HttpRequest.BodyPublishers.ofString(String.format("{\"url\": \"%s\"}", uri.toString())))
                 .header("Content-Type", "application/json")
                 .timeout(DEFAULT_TIMEOUT)
                 .build();

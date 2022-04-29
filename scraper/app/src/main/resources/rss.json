@@ -34,5 +34,23 @@
       "пиар",
       "Спецпроекты"
     ]
+  },
+  {
+    "uri": "https://news.finance.ua/ua/rss",
+    "code": "FIN",
+    "topic": "FINANCE",
+    "titleSuffixToTrim": "— Finance.ua"
+  },
+  {
+    "uri": "https://minfin.com.ua/ua/data/rss/news.xml",
+    "code": "MFN",
+    "topic": "FINANCE"
+  },
+  {
+    "uri": "https://www.liga.net/ua/fin/export/all.xml",
+    "code": "LIG",
+    "topic": "FINANCE",
+    "timeout": 60,
+    "titleSuffixToTrim": "Экономика - LIGA.net"
   }
 ]
