@@ -3,6 +3,7 @@ package com.leskor.scraper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.sites.Site;
+import com.leskor.scraper.sites.custom.EconomicnaPravda;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,10 +27,11 @@ public class App {
         logger.info("Starting Scraper {}", VERSION);
 
         ExecutorService pool = Executors.newFixedThreadPool(16);
+        var httpClient = createHttpClient(pool);
         var rssFactory = new RSSFactory(
                 new ObjectMapper(),
                 "rss.json",
-                createHttpClient(pool),
+                httpClient,
                 Config.getReadabilityURI()
         );
 
@@ -37,8 +39,10 @@ public class App {
 
         try {
             var rssSites = rssFactory.createSites();
+            var customSites = createCustomSites(httpClient);
             while (true) {
                 handleSites(rssSites);
+                handleSites(customSites);
                 Thread.sleep(1000L * pollingInterval);
             }
         } catch (IOException e) {
@@ -49,6 +53,11 @@ public class App {
             logger.info("Shutting down...");
             pool.shutdown();
         }
+    }
+
+    private static List<Site> createCustomSites(HttpClient httpClient) {
+        var economicnaPravda = new EconomicnaPravda(httpClient);
+        return List.of(economicnaPravda);
     }
 
     private static void handleSites(List<? extends Site> sites) {

@@ -44,6 +44,21 @@ public record Post(
         return new Post(siteCode, publicationTime, readabilityResponse.title(), readabilityResponse.textContent(), hash, imageURL, topic);
     }
 
+    public static Post from(String siteCode, Topic topic, ZonedDateTime publicationTime, String title, String content, String imageURL) {
+        Objects.requireNonNull(siteCode, "Post requires site code");
+        Objects.requireNonNull(publicationTime, "Post requires publication time");
+        Objects.requireNonNull(title, "Post requires a title");
+        Objects.requireNonNull(content, "Post requires a text content");
+
+        if (content.length() < 500) {
+            throw new IllegalArgumentException("Post is too short");
+        }
+
+        final String hash = String.valueOf(content.hashCode());
+
+        return new Post(siteCode, publicationTime, title, content, hash, imageURL, topic);
+    }
+
     private static String extractImageURL(String content) {
         Document document = Jsoup.parse(content, Parser.xmlParser());
         var images = document.getElementsByTag("img");

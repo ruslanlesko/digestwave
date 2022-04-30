@@ -12,6 +12,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +54,7 @@ public abstract class Site {
     }
 
     public final CompletableFuture<List<Post>> fetchPosts() {
-        return httpClient.sendAsync(buildIndexPageRequest(indexPageTimeoutDuration), BodyHandlers.ofString(UTF_8))
+        return httpClient.sendAsync(buildIndexPageRequest(indexPageTimeoutDuration), BodyHandlers.ofString(charset()))
                 .thenApply(response -> {
                     if (response.statusCode() != 200) {
                         logger.warn("Cannot fetchPosts, status {}", response.statusCode());
@@ -65,6 +66,10 @@ public abstract class Site {
                     }
                     return waitForPostFutures(extractPostsBasedOnPage(response.body()));
                 });
+    }
+
+    protected Charset charset() {
+        return UTF_8;
     }
 
     protected abstract List<CompletableFuture<Post>> extractPostsBasedOnPage(String page);
@@ -87,7 +92,7 @@ public abstract class Site {
     }
 
     protected final CompletableFuture<ReadabilityResponse> retrieveReadabilityResponse(URI uri) {
-        return httpClient.sendAsync(buildReadabilityRequest(uri), BodyHandlers.ofString(UTF_8))
+        return httpClient.sendAsync(buildReadabilityRequest(uri), BodyHandlers.ofString(charset()))
                 .thenApply(response -> {
                     if (response.statusCode() != 200) {
                         logger.error("Cannot invoke readability, status {}", response.statusCode());
