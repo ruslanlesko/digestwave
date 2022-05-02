@@ -90,7 +90,7 @@ public class EconomicnaPravda extends Site {
         Elements paragraphs = document.getElementsByTag("p");
         StringBuilder result = new StringBuilder();
         for (var p : paragraphs) {
-            if (p.child(0).html().startsWith("Про це")) {
+            if (!p.children().isEmpty() && p.child(0).html().startsWith("Про це")) {
                 continue;
             }
             StringBuilder text = new StringBuilder();

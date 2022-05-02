@@ -100,8 +100,12 @@ public class RSSSite extends Site {
             if (readabilityResponse == null) {
                 return null;
             }
-            return Post.from(siteCode, topic, publicationTime, readabilityResponse);
+            return buildPost(siteCode, topic, publicationTime, readabilityResponse);
         });
+    }
+
+    protected Post buildPost(String siteCode, Topic topic, ZonedDateTime publicationTime, ReadabilityResponse readabilityResponse) {
+        return Post.from(siteCode, topic, publicationTime, readabilityResponse);
     }
 
     private record URIWithPublicationTime(URI uri, ZonedDateTime publicationTime) {

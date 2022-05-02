@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.sites.Site;
 import com.leskor.scraper.sites.custom.EconomicnaPravda;
+import com.leskor.scraper.sites.custom.NV;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,8 @@ public class App {
 
     private static List<Site> createCustomSites(HttpClient httpClient) {
         var economicnaPravda = new EconomicnaPravda(httpClient);
-        return List.of(economicnaPravda);
+        var nv = new NV(Config.getReadabilityURI(), httpClient);
+        return List.of(economicnaPravda, nv);
     }
 
     private static void handleSites(List<? extends Site> sites) {

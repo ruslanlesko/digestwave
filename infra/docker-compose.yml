@@ -69,7 +69,7 @@ services:
       SCR_READABILITY_URI: "http://readability:3000"
       SCR_KAFKA_ADDRESS: "kafka:9092"
       SCR_SCHEMA_REGISTRY_ADDRESS: "http://schema:8081"
-      SCR_POLLING_INTERVAL: "3600"
+      SCR_POLLING_INTERVAL: "120"
       SCR_LOGGING_LEVEL: "info"
 
   provider:
