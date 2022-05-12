@@ -20,9 +20,22 @@
     margin: 0;
     position: absolute;
     left: 50%;
+    min-width: 50%;
     -ms-transform: translate(-50%, 0%);
     transform: translate(-50%, 0%);
     font-family: 'Manrope', sans-serif;
+}
+
+#topicsBar {
+    float: right;
+    margin-top: 0.6em;
+    margin-right: 1em;
+    font-size: 1.2em;
+}
+
+.topic {
+    display: inline;
+    margin-left: 1em;
 }
 
 .articlePreview {
@@ -40,11 +53,17 @@ a:link {
 }
 
 a:hover {
+    color: purple;
     text-decoration: underline;
 }
 
 .site a {
     font-weight: lighter;
+}
+
+a.currentSelection {
+    color: purple;
+    text-decoration: underline;
 }
 
 .articlePreview img {

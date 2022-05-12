@@ -2,6 +2,16 @@ const ARTICLE_URL = 'http://localhost:8080/v1/articles/';
 const ARTICLE_IMAGE_URL = 'http://localhost:8080/v1/articles/';
 const HEADERS = { 'Accept': 'application/json' }
 
+function highlightCurrentTopic(topic) {
+    const links = document.getElementsByTagName('a');
+    for (var a in links) {
+        if (links[a].getAttribute('href') === '/?topic=' + topic) {
+            links[a].className = 'currentSelection';
+            break;
+        }
+    }
+}
+
 function displayArticle(article) {
     document.getElementsByTagName('title')[0].innerHTML = article.title;
 
@@ -13,7 +23,7 @@ function displayArticle(article) {
     if (article.hasCoverImage) {
         const newImg = document.createElement('img');
         newImg.setAttribute("src", ARTICLE_IMAGE_URL + article.id + "/image");
-        newImg.setAttribute('width', '220px');
+        newImg.setAttribute('height', '120px');
         newImg.setAttribute('alt', 'Article cover image');
         newImg.className = 'coverImage'
         content.appendChild(newImg);
@@ -34,6 +44,8 @@ function displayArticle(article) {
             newP.innerHTML += p.trim();
             content.appendChild(newP);
         });
+
+    highlightCurrentTopic(article.topic.toLowerCase());
 }
 
 function fetchArticle(id) {

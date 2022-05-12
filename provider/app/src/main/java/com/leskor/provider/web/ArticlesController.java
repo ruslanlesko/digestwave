@@ -28,8 +28,8 @@ public class ArticlesController {
     }
 
     @GetMapping(value = "/v1/articles", produces = APPLICATION_JSON_VALUE)
-    public List<Article> fetchArticles() {
-        return articlesService.fetchArticles();
+    public List<Article> fetchArticles(@RequestParam(value = "topic", required = false, defaultValue = "") String topic) {
+        return articlesService.fetchArticles(topic);
     }
 
     @GetMapping(value = "/v1/articles/{articleId}", produces = APPLICATION_JSON_VALUE)
@@ -43,7 +43,7 @@ public class ArticlesController {
     }
 
     @GetMapping(value = "/v1/preview/articles", produces = APPLICATION_JSON_VALUE)
-    public List<ArticlePreview> fetchArticlePreviews() {
-        return articlesService.fetchArticlePreviews();
+    public List<ArticlePreview> fetchArticlePreviews(@RequestParam(value = "topic", required = false, defaultValue = "") String topic) {
+        return articlesService.fetchArticlePreviews(topic);
     }
 }

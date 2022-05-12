@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface PostsRepository extends JpaRepository<Post, String> {
     List<Post> findAllByOrderByPublicationTimeDesc();
+    List<Post> findByTopicOrderByPublicationTimeDesc(String topic);
 }

@@ -15,6 +15,8 @@ import java.util.Optional;
 
 @Service
 public class ArticlesService {
+    private static final int ARTICLES_LIMIT = 10;
+
     private final PostsRepository postsRepository;
     private final SitesService sitesService;
 
@@ -24,16 +26,19 @@ public class ArticlesService {
         this.sitesService = sitesService;
     }
 
-    public List<Article> fetchArticles() {
-        return postsRepository.findAllByOrderByPublicationTimeDesc()
-                .stream()
+    public List<Article> fetchArticles(String topic) {
+        List<Post> posts = topic == null || topic.isBlank() ?
+                postsRepository.findAllByOrderByPublicationTimeDesc()
+                : postsRepository.findByTopicOrderByPublicationTimeDesc(topic.toUpperCase());
+
+        return posts.stream()
                 .map(p -> Article.from(p, sitesService::siteForCode))
-                .limit(10)
+                .limit(ARTICLES_LIMIT)
                 .toList();
     }
 
-    public List<ArticlePreview> fetchArticlePreviews() {
-        return fetchArticles().stream().map(ArticlePreview::from).toList();
+    public List<ArticlePreview> fetchArticlePreviews(String topic) {
+        return fetchArticles(topic).stream().map(ArticlePreview::from).toList();
     }
 
     public Optional<Article> fetchArticleById(String articleId) {

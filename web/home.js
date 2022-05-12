@@ -2,6 +2,16 @@ const ARTICLES_LIST_URL = 'http://localhost:8080/v1/preview/articles';
 const ARTICLE_IMAGE_URL = 'http://localhost:8080/v1/articles/';
 const HEADERS = { 'Accept': 'application/json' }
 
+function highlightCurrentTopic(topic) {
+    const links = document.getElementsByTagName('a');
+    for (var a in links) {
+        if (links[a].getAttribute('href') === '/?topic=' + topic) {
+            links[a].className = 'currentSelection';
+            break;
+        }
+    }
+}
+
 function displayArticlePreview(articlePreview) {
     const parent = document.getElementById('articlesList');
 
@@ -25,8 +35,10 @@ function displayArticlePreview(articlePreview) {
     newDiv.appendChild(site);
 }
 
-function fetchArticlesList() {
-    fetch(ARTICLES_LIST_URL, { 'headers': HEADERS })
+function fetchArticlesList(topic) {
+    const url = topic === null || topic === "" ? ARTICLES_LIST_URL 
+            : ARTICLES_LIST_URL + "?topic=" + topic;
+    fetch(url, { 'headers': HEADERS })
         .then(resp => {
             if (resp.status == 200) {
                 return resp.json();
@@ -38,4 +50,12 @@ function fetchArticlesList() {
         .catch(e => console.log(`Error while fetching articles list: ${e}`));
 }
 
-fetchArticlesList();
+const params = new URLSearchParams(window.location.search);
+const topic = params.get("topic");
+
+if (topic != null && topic != "") {
+    fetchArticlesList(topic);
+    highlightCurrentTopic(topic);
+} else {
+    fetchArticlesList("");
+}
