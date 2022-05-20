@@ -4,15 +4,14 @@ import com.leskor.scraper.dto.ReadabilityResponse;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.entities.Topic;
 import com.leskor.scraper.sites.RSSSite;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.time.ZonedDateTime;
 import java.util.Set;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import static java.time.Duration.ofSeconds;
 
@@ -24,10 +23,16 @@ public class NV extends RSSSite {
     }
 
     @Override
-    protected Post buildPost(String siteCode, Topic topic, ZonedDateTime publicationTime, ReadabilityResponse readabilityResponse) {
+    protected Post buildPost(
+            String siteCode,
+            Topic topic,
+            ZonedDateTime publicationTime,
+            ReadabilityResponse readabilityResponse,
+            URI uri
+    ) {
         String content = parseContent(readabilityResponse.content());
         String imageUrl = extractImageUrl(readabilityResponse.content());
-        return Post.from(siteCode, topic, publicationTime, readabilityResponse.title(), content, imageUrl);
+        return Post.from(siteCode, topic, publicationTime, readabilityResponse.title(), content, uri, imageUrl);
     }
 
     private String parseContent(String htmlContent) {

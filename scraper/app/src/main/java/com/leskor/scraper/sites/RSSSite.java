@@ -3,11 +3,6 @@ package com.leskor.scraper.sites;
 import com.leskor.scraper.dto.ReadabilityResponse;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.entities.Topic;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.parser.Parser;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.time.Duration;
@@ -18,6 +13,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
 
 import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
 
@@ -100,12 +99,18 @@ public class RSSSite extends Site {
             if (readabilityResponse == null) {
                 return null;
             }
-            return buildPost(siteCode, topic, publicationTime, readabilityResponse);
+            return buildPost(siteCode, topic, publicationTime, readabilityResponse, uri);
         });
     }
 
-    protected Post buildPost(String siteCode, Topic topic, ZonedDateTime publicationTime, ReadabilityResponse readabilityResponse) {
-        return Post.from(siteCode, topic, publicationTime, readabilityResponse);
+    protected Post buildPost(
+            String siteCode,
+            Topic topic,
+            ZonedDateTime publicationTime,
+            ReadabilityResponse readabilityResponse,
+            URI uri
+    ) {
+        return Post.from(siteCode, topic, publicationTime, readabilityResponse, uri);
     }
 
     private record URIWithPublicationTime(URI uri, ZonedDateTime publicationTime) {

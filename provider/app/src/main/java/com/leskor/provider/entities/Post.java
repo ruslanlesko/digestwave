@@ -19,6 +19,7 @@ public class Post {
 
     public String title;
     public String content;
+    public String url;
 
     @Column(name = "image_url")
     public String imageURL;
@@ -71,6 +72,14 @@ public class Post {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getImageURL() {

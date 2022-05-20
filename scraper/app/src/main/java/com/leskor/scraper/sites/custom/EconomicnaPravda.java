@@ -3,12 +3,6 @@ package com.leskor.scraper.sites.custom;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.entities.Topic;
 import com.leskor.scraper.sites.Site;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.parser.Parser;
-import org.jsoup.select.Elements;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.nio.charset.Charset;
@@ -17,6 +11,11 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
+import org.jsoup.select.Elements;
 
 import static java.time.Duration.ofSeconds;
 import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
@@ -44,14 +43,16 @@ public class EconomicnaPravda extends Site {
             if (limit <= 0) break;
 
             Element titleElement = elem.getElementsByTag("title").first();
+            Element linkElement = elem.getElementsByTag("link").first();
             Element rawTextElement = elem.getElementsByTag("fulltext").first();
             var dateElement = elem.getElementsByTag("pubDate").first();
-            if (titleElement == null || rawTextElement == null || dateElement == null) continue;
+            if (titleElement == null || linkElement == null || rawTextElement == null || dateElement == null) continue;
 
             limit--;
 
             var dateString = dateElement.text();
             var title = titleElement.text();
+            var link = linkElement.text();
 
             String imageUrl = null;
             Element enclosure = elem.getElementsByTag("enclosure").first();
@@ -66,7 +67,7 @@ public class EconomicnaPravda extends Site {
             try {
                 ZonedDateTime publicationTime = ZonedDateTime.parse(dateString, RFC_1123_DATE_TIME);
                 String text = parseRawText(rawTextElement);
-                var newPost = Post.from(siteCode, topic, publicationTime, title, text, imageUrl);
+                var newPost = Post.from(siteCode, topic, publicationTime, title, text, URI.create(link), imageUrl);
 
                 result.add(CompletableFuture.completedFuture(newPost));
             } catch (IllegalArgumentException e) {

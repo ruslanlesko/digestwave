@@ -45,6 +45,10 @@ function displayArticle(article) {
             content.appendChild(newP);
         });
 
+    const originalLinkDiv = document.getElementById('originalArticleLink');
+    const link = originalLinkDiv.getElementsByTagName('a')[0];
+    link.setAttribute('href', article.url);
+
     highlightCurrentTopic(article.topic.toLowerCase());
 }
 
