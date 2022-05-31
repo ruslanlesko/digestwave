@@ -5,9 +5,6 @@ import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.sites.Site;
 import com.leskor.scraper.sites.custom.EconomicnaPravda;
 import com.leskor.scraper.sites.custom.NV;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Redirect;
@@ -16,6 +13,8 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class App {
     private static final Logger logger = LoggerFactory.getLogger("Application");

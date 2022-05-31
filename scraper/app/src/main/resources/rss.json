@@ -52,5 +52,30 @@
     "topic": "FINANCE",
     "timeout": 60,
     "titleSuffixToTrim": "Экономика - LIGA.net"
+  },
+  {
+    "uri": "https://football.ua/rss2.ashx",
+    "code": "FBU",
+    "topic": "FOOTBALL"
+  },
+  {
+    "uri": "https://ua.tribuna.com/rss/rubric.xml?id=208",
+    "code": "TRI",
+    "topic": "FOOTBALL"
+  },
+  {
+    "uri": "https://www.ua-football.com/ua/rss/all.xml",
+    "code": "UFB",
+    "topic": "FOOTBALL"
+  },
+  {
+    "uri": "https://sport.ua/uk/rss/football",
+    "code": "SPU",
+    "topic": "FOOTBALL"
+  },
+  {
+    "uri": "https://sportarena.com/football/feed/",
+    "code": "SPA",
+    "topic": "FOOTBALL"
   }
 ]
