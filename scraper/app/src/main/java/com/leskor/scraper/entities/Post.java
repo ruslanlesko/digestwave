@@ -47,7 +47,7 @@ public record Post(
             throw new IllegalArgumentException("Post is too short");
         }
 
-        final String hash = String.valueOf(readabilityResponse.textContent().hashCode());
+        final String hash = String.valueOf(Objects.hash(siteCode, readabilityResponse.title()));
         final String imageURL = extractImageURL(readabilityResponse.content());
 
         return new Post(siteCode, publicationTime, readabilityResponse.title(), readabilityResponse.textContent(), hash, uri.toString(), imageURL, topic);
