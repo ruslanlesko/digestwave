@@ -72,7 +72,7 @@ public record Post(
             throw new IllegalArgumentException("Post is too short");
         }
 
-        final String hash = String.valueOf(content.hashCode());
+        final String hash = String.valueOf(Objects.hash(siteCode, title));
 
         return new Post(siteCode, publicationTime, title, content, hash, uri.toString(), imageURL, topic);
     }
