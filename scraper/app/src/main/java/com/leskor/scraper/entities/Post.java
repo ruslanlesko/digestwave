@@ -36,6 +36,17 @@ public record Post(
             ReadabilityResponse readabilityResponse,
             URI uri
     ) {
+        return from(siteCode, topic, publicationTime, readabilityResponse, uri, null);
+    }
+
+    public static Post from(
+            String siteCode,
+            Topic topic,
+            ZonedDateTime publicationTime,
+            ReadabilityResponse readabilityResponse,
+            URI uri,
+            URI imageURI
+    ) {
         Objects.requireNonNull(siteCode, "Post requires site code");
         Objects.requireNonNull(publicationTime, "Post requires publication time");
         Objects.requireNonNull(uri, "Post requires URI");
@@ -52,7 +63,7 @@ public record Post(
         }
 
         final String hash = String.valueOf(Objects.hash(siteCode, readabilityResponse.title()));
-        final String imageURL = extractImageURL(readabilityResponse.content());
+        final String imageURL = generateImageURL(readabilityResponse.content(), imageURI);
 
         return new Post(siteCode, publicationTime, readabilityResponse.title(), readabilityResponse.textContent(), hash, uri.toString(), imageURL, topic);
     }
@@ -83,6 +94,14 @@ public record Post(
         final String hash = String.valueOf(Objects.hash(siteCode, title));
 
         return new Post(siteCode, publicationTime, title, content, hash, uri.toString(), imageURL, topic);
+    }
+
+    private static String generateImageURL(String postBody, URI providedImageURI) {
+        final String extractedImageFromBody = extractImageURL(postBody);
+        if (extractedImageFromBody == null || extractedImageFromBody.isBlank()) {
+            return providedImageURI == null ? null : providedImageURI.toString();
+        }
+        return extractedImageFromBody;
     }
 
     private static String extractImageURL(String content) {

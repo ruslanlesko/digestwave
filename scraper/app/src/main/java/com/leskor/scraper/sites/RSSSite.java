@@ -45,14 +45,14 @@ public class RSSSite extends Site {
         return extractPostURIsWithPublicationTimeFromPage(page)
                 .stream()
                 .filter(Objects::nonNull)
-                .map(uriWithTime -> extractPost(uriWithTime.uri, uriWithTime.publicationTime)).toList();
+                .map(this::extractPost).toList();
     }
 
-    private List<URIWithPublicationTime> extractPostURIsWithPublicationTimeFromPage(String page) {
+    private List<PostMetadata> extractPostURIsWithPublicationTimeFromPage(String page) {
         Document document = Jsoup.parse(page, Parser.xmlParser());
         var postElements = document.getElementsByTag("item");
         int limit = POSTS_LIMIT;
-        List<URIWithPublicationTime> result = new ArrayList<>();
+        List<PostMetadata> result = new ArrayList<>();
         for (var elem : postElements) {
             if (limit <= 0) break;
 
@@ -70,9 +70,18 @@ public class RSSSite extends Site {
             if (dateElement == null) continue;
             var dateString = dateElement.text();
 
+            URI imageURI = null;
+            var enclosure = elem.getElementsByTag("enclosure").first();
+            if (enclosure != null
+                    && enclosure.hasAttr("type")
+                    && enclosure.attr("type").startsWith("image")
+                    && enclosure.hasAttr("url")) {
+                imageURI = URI.create(enclosure.attr("url"));
+            }
+
             try {
                 ZonedDateTime publicationTime = ZonedDateTime.parse(dateString, RFC_1123_DATE_TIME);
-                result.add(new URIWithPublicationTime(URI.create(link.text()), publicationTime));
+                result.add(new PostMetadata(URI.create(link.text()), publicationTime, imageURI));
             } catch (IllegalArgumentException e) {
                 logger.warn("Cannot parse URL", e);
             } catch (DateTimeParseException e) {
@@ -82,7 +91,9 @@ public class RSSSite extends Site {
         return result;
     }
 
-    private CompletableFuture<Post> extractPost(URI uri, ZonedDateTime publicationTime) {
+    private CompletableFuture<Post> extractPost(PostMetadata metadata) {
+        URI uri = metadata.uri();
+        ZonedDateTime publicationTime = metadata.publicationTime();
         logger.debug("Reading {}", uri);
 
         CompletableFuture<ReadabilityResponse> readabilityFuture = retrieveReadabilityResponse(uri)
@@ -99,7 +110,7 @@ public class RSSSite extends Site {
             if (readabilityResponse == null) {
                 return null;
             }
-            return buildPost(siteCode, topic, publicationTime, readabilityResponse, uri);
+            return buildPost(siteCode, topic, publicationTime, readabilityResponse, uri, metadata.imageURI());
         });
     }
 
@@ -108,11 +119,12 @@ public class RSSSite extends Site {
             Topic topic,
             ZonedDateTime publicationTime,
             ReadabilityResponse readabilityResponse,
-            URI uri
+            URI uri,
+            URI imageURI
     ) {
-        return Post.from(siteCode, topic, publicationTime, readabilityResponse, uri);
+        return Post.from(siteCode, topic, publicationTime, readabilityResponse, uri, imageURI);
     }
 
-    private record URIWithPublicationTime(URI uri, ZonedDateTime publicationTime) {
+    private record PostMetadata(URI uri, ZonedDateTime publicationTime, URI imageURI) {
     }
 }
