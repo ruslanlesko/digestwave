@@ -47,6 +47,10 @@ public record Post(
             throw new IllegalArgumentException("Post is too short");
         }
 
+        if (readabilityResponse.title().length() < 10) {
+            throw new IllegalArgumentException("Title is too short");
+        }
+
         final String hash = String.valueOf(Objects.hash(siteCode, readabilityResponse.title()));
         final String imageURL = extractImageURL(readabilityResponse.content());
 
@@ -70,6 +74,10 @@ public record Post(
 
         if (content.length() < 500) {
             throw new IllegalArgumentException("Post is too short");
+        }
+
+        if (title.length() < 10) {
+            throw new IllegalArgumentException("Title is too short");
         }
 
         final String hash = String.valueOf(Objects.hash(siteCode, title));
