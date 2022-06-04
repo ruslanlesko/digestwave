@@ -7,6 +7,9 @@
     "titleSuffixToTrim": "|",
     "excludedCategories": [
       "Підкаст"
+    ],
+    "excludeIfTitleContains": [
+      "Паляниця"
     ]
   },
   {
@@ -66,12 +69,21 @@
   {
     "uri": "https://www.ua-football.com/ua/rss/all.xml",
     "code": "UFB",
-    "topic": "FOOTBALL"
+    "topic": "FOOTBALL",
+    "excludedCategories": [
+      "Загальні новини"
+    ],
+    "excludeIfTitleContains": [
+      "Аудіодумка"
+    ]
   },
   {
     "uri": "https://sport.ua/uk/rss/football",
     "code": "SPU",
-    "topic": "FOOTBALL"
+    "topic": "FOOTBALL",
+    "excludeIfTitleContains": [
+      "Дивитися онлайн"
+    ]
   },
   {
     "uri": "https://sportarena.com/football/feed/",

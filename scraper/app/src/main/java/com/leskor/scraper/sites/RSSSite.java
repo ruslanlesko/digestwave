@@ -34,9 +34,10 @@ public class RSSSite extends Site {
             HttpClient httpClient,
             Duration indexPageTimeoutDuration,
             String titleSuffixToTrim,
-            Set<String> excludedCategories
+            Set<String> excludedCategories,
+            Set<String> excludeIfTitleContains
     ) {
-        super(indexPageUri, readabilityUri, siteCode, httpClient, indexPageTimeoutDuration, topic);
+        super(indexPageUri, readabilityUri, siteCode, httpClient, indexPageTimeoutDuration, topic, excludeIfTitleContains);
         this.titleSuffixToTrim = titleSuffixToTrim == null ? "" : titleSuffixToTrim;
         this.excludedCategories = excludedCategories == null ? Set.of() : excludedCategories;
     }

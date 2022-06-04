@@ -5,9 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leskor.scraper.dto.ReadabilityResponse;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.entities.Topic;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -16,10 +13,13 @@ import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -36,6 +36,7 @@ public abstract class Site {
     protected final HttpClient httpClient;
     protected final Duration indexPageTimeoutDuration;
     protected final Topic topic;
+    protected final Set<String> excludeIfTitleContains;
 
     protected Site(
             URI indexPageUri,
@@ -43,7 +44,8 @@ public abstract class Site {
             String siteCode,
             HttpClient httpClient,
             Duration indexPageTimeoutDuration,
-            Topic topic
+            Topic topic,
+            Set<String> excludeIfTitleContains
     ) {
         this.indexPageUri = indexPageUri;
         this.readabilityUri = readabilityUri;
@@ -51,6 +53,7 @@ public abstract class Site {
         this.httpClient = httpClient;
         this.indexPageTimeoutDuration = indexPageTimeoutDuration;
         this.topic = topic;
+        this.excludeIfTitleContains = excludeIfTitleContains == null ? Set.of() : excludeIfTitleContains;
     }
 
     public final CompletableFuture<List<Post>> fetchPosts() {
@@ -80,7 +83,7 @@ public abstract class Site {
         for (var f : postFutures) {
             try {
                 Post post = f.get(DEFAULT_TIMEOUT.getSeconds() * 2, TimeUnit.SECONDS);
-                if (post != null) {
+                if (post != null && !isPostContainExcludedTitleString(post)) {
                     result.add(post);
                 }
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
@@ -124,5 +127,11 @@ public abstract class Site {
                 .header("Content-Type", "application/json")
                 .timeout(DEFAULT_TIMEOUT)
                 .build();
+    }
+
+    private boolean isPostContainExcludedTitleString(Post post) {
+        return excludeIfTitleContains.stream()
+                .map(String::toUpperCase)
+                .anyMatch(s -> post.title().toUpperCase().contains(s));
     }
 }

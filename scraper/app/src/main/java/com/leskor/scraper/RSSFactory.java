@@ -3,7 +3,6 @@ package com.leskor.scraper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leskor.scraper.entities.Topic;
 import com.leskor.scraper.sites.RSSSite;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -41,7 +40,17 @@ public class RSSFactory {
     private RSSSite configToRSSSite(SiteConfig siteConfig) {
         var uri = URI.create(siteConfig.uri());
         Duration timeout = siteConfig.timeout() <= 0 ? Duration.ofSeconds(10) : Duration.ofSeconds(siteConfig.timeout());
-        return new RSSSite(uri, readabilityUri, siteConfig.code(), siteConfig.topic(), httpClient, timeout, siteConfig.titleSuffixToTrim(), siteConfig.excludedCategories());
+        return new RSSSite(
+                uri,
+                readabilityUri,
+                siteConfig.code(),
+                siteConfig.topic(),
+                httpClient,
+                timeout,
+                siteConfig.titleSuffixToTrim(),
+                siteConfig.excludedCategories(),
+                siteConfig.excludeIfTitleContains()
+        );
     }
 
     private record SiteConfig(
@@ -50,7 +59,8 @@ public class RSSFactory {
             Topic topic,
             long timeout,
             String titleSuffixToTrim,
-            Set<String> excludedCategories
+            Set<String> excludedCategories,
+            Set<String> excludeIfTitleContains
     ) {
     }
 }

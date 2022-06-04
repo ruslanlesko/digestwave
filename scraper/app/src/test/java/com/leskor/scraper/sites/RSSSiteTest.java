@@ -57,7 +57,8 @@ class RSSSiteTest {
                 httpClient,
                 INDEX_PAGE_TIMEOUT_DURATION,
                 TITLE_SUFFIX_TO_TRIM,
-                Set.of("Ad")
+                Set.of("Ad"),
+                Set.of("Video-post")
         );
     }
 
@@ -127,6 +128,43 @@ class RSSSiteTest {
 
         assertFalse(result.isEmpty(), "List of posts is empty");
         assertEquals(List.of(expectedPost), result, "List of post is not what we expected");
+    }
+
+    @Test
+    void fetchPostsIgnoresPostIfTitleContainsExcludedString() throws Exception {
+        var indexPageResponse = """
+                <xml>
+                    <item>
+                        <link>https://digestwave.com/post/42</link>
+                        <pubDate>Tue, 14 Dec 2021 11:05:30 GMT</pubDate>
+                        <category><![CDATA[Review]]></category>
+                        <category><![CDATA[Laptops]]></category>
+                    </item>
+                </xml>
+                """;
+
+        var readabilityResponse = new ReadabilityResponse(
+                "Nice video-post",
+                "<h1>Hello</h1><p>Long story short</p>",
+                "Hello. Long story short",
+                512,
+                ""
+        );
+
+        when(httpClient.sendAsync(argThat(r -> r != null && r.uri().equals(INDEX_PAGE_URI)), notNull()))
+                .thenReturn(completedFuture(createHttpResponseWithBody(indexPageResponse)));
+
+        when(httpClient.sendAsync(
+                argThat(r -> r != null
+                        && r.uri().equals(READABILITY_PAGE_URI)
+                        && r.bodyPublisher().isPresent()
+                ),
+                notNull()
+        )).thenReturn(completedFuture(createHttpResponseWithBody(readabilityResponse)));
+
+        CompletableFuture<List<Post>> resultFuture = rssSite.fetchPosts();
+        List<Post> result = resultFuture.get(2, SECONDS);
+        assertTrue(result.isEmpty(), "List of posts is not empty");
     }
 
     private static Stream<Arguments> bodyAndStatusForUnavailablePage() {

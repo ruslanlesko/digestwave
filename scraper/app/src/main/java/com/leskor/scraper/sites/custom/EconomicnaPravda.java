@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -25,7 +26,7 @@ public class EconomicnaPravda extends Site {
     private static final int POSTS_LIMIT = 10;
 
     public EconomicnaPravda(HttpClient httpClient) {
-        super(INDEX_URI, null, "EPR", httpClient, ofSeconds(10), Topic.FINANCE);
+        super(INDEX_URI, null, "EPR", httpClient, ofSeconds(10), Topic.FINANCE, Set.of());
     }
 
     @Override

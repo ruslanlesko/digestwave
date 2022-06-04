@@ -19,7 +19,17 @@ public class NV extends RSSSite {
     private static final URI INDEX_URI = URI.create("https://nv.ua/ukr/rss/2292.xml");
 
     public NV(URI readabilityUri, HttpClient httpClient) {
-        super(INDEX_URI, readabilityUri, "NV", Topic.FINANCE, httpClient, ofSeconds(10), null, Set.of());
+        super(
+                INDEX_URI,
+                readabilityUri,
+                "NV",
+                Topic.FINANCE,
+                httpClient,
+                ofSeconds(10),
+                null,
+                Set.of(),
+                Set.of()
+        );
     }
 
     @Override
