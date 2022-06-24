@@ -22,6 +22,7 @@ services:
       - "8083:8083"
       - "5005:5005"
     container_name: connect
+    restart: "on-failure"
     environment:
       BOOTSTRAP_SERVERS: kafka:9092
       GROUP_ID: 1
@@ -72,10 +73,11 @@ services:
     container_name: kafka
     ports:
       - "9092:9092"
+    restart: "on-failure"
     environment:
       KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "posts:1:1"
+      KAFKA_CREATE_TOPICS: "posts:1:1,sanitized-posts:1:1"
     deploy:
       resources:
         limits:
@@ -99,6 +101,19 @@ services:
       SCR_SCHEMA_REGISTRY_ADDRESS: "http://schema:8081"
       SCR_POLLING_INTERVAL: "120"
       SCR_LOGGING_LEVEL: "info"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  sanitizer:
+    build: ../sanitizer
+    container_name: sanitizer
+    restart: "always"
+    environment:
+      SNT_KAFKA_ADDRESS: "kafka:9092"
+      SNT_SCHEMA_REGISTRY_ADDRESS: "http://schema:8081"
+      SNT_LOGGING_LEVEL: "info"
     deploy:
       resources:
         limits:

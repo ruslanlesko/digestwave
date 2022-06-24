@@ -18,7 +18,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_A:PLAINTEXT,LISTENER_B:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_A
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "posts:1:1"
+      KAFKA_CREATE_TOPICS: "posts:1:1,sanitized-posts:1:1"
 
   schema:
     image: confluentinc/cp-schema-registry:7.0.1
@@ -35,6 +35,19 @@ services:
     container_name: readability
     ports:
       - "3009:3000"
+
+  sanitizer:
+    build: ../sanitizer
+    container_name: sanitizer
+    restart: "always"
+    environment:
+      SNT_KAFKA_ADDRESS: "kafka:9092"
+      SNT_SCHEMA_REGISTRY_ADDRESS: "http://schema:8081"
+      SNT_LOGGING_LEVEL: "info"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
   db:
     build: postsdb
@@ -65,3 +78,18 @@ services:
     restart: "on-failure"
     environment:
       BASE_URL: http://connect:8083
+
+  provider:
+    build: ../provider
+    container_name: provider
+    restart: "always"
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: "db"
+      DB_USER: "connect"
+      DB_PWD: "connectpass"
+    deploy:
+      resources:
+        limits:
+          memory: 256M

@@ -1,0 +1,58 @@
+plugins {
+    id 'application'
+    id 'java'
+}
+
+repositories {
+    // Use Maven Central for resolving dependencies.
+    mavenCentral()
+    maven {
+        url "https://packages.confluent.io/maven/"
+    }
+    maven {
+        url "https://repository.mulesoft.org/nexus/content/repositories/public/"
+    }
+}
+
+java {
+    sourceCompatibility = 17
+    targetCompatibility = 17
+}
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
+dependencies {
+    implementation 'org.apache.kafka:kafka-clients:3.1.0'
+    implementation 'org.apache.kafka:kafka-streams:3.1.0'
+    implementation 'io.confluent:kafka-schema-registry-client:7.1.1'
+    implementation 'io.confluent:kafka-streams-json-schema-serde:7.1.1'
+
+    implementation 'org.apache.logging.log4j:log4j-core:2.17.0'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.17.0'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
+}
+
+application {
+    mainClass = 'com.leskor.sanitizer.App'
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "com.leskor.sanitizer.App"
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    archiveBaseName = "app"
+    archiveVersion = ""
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+}
