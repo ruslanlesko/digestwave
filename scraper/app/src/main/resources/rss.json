@@ -89,5 +89,30 @@
     "uri": "https://sportarena.com/football/feed/",
     "code": "SPA",
     "topic": "FOOTBALL"
+  },
+  {
+    "uri": "https://feed.infoq.com/",
+    "code": "IFQ",
+    "topic": "PROGRAMMING"
+  },
+  {
+    "uri": "https://www.infoworld.com/index.rss",
+    "code": "IFW",
+    "topic": "PROGRAMMING"
+  },
+  {
+    "uri": "http://feeds.dzone.com/home",
+    "code": "DZN",
+    "topic": "PROGRAMMING"
+  },
+  {
+    "uri": "https://www.techrepublic.com/rssfeeds/topic/developer/",
+    "code": "TRP",
+    "topic": "PROGRAMMING"
+  },
+  {
+    "uri": "https://sdtimes.com/feed/",
+    "code": "SDT",
+    "topic": "PROGRAMMING"
   }
 ]
