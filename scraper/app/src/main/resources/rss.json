@@ -133,5 +133,35 @@
     "code": "SDT",
     "topic": "PROGRAMMING",
     "region": "INT"
+  },
+  {
+    "uri": "https://www.economist.com/finance-and-economics/rss.xml",
+    "code": "ECO",
+    "topic": "FINANCE",
+    "region": "INT"
+  },
+  {
+    "uri": "https://moneymorning.com/feed/",
+    "code": "MM",
+    "topic": "FINANCE",
+    "region": "INT"
+  },
+  {
+    "uri": "https://www.thestreet.com/.rss/full/",
+    "code": "TST",
+    "topic": "FINANCE",
+    "region": "INT"
+  },
+  {
+    "uri": "https://www.business-standard.com/rss/finance-103.rss",
+    "code": "BS",
+    "topic": "FINANCE",
+    "region": "INT"
+  },
+  {
+    "uri": "https://fortune.com/feed/fortune-feeds/?id=3230629",
+    "code": "FOR",
+    "topic": "FINANCE",
+    "region": "INT"
   }
 ]
