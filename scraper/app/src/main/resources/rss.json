@@ -3,6 +3,7 @@
     "uri": "https://keddr.com/feed/",
     "code": "KDR",
     "topic": "TECH",
+    "region": "UA",
     "timeout": 60,
     "titleSuffixToTrim": "|",
     "excludedCategories": [
@@ -15,24 +16,28 @@
   {
     "uri": "https://gagadget.com/rss/",
     "code": "GGT",
-    "topic": "TECH"
+    "topic": "TECH",
+    "region": "UA"
   },
   {
     "uri": "https://feeds.feedburner.com/itcua",
     "code": "ITC",
     "topic": "TECH",
+    "region": "UA",
     "titleSuffixToTrim": "- ITC.ua"
   },
   {
     "uri": "https://root-nation.com/ru/feed/",
     "code": "RNA",
     "topic": "TECH",
+    "region": "UA",
     "titleSuffixToTrim": "- Root Nation"
   },
   {
     "uri": "https://ain.ua/feed/",
     "code": "AIN",
     "topic": "TECH",
+    "region": "UA",
     "excludedCategories": [
       "пиар",
       "Спецпроекты"
@@ -42,34 +47,40 @@
     "uri": "https://news.finance.ua/ua/rss",
     "code": "FIN",
     "topic": "FINANCE",
+    "region": "UA",
     "titleSuffixToTrim": "— Finance.ua"
   },
   {
     "uri": "https://minfin.com.ua/ua/data/rss/news.xml",
     "code": "MFN",
-    "topic": "FINANCE"
+    "topic": "FINANCE",
+    "region": "UA"
   },
   {
     "uri": "https://www.liga.net/ua/fin/export/all.xml",
     "code": "LIG",
     "topic": "FINANCE",
+    "region": "UA",
     "timeout": 60,
     "titleSuffixToTrim": "Экономика - LIGA.net"
   },
   {
     "uri": "https://football.ua/rss2.ashx",
     "code": "FBU",
-    "topic": "FOOTBALL"
+    "topic": "FOOTBALL",
+    "region": "UA"
   },
   {
     "uri": "https://ua.tribuna.com/rss/rubric.xml?id=208",
     "code": "TRI",
-    "topic": "FOOTBALL"
+    "topic": "FOOTBALL",
+    "region": "UA"
   },
   {
     "uri": "https://www.ua-football.com/ua/rss/all.xml",
     "code": "UFB",
     "topic": "FOOTBALL",
+    "region": "UA",
     "excludedCategories": [
       "Загальні новини"
     ],
@@ -81,6 +92,7 @@
     "uri": "https://sport.ua/uk/rss/football",
     "code": "SPU",
     "topic": "FOOTBALL",
+    "region": "UA",
     "excludeIfTitleContains": [
       "Дивитися онлайн"
     ]
@@ -88,31 +100,37 @@
   {
     "uri": "https://sportarena.com/football/feed/",
     "code": "SPA",
-    "topic": "FOOTBALL"
+    "topic": "FOOTBALL",
+    "region": "UA"
   },
   {
     "uri": "https://feed.infoq.com/",
     "code": "IFQ",
-    "topic": "PROGRAMMING"
+    "topic": "PROGRAMMING",
+    "region": "INT"
   },
   {
     "uri": "https://www.infoworld.com/index.rss",
     "code": "IFW",
-    "topic": "PROGRAMMING"
+    "topic": "PROGRAMMING",
+    "region": "INT"
   },
   {
     "uri": "http://feeds.dzone.com/home",
     "code": "DZN",
-    "topic": "PROGRAMMING"
+    "topic": "PROGRAMMING",
+    "region": "INT"
   },
   {
     "uri": "https://www.techrepublic.com/rssfeeds/topic/developer/",
     "code": "TRP",
-    "topic": "PROGRAMMING"
+    "topic": "PROGRAMMING",
+    "region": "INT"
   },
   {
     "uri": "https://sdtimes.com/feed/",
     "code": "SDT",
-    "topic": "PROGRAMMING"
+    "topic": "PROGRAMMING",
+    "region": "INT"
   }
 ]

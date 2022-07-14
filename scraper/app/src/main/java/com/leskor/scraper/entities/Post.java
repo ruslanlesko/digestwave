@@ -27,21 +27,25 @@ public record Post(
         @JsonProperty("image_url")
         String imageURL,
         @JsonProperty
-        Topic topic
+        Topic topic,
+        @JsonProperty
+        Region region
 ) {
     public static Post from(
             String siteCode,
             Topic topic,
+            Region region,
             ZonedDateTime publicationTime,
             ReadabilityResponse readabilityResponse,
             URI uri
     ) {
-        return from(siteCode, topic, publicationTime, readabilityResponse, uri, null);
+        return from(siteCode, topic, region, publicationTime, readabilityResponse, uri, null);
     }
 
     public static Post from(
             String siteCode,
             Topic topic,
+            Region region,
             ZonedDateTime publicationTime,
             ReadabilityResponse readabilityResponse,
             URI uri,
@@ -65,12 +69,13 @@ public record Post(
         final String hash = String.valueOf(Objects.hash(siteCode, readabilityResponse.title()));
         final String imageURL = generateImageURL(readabilityResponse.content(), imageURI);
 
-        return new Post(siteCode, publicationTime, readabilityResponse.title(), readabilityResponse.textContent(), hash, uri.toString(), imageURL, topic);
+        return new Post(siteCode, publicationTime, readabilityResponse.title(), readabilityResponse.textContent(), hash, uri.toString(), imageURL, topic, region);
     }
 
     public static Post from(
             String siteCode,
             Topic topic,
+            Region region,
             ZonedDateTime publicationTime,
             String title,
             String content,
@@ -93,7 +98,7 @@ public record Post(
 
         final String hash = String.valueOf(Objects.hash(siteCode, title));
 
-        return new Post(siteCode, publicationTime, title, content, hash, uri.toString(), imageURL, topic);
+        return new Post(siteCode, publicationTime, title, content, hash, uri.toString(), imageURL, topic, region);
     }
 
     private static String generateImageURL(String postBody, URI providedImageURI) {

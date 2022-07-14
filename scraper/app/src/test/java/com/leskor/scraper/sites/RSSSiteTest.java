@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leskor.scraper.dto.ReadabilityResponse;
 import com.leskor.scraper.entities.Post;
+import com.leskor.scraper.entities.Region;
 import com.leskor.scraper.entities.Topic;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -54,6 +55,7 @@ class RSSSiteTest {
                 READABILITY_PAGE_URI,
                 SITE_CODE,
                 Topic.TECH,
+                Region.INT,
                 httpClient,
                 INDEX_PAGE_TIMEOUT_DURATION,
                 TITLE_SUFFIX_TO_TRIM,
@@ -123,7 +125,8 @@ class RSSSiteTest {
                 "838002001",
                 "https://digestwave.com/post/42",
                 null,
-                Topic.TECH
+                Topic.TECH,
+                Region.INT
         );
 
         assertFalse(result.isEmpty(), "List of posts is empty");

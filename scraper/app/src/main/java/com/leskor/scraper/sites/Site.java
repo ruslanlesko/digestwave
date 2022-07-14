@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leskor.scraper.dto.ReadabilityResponse;
 import com.leskor.scraper.entities.Post;
+import com.leskor.scraper.entities.Region;
 import com.leskor.scraper.entities.Topic;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -36,6 +37,7 @@ public abstract class Site {
     protected final HttpClient httpClient;
     protected final Duration indexPageTimeoutDuration;
     protected final Topic topic;
+    protected final Region region;
     protected final Set<String> excludeIfTitleContains;
 
     protected Site(
@@ -45,6 +47,7 @@ public abstract class Site {
             HttpClient httpClient,
             Duration indexPageTimeoutDuration,
             Topic topic,
+            Region region,
             Set<String> excludeIfTitleContains
     ) {
         this.indexPageUri = indexPageUri;
@@ -53,6 +56,7 @@ public abstract class Site {
         this.httpClient = httpClient;
         this.indexPageTimeoutDuration = indexPageTimeoutDuration;
         this.topic = topic;
+        this.region = region;
         this.excludeIfTitleContains = excludeIfTitleContains == null ? Set.of() : excludeIfTitleContains;
     }
 

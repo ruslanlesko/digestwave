@@ -4,7 +4,7 @@
 <head>
     <title>Digestwave</title>
 
-    
+
     <meta name="viewport" content="width=device-width, initial-scale=0.6">
     <meta charset="utf-8" />
 
@@ -32,16 +32,21 @@
 
 <body>
     <div id="center">
-        <div id="topicsBar">
-            <div class="topic"><a href="/?topic=tech">Technology</a></div>
-            <div class="topic"><a href="/?topic=finance">Finance</a></div>
-            <div class="topic"><a href="/?topic=football">Football</a></div>
+        <div id="locale">
+            <select style="border: none; background-color: inherit;" title="Localization" name="locale-names" id="locale-names">
+                <option value="ua">Ukrainian</option>
+                <option value="int">International</option>
+            </select>
         </div>
-        <a href="/"><h1>Digestwave</h1></a>
+        <div id="topicsBar">
+        </div>
+        <a href="/">
+            <h1>Digestwave</h1>
+        </a>
         <div id="articlesList">
         </div>
     </div>
-    <script src="home.js"></script> 
+    <script src="home.js"></script>
 </body>
 
 </html>

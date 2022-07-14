@@ -4,19 +4,16 @@ import com.leskor.provider.entities.Article;
 import com.leskor.provider.entities.ArticlePreview;
 import com.leskor.provider.entities.Post;
 import com.leskor.provider.repositories.PostsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ArticlesService {
-    private static final int ARTICLES_LIMIT = 10;
-
     private final PostsRepository postsRepository;
     private final SitesService sitesService;
 
@@ -26,20 +23,29 @@ public class ArticlesService {
         this.sitesService = sitesService;
     }
 
-    public List<Article> fetchArticles(String topic, int page, int size) {
-        List<Post> posts = topic == null || topic.isBlank() ?
-                postsRepository.findAllByOrderByPublicationTimeDesc()
-                : postsRepository.findByTopicOrderByPublicationTimeDesc(topic.toUpperCase());
-
-        return posts.stream()
+    public List<Article> fetchArticles(String topic, String region, int page, int size) {
+        return extractPosts(topic.toUpperCase(), region.toUpperCase()).stream()
                 .map(p -> Article.from(p, sitesService::siteForCode))
                 .skip((long) (page - 1) * size)
                 .limit(size)
                 .toList();
     }
 
-    public List<ArticlePreview> fetchArticlePreviews(String topic, int page, int size) {
-        return fetchArticles(topic, page, size).stream().map(ArticlePreview::from).toList();
+    private List<Post> extractPosts(String topic, String region) {
+        if ((topic == null || topic.isBlank()) && (region == null || region.isBlank())) {
+            return postsRepository.findAllByOrderByPublicationTimeDesc();
+        }
+        if ((topic == null || topic.isBlank())) {
+            return postsRepository.findByRegionOrderByPublicationTimeDesc(region);
+        }
+        if ((region == null || region.isBlank())) {
+            return postsRepository.findByTopicOrderByPublicationTimeDesc(topic);
+        }
+        return postsRepository.findByTopicAndRegionOrderByPublicationTimeDesc(topic, region);
+    }
+
+    public List<ArticlePreview> fetchArticlePreviews(String topic, String region, int page, int size) {
+        return fetchArticles(topic, region, page, size).stream().map(ArticlePreview::from).toList();
     }
 
     public Optional<Article> fetchArticleById(String articleId) {

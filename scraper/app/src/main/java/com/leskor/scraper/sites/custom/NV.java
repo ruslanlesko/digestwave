@@ -2,6 +2,7 @@ package com.leskor.scraper.sites.custom;
 
 import com.leskor.scraper.dto.ReadabilityResponse;
 import com.leskor.scraper.entities.Post;
+import com.leskor.scraper.entities.Region;
 import com.leskor.scraper.entities.Topic;
 import com.leskor.scraper.sites.RSSSite;
 import java.net.URI;
@@ -24,6 +25,7 @@ public class NV extends RSSSite {
                 readabilityUri,
                 "NV",
                 Topic.FINANCE,
+                Region.UA,
                 httpClient,
                 ofSeconds(10),
                 null,
@@ -36,6 +38,7 @@ public class NV extends RSSSite {
     protected Post buildPost(
             String siteCode,
             Topic topic,
+            Region region,
             ZonedDateTime publicationTime,
             ReadabilityResponse readabilityResponse,
             URI uri,
@@ -44,7 +47,7 @@ public class NV extends RSSSite {
         String content = parseContent(readabilityResponse.content());
         String extractedImageUrl = extractImageUrl(readabilityResponse.content());
         String imageURL = extractedImageUrl.isBlank() && imageURI != null ? imageURI.toString() : extractedImageUrl;
-        return Post.from(siteCode, topic, publicationTime, readabilityResponse.title(), content, uri, imageURL);
+        return Post.from(siteCode, topic, region, publicationTime, readabilityResponse.title(), content, uri, imageURL);
     }
 
     private String parseContent(String htmlContent) {

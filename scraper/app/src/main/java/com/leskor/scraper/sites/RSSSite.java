@@ -2,6 +2,7 @@ package com.leskor.scraper.sites;
 
 import com.leskor.scraper.dto.ReadabilityResponse;
 import com.leskor.scraper.entities.Post;
+import com.leskor.scraper.entities.Region;
 import com.leskor.scraper.entities.Topic;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -31,13 +32,14 @@ public class RSSSite extends Site {
             URI readabilityUri,
             String siteCode,
             Topic topic,
+            Region region,
             HttpClient httpClient,
             Duration indexPageTimeoutDuration,
             String titleSuffixToTrim,
             Set<String> excludedCategories,
             Set<String> excludeIfTitleContains
     ) {
-        super(indexPageUri, readabilityUri, siteCode, httpClient, indexPageTimeoutDuration, topic, excludeIfTitleContains);
+        super(indexPageUri, readabilityUri, siteCode, httpClient, indexPageTimeoutDuration, topic, region, excludeIfTitleContains);
         this.titleSuffixToTrim = titleSuffixToTrim == null ? "" : titleSuffixToTrim;
         this.excludedCategories = excludedCategories == null ? Set.of() : excludedCategories;
     }
@@ -111,19 +113,20 @@ public class RSSSite extends Site {
             if (readabilityResponse == null) {
                 return null;
             }
-            return buildPost(siteCode, topic, publicationTime, readabilityResponse, uri, metadata.imageURI());
+            return buildPost(siteCode, topic, region, publicationTime, readabilityResponse, uri, metadata.imageURI());
         });
     }
 
     protected Post buildPost(
             String siteCode,
             Topic topic,
+            Region region,
             ZonedDateTime publicationTime,
             ReadabilityResponse readabilityResponse,
             URI uri,
             URI imageURI
     ) {
-        return Post.from(siteCode, topic, publicationTime, readabilityResponse, uri, imageURI);
+        return Post.from(siteCode, topic, region, publicationTime, readabilityResponse, uri, imageURI);
     }
 
     private record PostMetadata(URI uri, ZonedDateTime publicationTime, URI imageURI) {

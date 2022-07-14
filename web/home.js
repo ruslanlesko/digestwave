@@ -5,10 +5,68 @@ const HEADERS = { 'Accept': 'application/json' }
 var page = 1;
 var alreadyFetched = false;
 
+function getRegion() {
+    const userLocale =
+        navigator.languages && navigator.languages.length
+            ? navigator.languages[0]
+            : navigator.language;
+
+    const fromLocalStore = localStorage.getItem('locale');
+    if (fromLocalStore !== null) return fromLocalStore;
+
+    return userLocale.startsWith('ua') ? 'ua' : 'int';
+}
+
+function fillTopics() {
+    const uaTopicKeys = ['tech', 'finance', 'football'];
+    const uaTopicVals = ['Technology', 'Finance', 'Football'];
+
+    const intTopicKeys = ['programming'];
+    const intTopicVals = ['Programming'];
+
+    const region = getRegion();
+    var topicKeys = intTopicKeys;
+    var topicVals = intTopicVals;
+    if (region === 'ua') {
+        topicKeys = uaTopicKeys;
+        topicVals = uaTopicVals;
+    }
+
+    const parent = document.getElementById('topicsBar');
+    for (var i = 0; i < topicKeys.length; i++) {
+        const topicDiv = document.createElement('div');
+        topicDiv.className = 'topic';
+        const ref = document.createElement('a');
+        ref.setAttribute('href', "/?topic=" + topicKeys[i] + "&region=" + region);
+        ref.innerHTML = topicVals[i];
+        topicDiv.appendChild(ref);
+        parent.appendChild(topicDiv);
+    }
+}
+
+function setUpLocaleSelector() {
+    const region = getRegion();
+    const selector = document.getElementById('locale-names');
+    const options = selector.getElementsByTagName('option');
+    for (var opt = 0; opt < options.length; opt++) {
+        if (options[opt].getAttribute('value') === region) {
+            options[opt].selected = true;
+        } else {
+            options[opt].selected = false;
+        }
+    }
+
+    selector.addEventListener("change", (_) => {
+        const val = document.getElementById('locale-names').value;
+        localStorage.setItem('locale', val);
+        window.location.reload();
+    });
+}
+
 function highlightCurrentTopic(topic) {
     const links = document.getElementsByTagName('a');
     for (var a in links) {
-        if (links[a].getAttribute('href') === '/?topic=' + topic) {
+        if (links[a].getAttribute('href').startsWith('/?topic=' + topic)) {
             links[a].className = 'currentSelection';
             break;
         }
@@ -39,8 +97,9 @@ function displayArticlePreview(articlePreview) {
 }
 
 function fetchArticlesList(topic, page) {
-    const url = topic === null || topic === "" ? ARTICLES_LIST_URL + "?page=" + page + "&size=20"
-        : ARTICLES_LIST_URL + "?topic=" + topic + "&page=" + page + "&size=20";
+    const region = getRegion();
+    const url = topic === null || topic === "" ? ARTICLES_LIST_URL + "?page=" + page + "&size=20" + "&region=" + region
+        : ARTICLES_LIST_URL + "?topic=" + topic + "&region=" + region + "&page=" + page + "&size=20";
     fetch(url, { 'headers': HEADERS })
         .then(resp => {
             if (resp.status == 200) {
@@ -69,6 +128,9 @@ function isInViewport(element) {
         rect.right <= (window.innerWidth || html.clientWidth)
     );
 }
+
+fillTopics();
+setUpLocaleSelector();
 
 const params = new URLSearchParams(window.location.search);
 const topic = params.get("topic");

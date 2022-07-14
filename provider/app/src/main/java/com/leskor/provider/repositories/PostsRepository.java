@@ -10,4 +10,6 @@ import java.util.List;
 public interface PostsRepository extends JpaRepository<Post, String> {
     List<Post> findAllByOrderByPublicationTimeDesc();
     List<Post> findByTopicOrderByPublicationTimeDesc(String topic);
+    List<Post> findByRegionOrderByPublicationTimeDesc(String region);
+    List<Post> findByTopicAndRegionOrderByPublicationTimeDesc(String topic, String region);
 }

@@ -25,6 +25,7 @@ public class Post {
     public String imageURL;
 
     public String topic;
+    public String region;
 
     public String getTopic() {
         return topic;
@@ -32,6 +33,14 @@ public class Post {
 
     public void setTopic(String topic) {
         this.topic = topic;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
     }
 
     public String getHash() {

@@ -1,6 +1,7 @@
 package com.leskor.scraper.sites.custom;
 
 import com.leskor.scraper.entities.Post;
+import com.leskor.scraper.entities.Region;
 import com.leskor.scraper.entities.Topic;
 import com.leskor.scraper.sites.Site;
 import java.net.URI;
@@ -26,7 +27,7 @@ public class EconomicnaPravda extends Site {
     private static final int POSTS_LIMIT = 10;
 
     public EconomicnaPravda(HttpClient httpClient) {
-        super(INDEX_URI, null, "EPR", httpClient, ofSeconds(10), Topic.FINANCE, Set.of());
+        super(INDEX_URI, null, "EPR", httpClient, ofSeconds(10), Topic.FINANCE, Region.UA, Set.of());
     }
 
     @Override
@@ -68,7 +69,7 @@ public class EconomicnaPravda extends Site {
             try {
                 ZonedDateTime publicationTime = ZonedDateTime.parse(dateString, RFC_1123_DATE_TIME);
                 String text = parseRawText(rawTextElement);
-                var newPost = Post.from(siteCode, topic, publicationTime, title, text, URI.create(link), imageUrl);
+                var newPost = Post.from(siteCode, topic, region, publicationTime, title, text, URI.create(link), imageUrl);
 
                 result.add(CompletableFuture.completedFuture(newPost));
             } catch (IllegalArgumentException e) {
