@@ -21,8 +21,8 @@ function fillTopics() {
     const uaTopicKeys = ['tech', 'finance', 'football'];
     const uaTopicVals = ['Technology', 'Finance', 'Football'];
 
-    const intTopicKeys = ['programming', 'finance'];
-    const intTopicVals = ['Programming', 'Finance'];
+    const intTopicKeys = ['tech', 'finance', 'programming'];
+    const intTopicVals = ['Technology', 'Finance', 'Programming'];
 
     const region = getRegion();
     var topicKeys = intTopicKeys;

@@ -163,5 +163,35 @@
     "code": "FOR",
     "topic": "FINANCE",
     "region": "INT"
+  },
+  {
+    "uri": "https://www.digitaltrends.com/feed/",
+    "code": "DT",
+    "topic": "TECH",
+    "region": "INT"
+  },
+  {
+    "uri": "https://techcrunch.com/feed/",
+    "code": "TCR",
+    "topic": "TECH",
+    "region": "INT"
+  },
+  {
+    "uri": "https://www.tomsguide.com/feeds/all",
+    "code": "TG",
+    "topic": "TECH",
+    "region": "INT"
+  },
+  {
+    "uri": "https://www.cnet.com/rss/news/",
+    "code": "CNT",
+    "topic": "TECH",
+    "region": "INT"
+  },
+  {
+    "uri": "https://www.techradar.com/rss",
+    "code": "TRD",
+    "topic": "TECH",
+    "region": "INT"
   }
 ]
