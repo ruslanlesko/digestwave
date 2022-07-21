@@ -6,6 +6,7 @@ import com.leskor.scraper.dto.ReadabilityResponse;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.entities.Region;
 import com.leskor.scraper.entities.Topic;
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -99,7 +100,17 @@ public abstract class Site {
     }
 
     protected final CompletableFuture<ReadabilityResponse> retrieveReadabilityResponse(URI uri) {
+        return retrieveReadabilityResponse(uri, 5);
+    }
+
+    private CompletableFuture<ReadabilityResponse> retrieveReadabilityResponse(URI uri, int attemptsLeft) {
         return httpClient.sendAsync(buildReadabilityRequest(uri), BodyHandlers.ofString(charset()))
+                .thenCompose(response -> {
+                    if (response.statusCode() == 500) {
+                        return CompletableFuture.failedFuture(new IOException("Readability server error"));
+                    }
+                    return CompletableFuture.completedFuture(response);
+                })
                 .thenApply(response -> {
                     if (response.statusCode() != 200) {
                         logger.error("Cannot invoke readability, status {}", response.statusCode());
@@ -115,6 +126,14 @@ public abstract class Site {
                         logger.error("Failed to process readability response");
                         return null;
                     }
+                })
+                .exceptionallyCompose(e -> {
+                    if (attemptsLeft > 0) {
+                        logger.warn("Failed to invoke readability for uri {}, retrying...", uri);
+                        return retrieveReadabilityResponse(uri, attemptsLeft - 1);
+                    }
+                    logger.error("Readability cannot process uri {}", uri);
+                    return CompletableFuture.completedFuture(null);
                 });
     }
 
