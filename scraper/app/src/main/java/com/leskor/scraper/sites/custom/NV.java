@@ -41,13 +41,14 @@ public class NV extends RSSSite {
             Region region,
             ZonedDateTime publicationTime,
             ReadabilityResponse readabilityResponse,
+            String title,
             URI uri,
             URI imageURI
     ) {
         String content = parseContent(readabilityResponse.content());
         String extractedImageUrl = extractImageUrl(readabilityResponse.content());
         String imageURL = extractedImageUrl.isBlank() && imageURI != null ? imageURI.toString() : extractedImageUrl;
-        return Post.from(siteCode, topic, region, publicationTime, readabilityResponse.title(), content, uri, imageURL);
+        return Post.from(siteCode, topic, region, publicationTime, title, content, uri, imageURL);
     }
 
     private String parseContent(String htmlContent) {

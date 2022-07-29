@@ -1,16 +1,21 @@
 package com.leskor.sanitizer;
 
 import com.leskor.sanitizer.entities.Post;
+import com.leskor.sanitizer.entities.SanitizedPost;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.streams.serdes.json.KafkaJsonSchemaSerde;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.Consumed;
@@ -48,12 +53,19 @@ public class App {
 
         Map<String, Object> serdeConfig = new HashMap<>();
         serdeConfig.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, SCHEMA_REGISTRY_ADDRESS);
-        Serde<Post> postsSerde = new KafkaJsonSchemaSerde<>();
+        Serde<Post> postsSerde = new KafkaJsonSchemaSerde<>(Post.class);
         postsSerde.configure(serdeConfig, false);
+        Map<String, Object> sanitizedSerdeConfig = new HashMap<>();
+        sanitizedSerdeConfig.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, SCHEMA_REGISTRY_ADDRESS);
+        Serde<SanitizedPost> sanitizedPostSerde = new KafkaJsonSchemaSerde<>(SanitizedPost.class);
+        sanitizedPostSerde.configure(sanitizedSerdeConfig, false);
 
         StreamsBuilder builder = new StreamsBuilder();
         KStream<String, Post> stream = builder.stream(INPUT_TOPIC, Consumed.with(Serdes.String(), postsSerde));
-        stream.to(OUTPUT_TOPIC, Produced.with(Serdes.String(), postsSerde));
+        stream.map((key, value) -> {
+            SanitizedPost sanitizedPost = SanitizedPost.from(value, parseParagraphsFromPost(value));
+            return new KeyValue<>(key, sanitizedPost);
+        }).to(OUTPUT_TOPIC, Produced.with(Serdes.String(), sanitizedPostSerde));
 
         final KafkaStreams streams = new KafkaStreams(builder.build(), props);
         final CountDownLatch latch = new CountDownLatch(1);
@@ -83,6 +95,46 @@ public class App {
             System.exit(1);
         }
         System.exit(0);
+    }
+
+    private static List<String> parseParagraphsFromPost(Post post) {
+        return switch (post.siteCode()) {
+            case "FIN" -> parseFinanceUaParagraphs(post.title(), post.content());
+            default -> Arrays.stream(post.content().split("\n")).toList();
+        };
+    }
+
+    private static List<String> parseFinanceUaParagraphs(String title, String content) {
+        String[] paragraphs = content.split("\n");
+        if (paragraphs.length == 0) {
+            return List.of();
+        }
+
+        List<String> result = new ArrayList<>();
+
+        String firstParagraph = paragraphs[0];
+        if (!firstParagraph.contains(title)) {
+            result.add(firstParagraph);
+        }
+        result.addAll(Arrays.stream(paragraphs).skip(1).toList());
+
+        int paragraphContainingEditingSuggestionIdx = -1;
+        for (int i = 0; i < result.size(); i++) {
+            if (result.get(i).contains("Ctrl+Enter")) {
+                paragraphContainingEditingSuggestionIdx = i;
+                break;
+            }
+        }
+
+        if (paragraphContainingEditingSuggestionIdx != -1) {
+            result = result.subList(0, paragraphContainingEditingSuggestionIdx);
+        }
+
+        if (result.get(result.size() - 1).length() < 42) {
+            result.remove(result.size() - 1);
+        }
+
+        return result;
     }
 
     public static void main(String[] args) {

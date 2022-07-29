@@ -39,7 +39,7 @@ public record Post(
             ReadabilityResponse readabilityResponse,
             URI uri
     ) {
-        return from(siteCode, topic, region, publicationTime, readabilityResponse, uri, null);
+        return from(siteCode, topic, region, publicationTime, readabilityResponse, readabilityResponse.title(), uri, null);
     }
 
     public static Post from(
@@ -48,6 +48,7 @@ public record Post(
             Region region,
             ZonedDateTime publicationTime,
             ReadabilityResponse readabilityResponse,
+            String title,
             URI uri,
             URI imageURI
     ) {
@@ -55,21 +56,21 @@ public record Post(
         Objects.requireNonNull(publicationTime, "Post requires publication time");
         Objects.requireNonNull(uri, "Post requires URI");
         Objects.requireNonNull(readabilityResponse, "Post requires readability response");
-        Objects.requireNonNull(readabilityResponse.title(), "Post requires a title");
+        Objects.requireNonNull(title, "Post requires a title");
         Objects.requireNonNull(readabilityResponse.textContent(), "Post requires a text content");
 
         if (readabilityResponse.length() < 500) {
             throw new IllegalArgumentException("Post is too short");
         }
 
-        if (readabilityResponse.title().length() < 10) {
+        if (title.length() < 10) {
             throw new IllegalArgumentException("Title is too short");
         }
 
-        final String hash = String.valueOf(Objects.hash(siteCode, readabilityResponse.title()));
+        final String hash = String.valueOf(Objects.hash(siteCode, title));
         final String imageURL = generateImageURL(readabilityResponse.content(), imageURI);
 
-        return new Post(siteCode, publicationTime, readabilityResponse.title(), readabilityResponse.textContent(), hash, uri.toString(), imageURL, topic, region);
+        return new Post(siteCode, publicationTime, title, readabilityResponse.textContent(), hash, uri.toString(), imageURL, topic, region);
     }
 
     public static Post from(

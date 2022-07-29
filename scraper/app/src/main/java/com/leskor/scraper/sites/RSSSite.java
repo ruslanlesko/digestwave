@@ -69,6 +69,12 @@ public class RSSSite extends Site {
 
             if (exclude) continue;
 
+            var titleElement = elem.getElementsByTag("title").first();
+            var titleString = "";
+            if (titleElement != null) {
+                titleString = titleElement.text();
+            }
+
             var dateElement = elem.getElementsByTag("pubDate").first();
             if (dateElement == null) continue;
             var dateString = dateElement.text();
@@ -84,7 +90,7 @@ public class RSSSite extends Site {
 
             try {
                 ZonedDateTime publicationTime = ZonedDateTime.parse(dateString, RFC_1123_DATE_TIME);
-                result.add(new PostMetadata(URI.create(link.text()), publicationTime, imageURI));
+                result.add(new PostMetadata(URI.create(link.text()), titleString, publicationTime, imageURI));
             } catch (IllegalArgumentException e) {
                 logger.warn("Cannot parse URL", e);
             } catch (DateTimeParseException e) {
@@ -113,7 +119,7 @@ public class RSSSite extends Site {
             if (readabilityResponse == null) {
                 return null;
             }
-            return buildPost(siteCode, topic, region, publicationTime, readabilityResponse, uri, metadata.imageURI());
+            return buildPost(siteCode, topic, region, publicationTime, readabilityResponse, metadata.title(), uri, metadata.imageURI());
         });
     }
 
@@ -123,12 +129,13 @@ public class RSSSite extends Site {
             Region region,
             ZonedDateTime publicationTime,
             ReadabilityResponse readabilityResponse,
+            String title,
             URI uri,
             URI imageURI
     ) {
-        return Post.from(siteCode, topic, region, publicationTime, readabilityResponse, uri, imageURI);
+        return Post.from(siteCode, topic, region, publicationTime, readabilityResponse, title, uri, imageURI);
     }
 
-    private record PostMetadata(URI uri, ZonedDateTime publicationTime, URI imageURI) {
+    private record PostMetadata(URI uri, String title, ZonedDateTime publicationTime, URI imageURI) {
     }
 }

@@ -18,6 +18,8 @@ public record Post(
         @JsonProperty("image_url")
         String imageURL,
         @JsonProperty
-        String topic
+        String topic,
+        @JsonProperty
+        String region
 ) {
 }

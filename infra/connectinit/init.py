@@ -22,11 +22,12 @@ if l == []:
         "config": {
             "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
             "tasks.max": "1",
-            "topics": "posts",
+            "topics": "sanitized-posts",
             "connection.url": "jdbc:postgresql://db:5432/digestwave?user=connect&password=connectpass",
             "value.converter": "io.confluent.connect.json.JsonSchemaConverter",
             "value.converter.schema.registry.url": "http://schema:8081",
             "auto.create": "false",
+            "table.name.format": "posts",
             "insert.mode": "upsert",
             "delete.enabled": "false",
             "pk.fields": "hash",
