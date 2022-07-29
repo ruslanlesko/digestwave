@@ -63,7 +63,11 @@ public class App {
         StreamsBuilder builder = new StreamsBuilder();
         KStream<String, Post> stream = builder.stream(INPUT_TOPIC, Consumed.with(Serdes.String(), postsSerde));
         stream.map((key, value) -> {
-            SanitizedPost sanitizedPost = SanitizedPost.from(value, parseParagraphsFromPost(value));
+            List<String> paragraphs = parseParagraphsFromPost(value)
+                    .stream()
+                    .filter(paragraph -> paragraph != null && paragraph.length() > 0)
+                    .toList();
+            SanitizedPost sanitizedPost = SanitizedPost.from(value, paragraphs);
             return new KeyValue<>(key, sanitizedPost);
         }).to(OUTPUT_TOPIC, Produced.with(Serdes.String(), sanitizedPostSerde));
 
