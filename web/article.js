@@ -95,8 +95,6 @@ function displayArticle(article) {
     content.appendChild(site);
 
     article.content
-        .split('\n')
-        .filter(s => s.trim().length > 0)
         .forEach(p => {
             const newP = document.createElement('p');
             newP.innerHTML += p.trim();
