@@ -122,6 +122,7 @@ class RSSSiteTest {
                 ZonedDateTime.of(2021, 12, 14, 11, 5, 30, 0, ZoneId.of("Z")),
                 "Nice article",
                 "Hello. Long story short",
+                "<h1>Hello</h1><p>Long story short</p>",
                 "838002001",
                 "https://digestwave.com/post/42",
                 null,

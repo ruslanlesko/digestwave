@@ -21,6 +21,8 @@ public record Post(
         @JsonProperty
         String content,
         @JsonProperty
+        String html,
+        @JsonProperty
         String hash,
         @JsonProperty
         String url,
@@ -70,7 +72,18 @@ public record Post(
         final String hash = String.valueOf(Objects.hash(siteCode, title));
         final String imageURL = generateImageURL(readabilityResponse.content(), imageURI);
 
-        return new Post(siteCode, publicationTime, title, readabilityResponse.textContent(), hash, uri.toString(), imageURL, topic, region);
+        return new Post(
+                siteCode,
+                publicationTime,
+                title,
+                readabilityResponse.textContent(),
+                readabilityResponse.content(),
+                hash,
+                uri.toString(),
+                imageURL,
+                topic,
+                region
+        );
     }
 
     public static Post from(
@@ -80,6 +93,7 @@ public record Post(
             ZonedDateTime publicationTime,
             String title,
             String content,
+            String html,
             URI uri,
             String imageURL
     ) {
@@ -99,7 +113,7 @@ public record Post(
 
         final String hash = String.valueOf(Objects.hash(siteCode, title));
 
-        return new Post(siteCode, publicationTime, title, content, hash, uri.toString(), imageURL, topic, region);
+        return new Post(siteCode, publicationTime, title, content, html, hash, uri.toString(), imageURL, topic, region);
     }
 
     private static String generateImageURL(String postBody, URI providedImageURI) {

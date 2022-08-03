@@ -69,7 +69,8 @@ public class EconomicnaPravda extends Site {
             try {
                 ZonedDateTime publicationTime = ZonedDateTime.parse(dateString, RFC_1123_DATE_TIME);
                 String text = parseRawText(rawTextElement);
-                var newPost = Post.from(siteCode, topic, region, publicationTime, title, text, URI.create(link), imageUrl);
+                String html = parseHtml(rawTextElement);
+                var newPost = Post.from(siteCode, topic, region, publicationTime, title, text, html, URI.create(link), imageUrl);
 
                 result.add(CompletableFuture.completedFuture(newPost));
             } catch (IllegalArgumentException e) {
@@ -110,5 +111,16 @@ public class EconomicnaPravda extends Site {
             result.append('\n');
         }
         return result.toString();
+    }
+
+    private String parseHtml(Element rawTextElement) {
+        if (rawTextElement.childNodes().isEmpty()) {
+            return "";
+        }
+        if (!rawTextElement.childNodes().get(0).attributes().hasKeyIgnoreCase("#cdata")) {
+            return "";
+        }
+
+        return rawTextElement.childNodes().get(0).attributes().get("#cdata");
     }
 }

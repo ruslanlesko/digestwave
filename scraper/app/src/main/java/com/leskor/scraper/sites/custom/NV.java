@@ -48,7 +48,7 @@ public class NV extends RSSSite {
         String content = parseContent(readabilityResponse.content());
         String extractedImageUrl = extractImageUrl(readabilityResponse.content());
         String imageURL = extractedImageUrl.isBlank() && imageURI != null ? imageURI.toString() : extractedImageUrl;
-        return Post.from(siteCode, topic, region, publicationTime, title, content, uri, imageURL);
+        return Post.from(siteCode, topic, region, publicationTime, title, content, readabilityResponse.content(), uri, imageURL);
     }
 
     private String parseContent(String htmlContent) {
