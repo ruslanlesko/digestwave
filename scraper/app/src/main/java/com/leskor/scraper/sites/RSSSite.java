@@ -108,8 +108,7 @@ public class RSSSite extends Site {
         CompletableFuture<ReadabilityResponse> readabilityFuture = retrieveReadabilityResponse(uri)
                 .thenApply(r -> {
                     if (r != null && titleSuffixToTrim != null && !titleSuffixToTrim.isBlank()) {
-                        String cleanedUpTitle = r.title().contains(titleSuffixToTrim) ?
-                                r.title().substring(0, r.title().indexOf(titleSuffixToTrim)).strip() : r.title().strip();
+                        String cleanedUpTitle = cleanUpTitle(r.title());
                         return ReadabilityResponse.fromTitleAndExistingResponse(cleanedUpTitle, r);
                     }
                     return r;
@@ -119,8 +118,15 @@ public class RSSSite extends Site {
             if (readabilityResponse == null) {
                 return null;
             }
-            return buildPost(siteCode, topic, region, publicationTime, readabilityResponse, metadata.title(), uri, metadata.imageURI());
+            String title = metadata.title() == null || metadata.title().isBlank() ? readabilityResponse.title()
+                    : cleanUpTitle(metadata.title());
+            return buildPost(siteCode, topic, region, publicationTime, readabilityResponse, title, uri, metadata.imageURI());
         });
+    }
+
+    private String cleanUpTitle(String title) {
+        return title.contains(titleSuffixToTrim) ?
+                title.substring(0, title.indexOf(titleSuffixToTrim)).strip() : title.strip();
     }
 
     protected Post buildPost(
