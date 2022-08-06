@@ -28,6 +28,8 @@ dependencies {
     implementation 'io.confluent:kafka-schema-registry-client:7.1.1'
     implementation 'io.confluent:kafka-streams-json-schema-serde:7.1.1'
 
+    implementation 'org.jsoup:jsoup:1.14.3'
+
     implementation 'org.apache.logging.log4j:log4j-core:2.17.0'
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.17.0'
 

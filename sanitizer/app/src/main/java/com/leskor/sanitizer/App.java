@@ -21,6 +21,10 @@ import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Safelist;
+import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,13 +107,14 @@ public class App {
 
     private static List<String> parseParagraphsFromPost(Post post) {
         return switch (post.siteCode()) {
-            case "FIN" -> parseFinanceUaParagraphs(post.title(), post.content());
+            case "FIN" -> parseFinanceUaParagraphs(post);
+            case "MFN" -> parseMinfinUaParagraphs(post);
             default -> Arrays.stream(post.content().split("\n")).toList();
         };
     }
 
-    private static List<String> parseFinanceUaParagraphs(String title, String content) {
-        String[] paragraphs = content.split("\n");
+    private static List<String> parseFinanceUaParagraphs(Post post) {
+        String[] paragraphs = post.content().split("\n");
         if (paragraphs.length == 0) {
             return List.of();
         }
@@ -117,7 +122,7 @@ public class App {
         List<String> result = new ArrayList<>();
 
         String firstParagraph = paragraphs[0];
-        if (!firstParagraph.contains(title)) {
+        if (!firstParagraph.contains(post.title())) {
             result.add(firstParagraph);
         }
         result.addAll(Arrays.stream(paragraphs).skip(1).toList());
@@ -136,6 +141,26 @@ public class App {
 
         if (result.get(result.size() - 1).length() < 42) {
             result.remove(result.size() - 1);
+        }
+
+        return result;
+    }
+
+    private static List<String> parseMinfinUaParagraphs(Post post) {
+        String html = post.html();
+        if (html == null || html.isBlank()) {
+            return List.of();
+        }
+
+        Document document = Jsoup.parse(html);
+        List<String> result = new ArrayList<>();
+        for (var p : document.getElementsByTag("p")) {
+            String cleanedText = Jsoup.clean(p.html(), Safelist.none());
+            if (cleanedText.length() > 0
+                    && !cleanedText.contains("Читайте також")
+                    && !cleanedText.contains("Підписуйтесь на")) {
+                result.add(cleanedText);
+            }
         }
 
         return result;

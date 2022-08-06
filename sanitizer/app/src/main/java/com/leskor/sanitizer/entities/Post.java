@@ -12,6 +12,8 @@ public record Post(
         @JsonProperty
         String content,
         @JsonProperty
+        String html,
+        @JsonProperty
         String hash,
         @JsonProperty
         String url,
