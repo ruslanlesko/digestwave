@@ -133,3 +133,14 @@ services:
       resources:
         limits:
           memory: 256M
+
+  web:
+    build: ../web
+    container_name: web
+    restart: "always"
+    ports:
+      - "8090:80"
+    deploy:
+      resources:
+        limits:
+          memory: 128M

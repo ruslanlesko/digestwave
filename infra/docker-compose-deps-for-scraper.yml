@@ -36,18 +36,18 @@ services:
     ports:
       - "3009:3000"
 
-  sanitizer:
-    build: ../sanitizer
-    container_name: sanitizer
-    restart: "always"
-    environment:
-      SNT_KAFKA_ADDRESS: "kafka:9092"
-      SNT_SCHEMA_REGISTRY_ADDRESS: "http://schema:8081"
-      SNT_LOGGING_LEVEL: "info"
-    deploy:
-      resources:
-        limits:
-          memory: 256M
+  # sanitizer:
+  #   build: ../sanitizer
+  #   container_name: sanitizer
+  #   restart: "always"
+  #   environment:
+  #     SNT_KAFKA_ADDRESS: "kafka:9092"
+  #     SNT_SCHEMA_REGISTRY_ADDRESS: "http://schema:8081"
+  #     SNT_LOGGING_LEVEL: "info"
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 256M
 
   db:
     build: postsdb
@@ -93,3 +93,14 @@ services:
       resources:
         limits:
           memory: 256M
+
+  web:
+    build: ../web
+    container_name: web
+    restart: "always"
+    ports:
+      - "8090:80"
+    deploy:
+      resources:
+        limits:
+          memory: 128M
