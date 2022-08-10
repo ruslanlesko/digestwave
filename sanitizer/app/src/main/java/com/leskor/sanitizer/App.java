@@ -4,14 +4,6 @@ import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.entities.SanitizedPost;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.streams.serdes.json.KafkaJsonSchemaSerde;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.CountDownLatch;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
@@ -24,9 +16,12 @@ import org.apache.kafka.streams.kstream.Produced;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Safelist;
-import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 import static java.lang.System.getenv;
 
@@ -152,13 +147,13 @@ public class App {
             return List.of();
         }
 
+        Set<String> excludedParagraphsContent = Set.of("Читайте також", "Підписуйтесь на", "Читайте:", "«Мінфін");
+
         Document document = Jsoup.parse(html);
         List<String> result = new ArrayList<>();
         for (var p : document.getElementsByTag("p")) {
             String cleanedText = Jsoup.clean(p.html(), Safelist.none());
-            if (cleanedText.length() > 0
-                    && !cleanedText.contains("Читайте також")
-                    && !cleanedText.contains("Підписуйтесь на")) {
+            if (cleanedText.length() > 0 && excludedParagraphsContent.stream().noneMatch(cleanedText::contains)) {
                 result.add(cleanedText);
             }
         }

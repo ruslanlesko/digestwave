@@ -55,7 +55,10 @@
     "uri": "https://minfin.com.ua/ua/data/rss/news.xml",
     "code": "MFN",
     "topic": "FINANCE",
-    "region": "UA"
+    "region": "UA",
+    "excludeIfTitleContains": [
+      "Відео"
+    ]
   },
   {
     "uri": "https://www.liga.net/ua/fin/export/all.xml",
