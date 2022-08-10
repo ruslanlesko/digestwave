@@ -4,6 +4,11 @@ import com.leskor.scraper.dto.ReadabilityResponse;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.entities.Region;
 import com.leskor.scraper.entities.Topic;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.time.Duration;
@@ -14,10 +19,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.parser.Parser;
 
 import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
 
@@ -125,7 +126,7 @@ public class RSSSite extends Site {
     }
 
     private String cleanUpTitle(String title) {
-        return title.contains(titleSuffixToTrim) ?
+        return titleSuffixToTrim != null && !titleSuffixToTrim.isBlank() && title.contains(titleSuffixToTrim) ?
                 title.substring(0, title.indexOf(titleSuffixToTrim)).strip() : title.strip();
     }
 
