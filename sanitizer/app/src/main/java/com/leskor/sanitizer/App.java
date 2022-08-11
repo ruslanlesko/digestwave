@@ -2,6 +2,8 @@ package com.leskor.sanitizer;
 
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.entities.SanitizedPost;
+import com.leskor.sanitizer.prettifiers.Prettifier;
+import com.leskor.sanitizer.prettifiers.PrettifierFactory;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.streams.serdes.json.KafkaJsonSchemaSerde;
 import org.apache.kafka.common.serialization.Serde;
@@ -13,14 +15,14 @@ import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.safety.Safelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 
 import static java.lang.System.getenv;
@@ -35,6 +37,8 @@ public class App {
             "localhost:19092" : getenv("SNT_KAFKA_ADDRESS");
     private final String SCHEMA_REGISTRY_ADDRESS = getenv("SNT_SCHEMA_REGISTRY_ADDRESS") == null ?
             "http://localhost:8081" : getenv("SNT_SCHEMA_REGISTRY_ADDRESS");
+
+    private final PrettifierFactory prettifierFactory = new PrettifierFactory();
 
     private Properties prepareStreamProperties() {
         Properties props = new Properties();
@@ -100,65 +104,9 @@ public class App {
         System.exit(0);
     }
 
-    private static List<String> parseParagraphsFromPost(Post post) {
-        return switch (post.siteCode()) {
-            case "FIN" -> parseFinanceUaParagraphs(post);
-            case "MFN" -> parseMinfinUaParagraphs(post);
-            default -> Arrays.stream(post.content().split("\n")).toList();
-        };
-    }
-
-    private static List<String> parseFinanceUaParagraphs(Post post) {
-        String[] paragraphs = post.content().split("\n");
-        if (paragraphs.length == 0) {
-            return List.of();
-        }
-
-        List<String> result = new ArrayList<>();
-
-        String firstParagraph = paragraphs[0];
-        if (!firstParagraph.contains(post.title())) {
-            result.add(firstParagraph);
-        }
-        result.addAll(Arrays.stream(paragraphs).skip(1).toList());
-
-        int paragraphContainingEditingSuggestionIdx = -1;
-        for (int i = 0; i < result.size(); i++) {
-            if (result.get(i).contains("Ctrl+Enter")) {
-                paragraphContainingEditingSuggestionIdx = i;
-                break;
-            }
-        }
-
-        if (paragraphContainingEditingSuggestionIdx != -1) {
-            result = result.subList(0, paragraphContainingEditingSuggestionIdx);
-        }
-
-        if (result.get(result.size() - 1).length() < 42) {
-            result.remove(result.size() - 1);
-        }
-
-        return result;
-    }
-
-    private static List<String> parseMinfinUaParagraphs(Post post) {
-        String html = post.html();
-        if (html == null || html.isBlank()) {
-            return List.of();
-        }
-
-        Set<String> excludedParagraphsContent = Set.of("Читайте також", "Підписуйтесь на", "Читайте:", "«Мінфін");
-
-        Document document = Jsoup.parse(html);
-        List<String> result = new ArrayList<>();
-        for (var p : document.getElementsByTag("p")) {
-            String cleanedText = Jsoup.clean(p.html(), Safelist.none());
-            if (cleanedText.length() > 0 && excludedParagraphsContent.stream().noneMatch(cleanedText::contains)) {
-                result.add(cleanedText);
-            }
-        }
-
-        return result;
+    private List<String> parseParagraphsFromPost(Post post) {
+        Prettifier prettifier = prettifierFactory.createPrettifier(post.siteCode());
+        return prettifier.parseParagraphs(post);
     }
 
     public static void main(String[] args) {
