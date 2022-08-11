@@ -61,14 +61,6 @@
     ]
   },
   {
-    "uri": "https://www.liga.net/ua/fin/export/all.xml",
-    "code": "LIG",
-    "topic": "FINANCE",
-    "region": "UA",
-    "timeout": 60,
-    "titleSuffixToTrim": "Экономика - LIGA.net"
-  },
-  {
     "uri": "https://football.ua/rss2.ashx",
     "code": "FBU",
     "topic": "FOOTBALL",
