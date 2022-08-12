@@ -1,9 +1,6 @@
 package com.leskor.sanitizer.prettifiers;
 
-import com.leskor.sanitizer.prettifiers.sites.EpravdaUaPrettifier;
-import com.leskor.sanitizer.prettifiers.sites.FinanceUaPrettifier;
-import com.leskor.sanitizer.prettifiers.sites.LigaNetPrettifier;
-import com.leskor.sanitizer.prettifiers.sites.MinfinUaPrettifier;
+import com.leskor.sanitizer.prettifiers.sites.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +16,7 @@ public class PrettifierFactory {
         prettifierMap.put("MFN", new MinfinUaPrettifier());
         prettifierMap.put("LIG", new LigaNetPrettifier());
         prettifierMap.put("EPR", new EpravdaUaPrettifier());
+        prettifierMap.put("NV", new NVUaPrettifier());
     }
 
     public Prettifier createPrettifier(String siteCode) {
