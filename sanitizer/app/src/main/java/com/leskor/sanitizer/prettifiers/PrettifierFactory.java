@@ -17,6 +17,7 @@ public class PrettifierFactory {
         prettifierMap.put("LIG", new LigaNetPrettifier());
         prettifierMap.put("EPR", new EpravdaUaPrettifier());
         prettifierMap.put("NV", new NVUaPrettifier());
+        prettifierMap.put("KDR", new KeddrComPrettifier());
     }
 
     public Prettifier createPrettifier(String siteCode) {

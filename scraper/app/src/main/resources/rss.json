@@ -1,20 +1,5 @@
 [
   {
-    "uri": "https://keddr.com/feed/",
-    "code": "KDR",
-    "topic": "TECH",
-    "region": "UA",
-    "timeout": 60,
-    "titleSuffixToTrim": "|",
-    "excludedCategories": [
-      "Підкаст",
-      "Подкаст"
-    ],
-    "excludeIfTitleContains": [
-      "Паляниця"
-    ]
-  },
-  {
     "uri": "https://gagadget.com/rss/",
     "code": "GGT",
     "topic": "TECH",

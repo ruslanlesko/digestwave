@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.leskor.scraper.dto.ReadabilityResponse;
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.util.Objects;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.parser.Parser;
+
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.Objects;
 
 public record Post(
         @JsonProperty("site_code")
@@ -114,6 +115,10 @@ public record Post(
         final String hash = String.valueOf(Objects.hash(siteCode, title));
 
         return new Post(siteCode, publicationTime, title, content, html, hash, uri.toString(), imageURL, topic, region);
+    }
+
+    public Post withImageURL(String newImageURL) {
+        return new Post(siteCode, publicationTime, title, content, html, hash, url, newImageURL, topic, region);
     }
 
     private static String generateImageURL(String postBody, URI providedImageURI) {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.sites.Site;
 import com.leskor.scraper.sites.custom.EconomicnaPravda;
+import com.leskor.scraper.sites.custom.Keddr;
 import com.leskor.scraper.sites.custom.Liga;
 import com.leskor.scraper.sites.custom.NV;
 import org.slf4j.Logger;
@@ -61,7 +62,8 @@ public class App {
         var economicnaPravda = new EconomicnaPravda(httpClient);
         var nv = new NV(Config.getReadabilityURI(), httpClient);
         var liga = new Liga(Config.getReadabilityURI(), httpClient);
-        return List.of(economicnaPravda, nv, liga);
+        var keddr = new Keddr(Config.getReadabilityURI(), httpClient);
+        return List.of(economicnaPravda, nv, liga, keddr);
     }
 
     private static void handleSites(List<? extends Site> sites) {

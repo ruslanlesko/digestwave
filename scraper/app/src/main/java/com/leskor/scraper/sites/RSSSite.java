@@ -52,7 +52,7 @@ public class RSSSite extends Site {
                 .map(this::extractPost).toList();
     }
 
-    private List<PostMetadata> extractPostURIsWithPublicationTimeFromPage(String page) {
+    protected List<PostMetadata> extractPostURIsWithPublicationTimeFromPage(String page) {
         Document document = Jsoup.parse(page, Parser.xmlParser());
         var postElements = document.getElementsByTag("item");
         int limit = POSTS_LIMIT;
@@ -101,7 +101,7 @@ public class RSSSite extends Site {
         return result;
     }
 
-    private CompletableFuture<Post> extractPost(PostMetadata metadata) {
+    protected CompletableFuture<Post> extractPost(PostMetadata metadata) {
         URI uri = metadata.uri();
         ZonedDateTime publicationTime = metadata.publicationTime();
         logger.debug("Reading {}", uri);
@@ -143,6 +143,6 @@ public class RSSSite extends Site {
         return Post.from(siteCode, topic, region, publicationTime, readabilityResponse, title, uri, imageURI);
     }
 
-    private record PostMetadata(URI uri, String title, ZonedDateTime publicationTime, URI imageURI) {
+    protected record PostMetadata(URI uri, String title, ZonedDateTime publicationTime, URI imageURI) {
     }
 }
