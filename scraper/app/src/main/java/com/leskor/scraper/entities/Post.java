@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.leskor.scraper.dto.ReadabilityResponse;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 
 import java.net.URI;
@@ -130,7 +130,13 @@ public record Post(
     }
 
     private static String extractImageURL(String content) {
-        Document document = Jsoup.parse(content, Parser.xmlParser());
+        Element document = Jsoup.parse(content, Parser.xmlParser());
+
+        Element picture = document.getElementsByTag("picture").first();
+        if (picture != null) {
+            document = picture;
+        }
+
         var images = document.getElementsByTag("img");
         if (images.isEmpty()) {
             return null;
