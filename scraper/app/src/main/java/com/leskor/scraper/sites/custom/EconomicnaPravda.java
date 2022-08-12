@@ -4,26 +4,33 @@ import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.entities.Region;
 import com.leskor.scraper.entities.Topic;
 import com.leskor.scraper.sites.Site;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.nio.charset.Charset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
-import org.jsoup.select.Elements;
+import org.jsoup.safety.Safelist;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.nio.charset.Charset;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import static java.time.Duration.ofSeconds;
-import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
+import static java.util.stream.Collectors.joining;
 
 public class EconomicnaPravda extends Site {
-    private static final URI INDEX_URI = URI.create("https://www.epravda.com.ua/rss/");
+    private static final URI INDEX_URI = URI.create("https://www.epravda.com.ua/news/");
     private static final int POSTS_LIMIT = 10;
 
     public EconomicnaPravda(HttpClient httpClient) {
@@ -37,90 +44,118 @@ public class EconomicnaPravda extends Site {
 
     @Override
     protected List<CompletableFuture<Post>> extractPostsBasedOnPage(String page) {
-        Document document = Jsoup.parse(page, Parser.xmlParser());
-        var postElements = document.getElementsByTag("item");
-        int limit = POSTS_LIMIT;
+        Document document = Jsoup.parse(page, Parser.htmlParser());
+        Element newsList = document.getElementsByClass("news_list").first();
+        if (newsList == null) {
+            logger.error("Failed to fetch news list for epravda");
+            return List.of();
+        }
+
         List<CompletableFuture<Post>> result = new ArrayList<>();
-        for (var elem : postElements) {
-            if (limit <= 0) break;
-
-            Element titleElement = elem.getElementsByTag("title").first();
-            Element linkElement = elem.getElementsByTag("link").first();
-            Element rawTextElement = elem.getElementsByTag("fulltext").first();
-            var dateElement = elem.getElementsByTag("pubDate").first();
-            if (titleElement == null || linkElement == null || rawTextElement == null || dateElement == null) continue;
-
-            limit--;
-
-            var dateString = dateElement.text();
-            var title = titleElement.text();
-            var link = linkElement.text();
-
-            String imageUrl = null;
-            Element enclosure = elem.getElementsByTag("enclosure").first();
-            if (enclosure != null) {
-                if (enclosure.hasAttr("url") && enclosure.hasAttr("type")) {
-                    if (enclosure.attr("type").startsWith("image")) {
-                        imageUrl = enclosure.attr("url");
-                    }
-                }
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("d MMMM, uuuu", new Locale("uk", "UA"));
+        LocalDate date = LocalDate.now();
+        for (var div : newsList.getElementsByTag("div")) {
+            if (div.hasClass("news__date")) {
+                String raw = div.text();
+                date = LocalDate.parse(raw, formatter);
+                continue;
+            }
+            if (!div.hasClass("article")) {
+                continue;
             }
 
-            try {
-                ZonedDateTime publicationTime = ZonedDateTime.parse(dateString, RFC_1123_DATE_TIME);
-                String text = parseRawText(rawTextElement);
-                String html = parseHtml(rawTextElement);
-                var newPost = Post.from(siteCode, topic, region, publicationTime, title, text, html, URI.create(link), imageUrl);
+            Element timeElement = div.getElementsByClass("article__time").first();
+            Element titleElement = div.getElementsByClass("article__title").first();
+            if (timeElement == null || titleElement == null) {
+                continue;
+            }
 
-                result.add(CompletableFuture.completedFuture(newPost));
-            } catch (IllegalArgumentException e) {
-                logger.warn("Cannot parse URL or post is too short", e);
-            } catch (DateTimeParseException e) {
-                logger.warn("Cannot parse publication time", e);
+            Element linkElement = titleElement.getElementsByTag("a").first();
+            if (linkElement == null || !linkElement.hasAttr("href")) {
+                continue;
+            }
+            String title = linkElement.text();
+            URI postURI = URI.create("https://www.epravda.com.ua" + linkElement.attr("href"));
+
+            LocalTime time = LocalTime.parse(timeElement.text(), DateTimeFormatter.ofPattern("HH:mm"));
+
+            ZonedDateTime publicationTime = ZonedDateTime.of(date, time, ZoneId.of("Europe/Kiev"));
+
+            result.add(fetchPost(postURI, title, publicationTime));
+            if (result.size() >= POSTS_LIMIT) {
+                break;
             }
         }
+
         return result;
     }
 
-    private String parseRawText(Element rawTextElement) {
-        if (rawTextElement.childNodes().isEmpty()) {
-            return "";
-        }
-        if (!rawTextElement.childNodes().get(0).attributes().hasKeyIgnoreCase("#cdata")) {
-            return "";
-        }
-        String raw = rawTextElement.childNodes().get(0).attributes().get("#cdata");
-        Document document = Jsoup.parse(raw);
-        Elements paragraphs = document.getElementsByTag("p");
-        StringBuilder result = new StringBuilder();
-        for (var p : paragraphs) {
-            if (!p.children().isEmpty() && p.child(0).html().startsWith("Про це")) {
-                continue;
-            }
-            StringBuilder text = new StringBuilder();
-            for (var child : p.children()) {
-                var fragment = child.html();
-                if (fragment.startsWith("Нагадаємо")
-                        || fragment.startsWith("Нагадуємо")
-                        || fragment.startsWith("Читайте також")) {
-                    return result.toString();
-                }
-                text.append(fragment);
-            }
-            result.append(text);
-            result.append('\n');
-        }
-        return result.toString();
+    private CompletableFuture<Post> fetchPost(URI postURI, String title, ZonedDateTime publicationTime) {
+        return fetchHtmlForPost(postURI)
+                .thenApply(d -> d == null ? null : createPost(d, title, postURI, publicationTime));
     }
 
-    private String parseHtml(Element rawTextElement) {
-        if (rawTextElement.childNodes().isEmpty()) {
+    private CompletableFuture<Document> fetchHtmlForPost(URI postURI) {
+        return httpClient.sendAsync(buildPageRequest(postURI), BodyHandlers.ofString(charset()))
+                .thenApply(response -> {
+                    if (response.statusCode() != 200) {
+                        logger.error("Failed to fetch article, status {}", response.statusCode());
+                        return null;
+                    }
+                    String body = response.body();
+                    if (body == null || body.isBlank()) {
+                        logger.warn("Cannot parse article response, body is blank");
+                        return null;
+                    }
+
+                    return Jsoup.parse(response.body(), Parser.htmlParser());
+                });
+    }
+
+    private HttpRequest buildPageRequest(URI postURI) {
+        return HttpRequest.newBuilder(postURI)
+                .GET()
+                .header("Content-Type", "text/html")
+                .timeout(DEFAULT_TIMEOUT)
+                .build();
+    }
+
+    private Post createPost(Document document, String title, URI postURI, ZonedDateTime publicationTime) {
+        String html = extractHtml(document);
+        String text = extractTextContent(document);
+        String imageURI = extractImageUri(document);
+        return Post.from(siteCode, topic, region, publicationTime, title, text, html, postURI, imageURI);
+    }
+
+    private String extractHtml(Document document) {
+        Element postWrapper = document.getElementsByClass("post__text").first();
+        if (postWrapper == null) {
             return "";
         }
-        if (!rawTextElement.childNodes().get(0).attributes().hasKeyIgnoreCase("#cdata")) {
+        return Jsoup.clean(postWrapper.html(), Safelist.basicWithImages());
+    }
+
+    private String extractTextContent(Document document) {
+        Element postWrapper = document.getElementsByClass("post__text").first();
+        if (postWrapper == null) {
             return "";
         }
 
-        return rawTextElement.childNodes().get(0).attributes().get("#cdata");
+        return postWrapper.getElementsByTag("p").stream()
+                .map(e -> Jsoup.clean(e.html(), Safelist.none()))
+                .collect(joining("\n"));
+    }
+
+    private String extractImageUri(Document document) {
+        Element divElement = document.getElementsByClass("image-box_center").first();
+        if (divElement == null) {
+            return "";
+        }
+        Element imageElement = document.getElementsByTag("img").first();
+        if (imageElement == null || !imageElement.hasAttr("src")) {
+            return "";
+        }
+        return imageElement.attr("src");
     }
 }
