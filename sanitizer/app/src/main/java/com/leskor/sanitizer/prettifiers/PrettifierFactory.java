@@ -21,6 +21,7 @@ public class PrettifierFactory {
         prettifierMap.put("GGT", new GagadgetComPrettifier());
         prettifierMap.put("ITC", new ItcUaPrettifier());
         prettifierMap.put("RNA", new RootNationUaPrettifier());
+        prettifierMap.put("AIN", new AinUaPrettifier());
     }
 
     public Prettifier createPrettifier(String siteCode) {
