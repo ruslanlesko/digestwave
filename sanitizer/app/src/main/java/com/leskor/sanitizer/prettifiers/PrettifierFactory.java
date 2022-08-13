@@ -19,6 +19,7 @@ public class PrettifierFactory {
         prettifierMap.put("NV", new NVUaPrettifier());
         prettifierMap.put("KDR", new KeddrComPrettifier());
         prettifierMap.put("GGT", new GagadgetComPrettifier());
+        prettifierMap.put("ITC", new ItcUaPrettifier());
     }
 
     public Prettifier createPrettifier(String siteCode) {
