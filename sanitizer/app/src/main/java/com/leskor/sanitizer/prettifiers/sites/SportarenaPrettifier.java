@@ -6,7 +6,7 @@ import com.leskor.sanitizer.prettifiers.Prettifier;
 import java.util.Arrays;
 import java.util.List;
 
-public class Sportarena implements Prettifier {
+public class SportarenaPrettifier implements Prettifier {
     @Override
     public List<String> parseParagraphs(Post post) {
         List<String> result = Arrays.stream(post.content().split("\n")).toList();
