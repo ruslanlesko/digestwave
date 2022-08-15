@@ -26,6 +26,7 @@ public class PrettifierFactory {
         prettifierMap.put("UFB", new UaFootballPrettifier());
         prettifierMap.put("SPU", new SportUaPrettifier());
         prettifierMap.put("SPA", new Sportarena());
+        prettifierMap.put("TRI", new UaTribunaPrettifier());
     }
 
     public Prettifier createPrettifier(String siteCode) {
