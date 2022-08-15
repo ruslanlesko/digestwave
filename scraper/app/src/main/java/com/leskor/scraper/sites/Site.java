@@ -6,6 +6,9 @@ import com.leskor.scraper.dto.ReadabilityResponse;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.entities.Region;
 import com.leskor.scraper.entities.Topic;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -20,8 +23,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -156,5 +157,9 @@ public abstract class Site {
         return excludeIfTitleContains.stream()
                 .map(String::toUpperCase)
                 .anyMatch(s -> post.title().toUpperCase().contains(s));
+    }
+
+    public String getSiteCode() {
+        return siteCode;
     }
 }

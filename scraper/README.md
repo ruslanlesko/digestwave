@@ -41,3 +41,4 @@ needs. Scraper is configured via environment variables.
 | SCR_SCHEMA_REGISTRY_ADDRESS | http://localhost:8081 | Address of Kafka Schema Registry                                                    |
 | SCR_LOGGING_LEVEL           | info                  | Logging level                                                                       |
 | SCR_POLLING_INTERVAL        | 20                    | Polling interval seconds                                                            |
+| SRC_LIMIT_TO_SITE_CODE      |                       | Limit scraping to only specific site code (useful for debugging)                    |

@@ -12,6 +12,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpClient.Redirect;
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -65,8 +66,12 @@ public class App {
     }
 
     private static void handleSites(List<? extends Site> sites) {
+        Optional<String> siteLimitation = Config.getSpecificSiteCodeLimitation();
         KafkaPostsProducer kafkaPostsProducer = new KafkaPostsProducer();
         for (var site : sites) {
+            if (siteLimitation.isPresent() && !siteLimitation.get().equals(site.getSiteCode())) {
+                continue;
+            }
             var posts = site.fetchPosts().join();
             logger.debug("Processing duplicates");
             var filteredPosts = posts.stream().filter(App::processDuplicateCache).toList();

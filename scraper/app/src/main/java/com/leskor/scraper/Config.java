@@ -1,6 +1,7 @@
 package com.leskor.scraper;
 
 import java.net.URI;
+import java.util.Optional;
 
 import static java.lang.System.getenv;
 
@@ -28,5 +29,9 @@ public final class Config {
     public static String getSchemaRegistryAddress() {
         return getenv("SCR_SCHEMA_REGISTRY_ADDRESS") == null ?
                 "http://localhost:8081" : getenv("SCR_SCHEMA_REGISTRY_ADDRESS");
+    }
+
+    public static Optional<String> getSpecificSiteCodeLimitation() {
+        return Optional.ofNullable(getenv("SRC_LIMIT_TO_SITE_CODE"));
     }
 }
