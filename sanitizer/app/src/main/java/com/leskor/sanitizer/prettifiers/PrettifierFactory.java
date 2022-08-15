@@ -23,6 +23,7 @@ public class PrettifierFactory {
         prettifierMap.put("RNA", new RootNationUaPrettifier());
         prettifierMap.put("AIN", new AinUaPrettifier());
         prettifierMap.put("FBU", new FootballUaPrettifier());
+        prettifierMap.put("UFB", new UaFootballPrettifier());
     }
 
     public Prettifier createPrettifier(String siteCode) {

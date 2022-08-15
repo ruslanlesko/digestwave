@@ -3,10 +3,7 @@ package com.leskor.scraper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.sites.Site;
-import com.leskor.scraper.sites.custom.EconomicnaPravda;
-import com.leskor.scraper.sites.custom.Keddr;
-import com.leskor.scraper.sites.custom.Liga;
-import com.leskor.scraper.sites.custom.NV;
+import com.leskor.scraper.sites.custom.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +60,8 @@ public class App {
         var nv = new NV(Config.getReadabilityURI(), httpClient);
         var liga = new Liga(Config.getReadabilityURI(), httpClient);
         var keddr = new Keddr(Config.getReadabilityURI(), httpClient);
-        return List.of(economicnaPravda, nv, liga, keddr);
+        var uaFootball = new UaFootball(Config.getReadabilityURI(), httpClient);
+        return List.of(economicnaPravda, nv, liga, keddr, uaFootball);
     }
 
     private static void handleSites(List<? extends Site> sites) {
@@ -90,7 +88,7 @@ public class App {
 
     private static HttpClient createHttpClient(Executor executor) {
         return HttpClient.newBuilder()
-                .followRedirects(Redirect.NEVER)
+                .followRedirects(Redirect.NORMAL)
                 .connectTimeout(Duration.ofSeconds(10))
                 .executor(executor)
                 .build();

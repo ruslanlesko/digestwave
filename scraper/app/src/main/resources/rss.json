@@ -61,18 +61,6 @@
     "region": "UA"
   },
   {
-    "uri": "https://www.ua-football.com/ua/rss/all.xml",
-    "code": "UFB",
-    "topic": "FOOTBALL",
-    "region": "UA",
-    "excludedCategories": [
-      "Загальні новини"
-    ],
-    "excludeIfTitleContains": [
-      "Аудіодумка"
-    ]
-  },
-  {
     "uri": "https://sport.ua/uk/rss/football",
     "code": "SPU",
     "topic": "FOOTBALL",
