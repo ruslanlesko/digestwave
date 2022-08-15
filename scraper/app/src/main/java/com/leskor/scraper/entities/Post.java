@@ -144,6 +144,17 @@ public record Post(
 
         for (var image : images) {
             if (image.attributes().hasKey("src")) {
+                try {
+                    if (image.hasAttr("height")
+                            && Integer.parseInt(image.attr("height")) < 128
+                            || image.hasAttr("width")
+                            && Integer.parseInt(image.attr("width")) < 128
+                    ) {
+                        continue;
+                    }
+                } catch (NumberFormatException e) {
+                    continue;
+                }
                 return image.attributes().getIgnoreCase("src");
             }
         }

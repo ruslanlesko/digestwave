@@ -64,12 +64,6 @@
     ]
   },
   {
-    "uri": "https://sportarena.com/football/feed/",
-    "code": "SPA",
-    "topic": "FOOTBALL",
-    "region": "UA"
-  },
-  {
     "uri": "https://feed.infoq.com/",
     "code": "IFQ",
     "topic": "PROGRAMMING",

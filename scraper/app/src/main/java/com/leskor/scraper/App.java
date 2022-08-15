@@ -62,7 +62,8 @@ public class App {
         var liga = new Liga(Config.getReadabilityURI(), httpClient);
         var keddr = new Keddr(Config.getReadabilityURI(), httpClient);
         var uaFootball = new UaFootball(Config.getReadabilityURI(), httpClient);
-        return List.of(economicnaPravda, nv, liga, keddr, uaFootball);
+        var sportarena = new Sportarena(Config.getReadabilityURI(), httpClient);
+        return List.of(economicnaPravda, nv, liga, keddr, uaFootball, sportarena);
     }
 
     private static void handleSites(List<? extends Site> sites) {
