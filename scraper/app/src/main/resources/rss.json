@@ -55,12 +55,6 @@
     ]
   },
   {
-    "uri": "https://ua.tribuna.com/rss/rubric.xml?id=208",
-    "code": "TRI",
-    "topic": "FOOTBALL",
-    "region": "UA"
-  },
-  {
     "uri": "https://sport.ua/uk/rss/football",
     "code": "SPU",
     "topic": "FOOTBALL",
