@@ -1,6 +1,5 @@
 package com.leskor.scraper.sites.custom;
 
-import com.leskor.scraper.dto.ReadabilityResponse;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.entities.Region;
 import com.leskor.scraper.entities.Topic;
@@ -14,8 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse.BodyHandlers;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -23,6 +20,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+import static com.leskor.scraper.dto.ReadabilityResponse.fromTitleAndExistingResponse;
 import static java.time.Duration.ofSeconds;
 
 public class Liga extends Site {
@@ -65,16 +63,9 @@ public class Liga extends Site {
     private CompletableFuture<Post> extractPost(String title, URI uri, ZonedDateTime time) {
         if (time == null) return CompletableFuture.completedFuture(null);
 
-        CompletableFuture<ReadabilityResponse> readabilityFuture = retrieveReadabilityResponse(uri)
-                .thenApply(r -> r == null ? null : ReadabilityResponse.fromTitleAndExistingResponse(title, r));
-
-        return readabilityFuture.thenCombine(extractImageURL(uri), (readabilityResponse, imageUriString) -> {
-            if (readabilityResponse == null) {
-                return null;
-            }
-            URI imageURI = imageUriString.map(URI::create).orElse(null);
-            return Post.from(siteCode, topic, region, time, readabilityResponse, readabilityResponse.title(), uri, imageURI);
-        });
+        return retrieveReadabilityResponse(uri)
+                .thenApply(r -> r == null ? null
+                        : Post.from(siteCode, topic, region, time, fromTitleAndExistingResponse(title, r), uri));
     }
 
     private ZonedDateTime parseTime(Element timeElem) {
@@ -106,30 +97,11 @@ public class Liga extends Site {
         return result;
     }
 
-    private CompletableFuture<Optional<String>> extractImageURL(URI postURI) {
-        return httpClient.sendAsync(buildPageRequest(postURI), BodyHandlers.ofString(charset()))
-                .thenApply(response -> {
-                    if (response.statusCode() != 200) {
-                        logger.error("Failed to fetch article, status {}", response.statusCode());
-                        return Optional.empty();
-                    }
-                    String body = response.body();
-                    if (body == null || body.isBlank()) {
-                        logger.warn("Cannot parse article response, body is blank");
-                        return Optional.empty();
-                    }
-
-                    Document document = Jsoup.parse(response.body(), Parser.htmlParser());
-                    return extractImageURLFromDocument(document);
-                });
-    }
-
-    private HttpRequest buildPageRequest(URI uri) {
-        return HttpRequest.newBuilder(uri)
-                .GET()
-                .header("Content-Type", "text/html")
-                .timeout(DEFAULT_TIMEOUT)
-                .build();
+    @Override
+    protected CompletableFuture<Optional<String>> extractImageURI(Post post) {
+        return post == null ? CompletableFuture.completedFuture(Optional.empty())
+                : extractArticlePage(URI.create(post.url()))
+                .thenApply(document -> document == null ? Optional.empty() : extractImageURLFromDocument(document));
     }
 
     private Optional<String> extractImageURLFromDocument(Document document) {

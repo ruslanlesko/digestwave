@@ -6,6 +6,9 @@ import com.leskor.scraper.dto.ReadabilityResponse;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.entities.Region;
 import com.leskor.scraper.entities.Topic;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.parser.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +21,7 @@ import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -73,7 +77,11 @@ public abstract class Site {
                         logger.warn("Cannot fetchPosts, body is blank");
                         return List.of();
                     }
-                    return waitForPostFutures(extractPostsBasedOnPage(response.body()));
+                    List<CompletableFuture<Post>> postsFutures = extractPostsBasedOnPage(response.body())
+                            .stream()
+                            .map(p -> p.thenCompose(this::enrichPostWithImageURI))
+                            .toList();
+                    return waitForPostFutures(postsFutures);
                 });
     }
 
@@ -82,6 +90,11 @@ public abstract class Site {
     }
 
     protected abstract List<CompletableFuture<Post>> extractPostsBasedOnPage(String page);
+
+    private CompletableFuture<Post> enrichPostWithImageURI(Post post) {
+        return extractImageURI(post)
+                .thenApply(imageURL -> imageURL.isEmpty() ? post : post.withImageURL(imageURL.get()));
+    }
 
     protected final List<Post> waitForPostFutures(List<CompletableFuture<Post>> postFutures) {
         List<Post> result = new ArrayList<>();
@@ -142,6 +155,34 @@ public abstract class Site {
         return HttpRequest.newBuilder(indexPageUri)
                 .setHeader("User-Agent", MOZILLA_AGENT)
                 .timeout(timeout)
+                .build();
+    }
+
+    protected CompletableFuture<Document> extractArticlePage(URI articleURI) {
+        return httpClient.sendAsync(buildArticlePageRequest(articleURI), BodyHandlers.ofString(charset()))
+                .thenApply(response -> {
+                    if (response.statusCode() != 200) {
+                        logger.error("Failed to fetch {} article, status {}", siteCode, response.statusCode());
+                        return null;
+                    }
+                    String body = response.body();
+                    if (body == null || body.isBlank()) {
+                        logger.warn("Cannot parse {} response, body is blank", siteCode);
+                        return null;
+                    }
+
+                    return Jsoup.parse(response.body(), Parser.htmlParser());
+                });
+    }
+
+    protected CompletableFuture<Optional<String>> extractImageURI(Post post) {
+        return CompletableFuture.completedFuture(Optional.empty());
+    }
+
+    protected final HttpRequest buildArticlePageRequest(URI articleURI) {
+        return HttpRequest.newBuilder(articleURI)
+                .setHeader("User-Agent", MOZILLA_AGENT)
+                .timeout(DEFAULT_TIMEOUT)
                 .build();
     }
 

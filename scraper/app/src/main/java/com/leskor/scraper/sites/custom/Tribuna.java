@@ -7,13 +7,10 @@ import com.leskor.scraper.sites.Site;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.parser.Parser;
 import org.jsoup.safety.Safelist;
 
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse.BodyHandlers;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -91,29 +88,8 @@ public class Tribuna extends Site {
     }
 
     private CompletableFuture<Post> extractPost(URI uri, String title, ZonedDateTime time) {
-        return httpClient.sendAsync(buildPageRequest(uri), BodyHandlers.ofString(charset()))
-                .thenApply(response -> {
-                    if (response.statusCode() != 200) {
-                        logger.error("Failed to fetch ua.tribuna.com article, status {}", response.statusCode());
-                        return null;
-                    }
-                    String body = response.body();
-                    if (body == null || body.isBlank()) {
-                        logger.warn("Cannot parse ua.tribuna.com article response, body is blank");
-                        return null;
-                    }
-
-                    Document document = Jsoup.parse(response.body(), Parser.htmlParser());
-                    return parsePost(document, title, uri, time);
-                });
-    }
-
-    private HttpRequest buildPageRequest(URI uri) {
-        return HttpRequest.newBuilder(uri)
-                .GET()
-                .header("Content-Type", "text/html")
-                .timeout(DEFAULT_TIMEOUT)
-                .build();
+        return extractArticlePage(uri)
+                .thenApply(document -> parsePost(document, title, uri, time));
     }
 
     private Post parsePost(Document document, String title, URI uri, ZonedDateTime time) {
