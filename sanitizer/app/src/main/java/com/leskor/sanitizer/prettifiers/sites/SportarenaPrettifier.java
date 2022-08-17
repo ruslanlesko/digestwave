@@ -2,24 +2,20 @@ package com.leskor.sanitizer.prettifiers.sites;
 
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.prettifiers.Prettifier;
+import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier;
+import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier.Strategy;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class SportarenaPrettifier implements Prettifier {
+    private final ArticlePrefixTrimmingPrettifier articlePrefixTrimmingPrettifier;
+
+    public SportarenaPrettifier() {
+        articlePrefixTrimmingPrettifier = new ArticlePrefixTrimmingPrettifier("Російський", Strategy.STARTS_WITH);
+    }
+
     @Override
     public List<String> parseParagraphs(Post post) {
-        List<String> result = Arrays.stream(post.content().split("\n")).toList();
-
-        int paragraphContainingEndOfPostIdx = -1;
-        for (int i = 0; i < result.size(); i++) {
-            if (result.get(i).trim().startsWith("Російський")) {
-                paragraphContainingEndOfPostIdx = i;
-                break;
-            }
-        }
-
-        return paragraphContainingEndOfPostIdx != -1 ?
-                result.subList(0, paragraphContainingEndOfPostIdx) : result;
+        return articlePrefixTrimmingPrettifier.parseParagraphs(post);
     }
 }

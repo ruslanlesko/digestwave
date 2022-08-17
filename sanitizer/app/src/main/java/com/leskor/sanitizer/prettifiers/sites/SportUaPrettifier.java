@@ -2,12 +2,20 @@ package com.leskor.sanitizer.prettifiers.sites;
 
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.prettifiers.Prettifier;
+import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier;
+import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier.Strategy;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 
 import java.util.List;
 
 public class SportUaPrettifier implements Prettifier {
+    private final ArticlePrefixTrimmingPrettifier articlePrefixTrimmingPrettifier;
+
+    public SportUaPrettifier() {
+        articlePrefixTrimmingPrettifier = new ArticlePrefixTrimmingPrettifier("Читайте нас", Strategy.STARTS_WITH);
+    }
+
     @Override
     public List<String> parseParagraphs(Post post) {
         List<String> result = Jsoup.parse(post.html()).getElementsByTag("p").stream()
@@ -15,15 +23,6 @@ public class SportUaPrettifier implements Prettifier {
                 .filter(p -> !p.toUpperCase().contains("ТЕКСТОВА ТРАНСЛЯЦІЯ МАТЧУ"))
                 .toList();
 
-        int paragraphContainingEndOfPostIdx = -1;
-        for (int i = 0; i < result.size(); i++) {
-            if (result.get(i).trim().startsWith("Читайте нас")) {
-                paragraphContainingEndOfPostIdx = i;
-                break;
-            }
-        }
-
-        return paragraphContainingEndOfPostIdx != -1 ?
-                result.subList(0, paragraphContainingEndOfPostIdx) : result;
+        return articlePrefixTrimmingPrettifier.trimParagraphs(result);
     }
 }

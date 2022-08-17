@@ -2,41 +2,31 @@ package com.leskor.sanitizer.prettifiers.sites;
 
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.prettifiers.Prettifier;
+import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FinanceUaPrettifier implements Prettifier {
+    private final ArticlePrefixTrimmingPrettifier articlePrefixTrimmingPrettifier;
+
+    public FinanceUaPrettifier() {
+        articlePrefixTrimmingPrettifier = new ArticlePrefixTrimmingPrettifier("Ctrl+Enter");
+    }
+
     @Override
     public List<String> parseParagraphs(Post post) {
-        String[] paragraphs = post.content().split("\n");
-        if (paragraphs.length == 0) {
-            return List.of();
+        List<String> result = articlePrefixTrimmingPrettifier.parseParagraphs(post);
+        if (result.isEmpty()) {
+            return result;
         }
 
-        List<String> result = new ArrayList<>();
-
-        String firstParagraph = paragraphs[0];
-        if (!firstParagraph.contains(post.title())) {
-            result.add(firstParagraph);
-        }
-        result.addAll(Arrays.stream(paragraphs).skip(1).toList());
-
-        int paragraphContainingEditingSuggestionIdx = -1;
-        for (int i = 0; i < result.size(); i++) {
-            if (result.get(i).contains("Ctrl+Enter")) {
-                paragraphContainingEditingSuggestionIdx = i;
-                break;
-            }
-        }
-
-        if (paragraphContainingEditingSuggestionIdx != -1) {
-            result = result.subList(0, paragraphContainingEditingSuggestionIdx);
+        String firstParagraph = result.get(0);
+        if (firstParagraph.contains(post.title())) {
+            result = result.stream().skip(1).toList();
         }
 
         if (result.get(result.size() - 1).length() < 42) {
-            result.remove(result.size() - 1);
+            return result.stream().limit(result.size() - 2).toList();
         }
 
         return result;

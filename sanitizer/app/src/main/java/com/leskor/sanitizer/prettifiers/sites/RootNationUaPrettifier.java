@@ -2,6 +2,8 @@ package com.leskor.sanitizer.prettifiers.sites;
 
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.prettifiers.Prettifier;
+import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier;
+import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier.Strategy;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
@@ -10,6 +12,11 @@ import org.jsoup.safety.Safelist;
 import java.util.List;
 
 public class RootNationUaPrettifier implements Prettifier {
+    private final ArticlePrefixTrimmingPrettifier articlePrefixTrimmingPrettifier;
+
+    public RootNationUaPrettifier() {
+        articlePrefixTrimmingPrettifier = new ArticlePrefixTrimmingPrettifier("Також цікаво:", Strategy.STARTS_WITH);
+    }
 
     @Override
     public List<String> parseParagraphs(Post post) {
@@ -31,15 +38,6 @@ public class RootNationUaPrettifier implements Prettifier {
                 )
                 .toList();
 
-        int paragraphContainingEditingSuggestionIdx = -1;
-        for (int i = 0; i < result.size(); i++) {
-            if (result.get(i).trim().startsWith("Також цікаво:")) {
-                paragraphContainingEditingSuggestionIdx = i;
-                break;
-            }
-        }
-
-        return paragraphContainingEditingSuggestionIdx != -1 ?
-                result.subList(0, paragraphContainingEditingSuggestionIdx) : result;
+        return articlePrefixTrimmingPrettifier.trimParagraphs(result);
     }
 }

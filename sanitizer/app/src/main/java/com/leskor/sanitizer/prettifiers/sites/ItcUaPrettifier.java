@@ -2,14 +2,22 @@ package com.leskor.sanitizer.prettifiers.sites;
 
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.prettifiers.Prettifier;
+import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier;
+import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier.Strategy;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.jsoup.safety.Safelist;
 
 import java.util.List;
+import java.util.Set;
 
 public class ItcUaPrettifier implements Prettifier {
+    private final ArticlePrefixTrimmingPrettifier articlePrefixTrimmingPrettifier;
+
+    public ItcUaPrettifier() {
+        articlePrefixTrimmingPrettifier = new ArticlePrefixTrimmingPrettifier(Set.of("Джерело:", "Джерела:"), Strategy.STARTS_WITH);
+    }
 
     @Override
     public List<String> parseParagraphs(Post post) {
@@ -27,15 +35,6 @@ public class ItcUaPrettifier implements Prettifier {
                 .map(html -> Jsoup.clean(html, Safelist.none()))
                 .toList();
 
-        int paragraphContainingEditingSuggestionIdx = -1;
-        for (int i = 0; i < result.size(); i++) {
-            if (result.get(i).trim().startsWith("Джерело:")) {
-                paragraphContainingEditingSuggestionIdx = i;
-                break;
-            }
-        }
-
-        return paragraphContainingEditingSuggestionIdx != -1 ?
-                result.subList(0, paragraphContainingEditingSuggestionIdx) : result;
+        return articlePrefixTrimmingPrettifier.trimParagraphs(result);
     }
 }
