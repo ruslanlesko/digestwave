@@ -27,6 +27,7 @@ public class PrettifierFactory {
         prettifierMap.put("SPU", new SportUaPrettifier());
         prettifierMap.put("SPA", new SportarenaPrettifier());
         prettifierMap.put("TRI", new UaTribunaPrettifier());
+        prettifierMap.put("TRD", new TechradarPrettifier());
     }
 
     public Prettifier createPrettifier(String siteCode) {
