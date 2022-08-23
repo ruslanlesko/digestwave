@@ -145,7 +145,8 @@
     "uri": "https://www.cnet.com/rss/news/",
     "code": "CNT",
     "topic": "TECH",
-    "region": "INT"
+    "region": "INT",
+    "titleSuffixToTrim": " - CNET"
   },
   {
     "uri": "https://www.techradar.com/rss",
