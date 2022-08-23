@@ -100,7 +100,7 @@ services:
 
   scraper:
     build: ../scraper
-    profiles: ["withscraper"]
+    profiles: ["complete", "scraper"]
     container_name: scraper
     restart: "always"
     environment:
@@ -116,6 +116,7 @@ services:
 
   sanitizer:
     build: ../sanitizer
+    profiles: ["complete", "sanitizer"]
     container_name: sanitizer
     restart: "always"
     environment:
