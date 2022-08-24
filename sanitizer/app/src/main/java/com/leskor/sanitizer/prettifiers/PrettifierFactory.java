@@ -29,6 +29,7 @@ public class PrettifierFactory {
         prettifierMap.put("TRI", new UaTribunaPrettifier());
         prettifierMap.put("TRD", new TechradarPrettifier());
         prettifierMap.put("CNT", new CnetPrettifier());
+        prettifierMap.put("TG", new TomsguidePrettifier());
     }
 
     public Prettifier createPrettifier(String siteCode) {
