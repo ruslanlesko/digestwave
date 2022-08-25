@@ -30,6 +30,7 @@ public class PrettifierFactory {
         prettifierMap.put("TRD", new TechradarPrettifier());
         prettifierMap.put("CNT", new CnetPrettifier());
         prettifierMap.put("TG", new TomsguidePrettifier());
+        prettifierMap.put("DT", new DigitalTrendsPrettifier());
     }
 
     public Prettifier createPrettifier(String siteCode) {
