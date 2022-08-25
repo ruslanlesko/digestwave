@@ -1,12 +1,5 @@
 package com.leskor.scraper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leskor.scraper.entities.Post;
-import com.leskor.scraper.sites.Site;
-import com.leskor.scraper.sites.custom.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Redirect;
@@ -16,6 +9,19 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leskor.scraper.entities.Post;
+import com.leskor.scraper.sites.Site;
+import com.leskor.scraper.sites.custom.EconomicnaPravda;
+import com.leskor.scraper.sites.custom.Keddr;
+import com.leskor.scraper.sites.custom.Liga;
+import com.leskor.scraper.sites.custom.NV;
+import com.leskor.scraper.sites.custom.Sportarena;
+import com.leskor.scraper.sites.custom.Techcrunch;
+import com.leskor.scraper.sites.custom.Tribuna;
+import com.leskor.scraper.sites.custom.UaFootball;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class App {
     private static final Logger logger = LoggerFactory.getLogger("Application");
@@ -64,7 +70,8 @@ public class App {
         var uaFootball = new UaFootball(Config.getReadabilityURI(), httpClient);
         var sportarena = new Sportarena(Config.getReadabilityURI(), httpClient);
         var tribuna = new Tribuna(Config.getReadabilityURI(), httpClient);
-        return List.of(economicnaPravda, nv, liga, keddr, uaFootball, sportarena, tribuna);
+        var techcrunch = new Techcrunch(Config.getReadabilityURI(), httpClient);
+        return List.of(economicnaPravda, nv, liga, keddr, uaFootball, sportarena, tribuna, techcrunch);
     }
 
     private static void handleSites(List<? extends Site> sites) {

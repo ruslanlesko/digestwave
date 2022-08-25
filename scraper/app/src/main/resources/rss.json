@@ -130,12 +130,6 @@
     "region": "INT"
   },
   {
-    "uri": "https://techcrunch.com/feed/",
-    "code": "TCR",
-    "topic": "TECH",
-    "region": "INT"
-  },
-  {
     "uri": "https://www.tomsguide.com/feeds/all",
     "code": "TG",
     "topic": "TECH",
