@@ -118,12 +118,6 @@
     "region": "INT"
   },
   {
-    "uri": "https://fortune.com/feed/fortune-feeds/?id=3230629",
-    "code": "FOR",
-    "topic": "FINANCE",
-    "region": "INT"
-  },
-  {
     "uri": "https://www.digitaltrends.com/feed/",
     "code": "DT",
     "topic": "TECH",

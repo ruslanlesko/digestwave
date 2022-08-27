@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.sites.Site;
 import com.leskor.scraper.sites.custom.EconomicnaPravda;
+import com.leskor.scraper.sites.custom.Fortune;
 import com.leskor.scraper.sites.custom.Keddr;
 import com.leskor.scraper.sites.custom.Liga;
 import com.leskor.scraper.sites.custom.NV;
@@ -71,7 +72,8 @@ public class App {
         var sportarena = new Sportarena(Config.getReadabilityURI(), httpClient);
         var tribuna = new Tribuna(Config.getReadabilityURI(), httpClient);
         var techcrunch = new Techcrunch(Config.getReadabilityURI(), httpClient);
-        return List.of(economicnaPravda, nv, liga, keddr, uaFootball, sportarena, tribuna, techcrunch);
+        var fortune = new Fortune(Config.getReadabilityURI(), httpClient);
+        return List.of(economicnaPravda, nv, liga, keddr, uaFootball, sportarena, tribuna, techcrunch, fortune);
     }
 
     private static void handleSites(List<? extends Site> sites) {
