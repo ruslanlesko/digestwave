@@ -112,12 +112,6 @@
     "region": "INT"
   },
   {
-    "uri": "https://www.business-standard.com/rss/finance-103.rss",
-    "code": "BS",
-    "topic": "FINANCE",
-    "region": "INT"
-  },
-  {
     "uri": "https://www.digitaltrends.com/feed/",
     "code": "DT",
     "topic": "TECH",

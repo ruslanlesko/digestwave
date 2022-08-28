@@ -12,15 +12,7 @@ import java.util.concurrent.Executors;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.sites.Site;
-import com.leskor.scraper.sites.custom.EconomicnaPravda;
-import com.leskor.scraper.sites.custom.Fortune;
-import com.leskor.scraper.sites.custom.Keddr;
-import com.leskor.scraper.sites.custom.Liga;
-import com.leskor.scraper.sites.custom.NV;
-import com.leskor.scraper.sites.custom.Sportarena;
-import com.leskor.scraper.sites.custom.Techcrunch;
-import com.leskor.scraper.sites.custom.Tribuna;
-import com.leskor.scraper.sites.custom.UaFootball;
+import com.leskor.scraper.sites.custom.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +65,8 @@ public class App {
         var tribuna = new Tribuna(Config.getReadabilityURI(), httpClient);
         var techcrunch = new Techcrunch(Config.getReadabilityURI(), httpClient);
         var fortune = new Fortune(Config.getReadabilityURI(), httpClient);
-        return List.of(economicnaPravda, nv, liga, keddr, uaFootball, sportarena, tribuna, techcrunch, fortune);
+        var businessStandard = new BusinessStandard(Config.getReadabilityURI(), httpClient);
+        return List.of(economicnaPravda, nv, liga, keddr, uaFootball, sportarena, tribuna, techcrunch, fortune, businessStandard);
     }
 
     private static void handleSites(List<? extends Site> sites) {

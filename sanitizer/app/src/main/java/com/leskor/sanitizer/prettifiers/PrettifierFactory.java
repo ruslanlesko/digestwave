@@ -32,6 +32,7 @@ public class PrettifierFactory {
         prettifierMap.put("TG", new TomsguidePrettifier());
         prettifierMap.put("DT", new DigitalTrendsPrettifier());
         prettifierMap.put("FOR", new FortunePrettifier());
+        prettifierMap.put("BS", new BusinessStandardPrettifier());
     }
 
     public Prettifier createPrettifier(String siteCode) {
