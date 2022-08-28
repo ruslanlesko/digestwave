@@ -1,9 +1,5 @@
 package com.leskor.scraper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leskor.scraper.entities.Region;
-import com.leskor.scraper.entities.Topic;
-import com.leskor.scraper.sites.RSSSite;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -11,6 +7,10 @@ import java.net.http.HttpClient;
 import java.time.Duration;
 import java.util.List;
 import java.util.Set;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leskor.scraper.entities.Region;
+import com.leskor.scraper.entities.Topic;
+import com.leskor.scraper.sites.RSSSite;
 
 public class RSSFactory {
     private final ObjectMapper objectMapper;
@@ -51,7 +51,8 @@ public class RSSFactory {
                 timeout,
                 siteConfig.titleSuffixToTrim(),
                 siteConfig.excludedCategories(),
-                siteConfig.excludeIfTitleContains()
+                siteConfig.excludeIfTitleContains(),
+                siteConfig.isImageExtractedFromMeta()
         );
     }
 
@@ -63,7 +64,8 @@ public class RSSFactory {
             long timeout,
             String titleSuffixToTrim,
             Set<String> excludedCategories,
-            Set<String> excludeIfTitleContains
+            Set<String> excludeIfTitleContains,
+            boolean isImageExtractedFromMeta
     ) {
     }
 }

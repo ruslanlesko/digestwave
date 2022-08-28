@@ -1,17 +1,16 @@
 package com.leskor.scraper.sites.custom;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.entities.Region;
 import com.leskor.scraper.entities.Topic;
 import com.leskor.scraper.sites.RSSSite;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 import static java.time.Duration.ofSeconds;
 
@@ -29,7 +28,8 @@ public class Keddr extends RSSSite {
                 ofSeconds(60),
                 "|",
                 Set.of("Підкаст", "Подкаст"),
-                Set.of("Паляниця")
+                Set.of("Паляниця"),
+                false
         );
     }
 

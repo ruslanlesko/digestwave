@@ -1,11 +1,5 @@
 package com.leskor.scraper.sites;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leskor.scraper.dto.ReadabilityResponse;
-import com.leskor.scraper.entities.Post;
-import com.leskor.scraper.entities.Region;
-import com.leskor.scraper.entities.Topic;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
@@ -20,6 +14,12 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 import javax.net.ssl.SSLSession;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leskor.scraper.dto.ReadabilityResponse;
+import com.leskor.scraper.entities.Post;
+import com.leskor.scraper.entities.Region;
+import com.leskor.scraper.entities.Topic;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,9 +28,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.mock;
@@ -60,7 +58,8 @@ class RSSSiteTest {
                 INDEX_PAGE_TIMEOUT_DURATION,
                 TITLE_SUFFIX_TO_TRIM,
                 Set.of("Ad"),
-                Set.of("Video-post")
+                Set.of("Video-post"),
+                false
         );
     }
 

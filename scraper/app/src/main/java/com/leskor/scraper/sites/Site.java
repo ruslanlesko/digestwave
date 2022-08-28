@@ -1,17 +1,5 @@
 package com.leskor.scraper.sites;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leskor.scraper.dto.ReadabilityResponse;
-import com.leskor.scraper.entities.Post;
-import com.leskor.scraper.entities.Region;
-import com.leskor.scraper.entities.Topic;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.parser.Parser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -27,6 +15,17 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leskor.scraper.dto.ReadabilityResponse;
+import com.leskor.scraper.entities.Post;
+import com.leskor.scraper.entities.Region;
+import com.leskor.scraper.entities.Topic;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.parser.Parser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -45,6 +44,7 @@ public abstract class Site {
     protected final Topic topic;
     protected final Region region;
     protected final Set<String> excludeIfTitleContains;
+    protected final boolean isImageExtractedFromMeta;
 
     protected Site(
             URI indexPageUri,
@@ -54,7 +54,8 @@ public abstract class Site {
             Duration indexPageTimeoutDuration,
             Topic topic,
             Region region,
-            Set<String> excludeIfTitleContains
+            Set<String> excludeIfTitleContains,
+            boolean isImageExtractedFromMeta
     ) {
         this.indexPageUri = indexPageUri;
         this.readabilityUri = readabilityUri;
@@ -64,6 +65,7 @@ public abstract class Site {
         this.topic = topic;
         this.region = region;
         this.excludeIfTitleContains = excludeIfTitleContains == null ? Set.of() : excludeIfTitleContains;
+        this.isImageExtractedFromMeta = isImageExtractedFromMeta;
     }
 
     public final CompletableFuture<List<Post>> fetchPosts() {
@@ -176,7 +178,20 @@ public abstract class Site {
     }
 
     protected CompletableFuture<Optional<String>> extractImageURI(Post post) {
-        return CompletableFuture.completedFuture(Optional.empty());
+        return isImageExtractedFromMeta && post != null ?
+                extractArticlePage(URI.create(post.url()))
+                        .thenApply(doc -> doc == null ? Optional.empty() : extractImageURLFromDocument(doc))
+                : CompletableFuture.completedFuture(Optional.empty());
+    }
+
+    private Optional<String> extractImageURLFromDocument(Document document) {
+        return document.getElementsByTag("meta")
+                .stream()
+                .filter(e -> e.hasAttr("property") && e.hasAttr("content")
+                        && "og:image".equals(e.attr("property"))
+                )
+                .map(e -> e.attr("content"))
+                .findFirst();
     }
 
     protected final HttpRequest buildArticlePageRequest(URI articleURI) {

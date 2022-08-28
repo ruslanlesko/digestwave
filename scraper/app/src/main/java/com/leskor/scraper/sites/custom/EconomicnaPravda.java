@@ -1,15 +1,5 @@
 package com.leskor.scraper.sites.custom;
 
-import com.leskor.scraper.entities.Post;
-import com.leskor.scraper.entities.Region;
-import com.leskor.scraper.entities.Topic;
-import com.leskor.scraper.sites.Site;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.parser.Parser;
-import org.jsoup.safety.Safelist;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -25,6 +15,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import com.leskor.scraper.entities.Post;
+import com.leskor.scraper.entities.Region;
+import com.leskor.scraper.entities.Topic;
+import com.leskor.scraper.sites.Site;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
+import org.jsoup.safety.Safelist;
 
 import static java.time.Duration.ofSeconds;
 import static java.util.stream.Collectors.joining;
@@ -34,7 +33,7 @@ public class EconomicnaPravda extends Site {
     private static final int POSTS_LIMIT = 10;
 
     public EconomicnaPravda(HttpClient httpClient) {
-        super(INDEX_URI, null, "EPR", httpClient, ofSeconds(10), Topic.FINANCE, Region.UA, Set.of());
+        super(INDEX_URI, null, "EPR", httpClient, ofSeconds(10), Topic.FINANCE, Region.UA, Set.of(), false);
     }
 
     @Override

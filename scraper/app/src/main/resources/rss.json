@@ -55,6 +55,20 @@
     ]
   },
   {
+    "uri": "https://www.ua-football.com/ua/rss/all.xml",
+    "code": "UFB",
+    "topic": "FOOTBALL",
+    "region": "UA",
+    "excludedCategories": [
+      "Загальні новини"
+    ],
+    "excludeIfTitleContains": [
+      "Аудіодумка",
+      "Текстова трансляція"
+    ],
+    "isImageExtractedFromMeta": true
+  },
+  {
     "uri": "https://sport.ua/uk/rss/football",
     "code": "SPU",
     "topic": "FOOTBALL",
@@ -62,6 +76,16 @@
     "excludeIfTitleContains": [
       "Відео"
     ]
+  },
+  {
+    "uri": "https://sportarena.com/uk/footboll/feed/",
+    "code": "SPA",
+    "topic": "FOOTBALL",
+    "region": "UA",
+    "excludeIfTitleContains": [
+      "Відео"
+    ],
+    "isImageExtractedFromMeta": true
   },
   {
     "uri": "https://feed.infoq.com/",
@@ -112,6 +136,20 @@
     "region": "INT"
   },
   {
+    "uri": "https://www.business-standard.com/rss/finance-103.rss",
+    "code": "BS",
+    "topic": "FINANCE",
+    "region": "INT",
+    "isImageExtractedFromMeta": true
+  },
+  {
+    "uri": "https://fortune.com/feed/fortune-feeds/?id=3230629",
+    "code": "FOR",
+    "topic": "FINANCE",
+    "region": "INT",
+    "isImageExtractedFromMeta": true
+  },
+  {
     "uri": "https://www.digitaltrends.com/feed/",
     "code": "DT",
     "topic": "TECH",
@@ -129,6 +167,13 @@
     "topic": "TECH",
     "region": "INT",
     "titleSuffixToTrim": " - CNET"
+  },
+  {
+    "uri": "https://techcrunch.com/feed/",
+    "code": "TCR",
+    "topic": "TECH",
+    "region": "INT",
+    "isImageExtractedFromMeta": true
   },
   {
     "uri": "https://www.techradar.com/rss",

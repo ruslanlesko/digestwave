@@ -1,5 +1,13 @@
 package com.leskor.scraper.sites.custom;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.entities.Region;
 import com.leskor.scraper.entities.Topic;
@@ -11,15 +19,6 @@ import org.jsoup.parser.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-
 import static com.leskor.scraper.dto.ReadabilityResponse.fromTitleAndExistingResponse;
 import static java.time.Duration.ofSeconds;
 
@@ -30,7 +29,7 @@ public class Liga extends Site {
     private static final int POSTS_LIMIT = 10;
 
     public Liga(URI readabilityUri, HttpClient httpClient) {
-        super(INDEX_URI, readabilityUri, "LIG", httpClient, ofSeconds(60), Topic.FINANCE, Region.UA, Set.of());
+        super(INDEX_URI, readabilityUri, "LIG", httpClient, ofSeconds(60), Topic.FINANCE, Region.UA, Set.of(), false);
     }
 
     @Override

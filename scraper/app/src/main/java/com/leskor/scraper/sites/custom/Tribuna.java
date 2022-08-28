@@ -1,14 +1,5 @@
 package com.leskor.scraper.sites.custom;
 
-import com.leskor.scraper.entities.Post;
-import com.leskor.scraper.entities.Region;
-import com.leskor.scraper.entities.Topic;
-import com.leskor.scraper.sites.Site;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.safety.Safelist;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.time.ZoneId;
@@ -18,6 +9,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import com.leskor.scraper.entities.Post;
+import com.leskor.scraper.entities.Region;
+import com.leskor.scraper.entities.Topic;
+import com.leskor.scraper.sites.Site;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.safety.Safelist;
 
 import static java.time.Duration.ofSeconds;
 
@@ -33,7 +32,8 @@ public class Tribuna extends Site {
                 ofSeconds(10),
                 Topic.FOOTBALL,
                 Region.UA,
-                Set.of("Відео")
+                Set.of("Відео"),
+                false
         );
     }
 

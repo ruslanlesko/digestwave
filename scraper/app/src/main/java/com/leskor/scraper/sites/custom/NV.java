@@ -1,14 +1,14 @@
 package com.leskor.scraper.sites.custom;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.time.ZonedDateTime;
+import java.util.Set;
 import com.leskor.scraper.dto.ReadabilityResponse;
 import com.leskor.scraper.entities.Post;
 import com.leskor.scraper.entities.Region;
 import com.leskor.scraper.entities.Topic;
 import com.leskor.scraper.sites.RSSSite;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.time.ZonedDateTime;
-import java.util.Set;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -30,7 +30,8 @@ public class NV extends RSSSite {
                 ofSeconds(10),
                 null,
                 Set.of(),
-                Set.of()
+                Set.of(),
+                false
         );
     }
 
