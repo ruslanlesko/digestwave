@@ -33,6 +33,7 @@ public class PrettifierFactory {
         prettifierMap.put("DT", new DigitalTrendsPrettifier());
         prettifierMap.put("FOR", new FortunePrettifier());
         prettifierMap.put("BS", new BusinessStandardPrettifier());
+        prettifierMap.put("TST", new TheStreetPrettifier());
     }
 
     public Prettifier createPrettifier(String siteCode) {

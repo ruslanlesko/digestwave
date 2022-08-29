@@ -133,7 +133,8 @@
     "uri": "https://www.thestreet.com/.rss/full/",
     "code": "TST",
     "topic": "FINANCE",
-    "region": "INT"
+    "region": "INT",
+    "isImageExtractedFromMeta": true
   },
   {
     "uri": "https://www.business-standard.com/rss/finance-103.rss",
