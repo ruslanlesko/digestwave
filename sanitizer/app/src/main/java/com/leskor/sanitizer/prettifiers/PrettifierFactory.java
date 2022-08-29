@@ -40,6 +40,7 @@ public class PrettifierFactory {
         prettifierMap.put("IFW", new InfoWorldPrettifier());
         prettifierMap.put("DZN", new DzonePrettifier());
         prettifierMap.put("TRP", new TechRepublicPrettifier());
+        prettifierMap.put("SDT", new SDTimesPrettifier());
     }
 
     public Prettifier createPrettifier(String siteCode) {
