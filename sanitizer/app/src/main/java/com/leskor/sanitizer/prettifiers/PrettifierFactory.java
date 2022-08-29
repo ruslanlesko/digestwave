@@ -37,6 +37,7 @@ public class PrettifierFactory {
         prettifierMap.put("MM", new MoneyMorningPrettifier());
         prettifierMap.put("ECO", new EconomistPrettifier());
         prettifierMap.put("IFQ", new InfoqPrettifier());
+        prettifierMap.put("IFW", new InfoWorldPrettifier());
     }
 
     public Prettifier createPrettifier(String siteCode) {
