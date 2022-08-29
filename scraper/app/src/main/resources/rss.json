@@ -91,7 +91,12 @@
     "uri": "https://feed.infoq.com/",
     "code": "IFQ",
     "topic": "PROGRAMMING",
-    "region": "INT"
+    "region": "INT",
+    "excludeIfTitleContains": [
+      "Podcast",
+      "Presentation"
+    ],
+    "isImageExtractedFromMeta": true
   },
   {
     "uri": "https://www.infoworld.com/index.rss",
