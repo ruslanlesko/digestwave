@@ -127,7 +127,8 @@
     "uri": "https://moneymorning.com/feed/",
     "code": "MM",
     "topic": "FINANCE",
-    "region": "INT"
+    "region": "INT",
+    "isImageExtractedFromMeta": true
   },
   {
     "uri": "https://www.thestreet.com/.rss/full/",

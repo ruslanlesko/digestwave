@@ -34,6 +34,7 @@ public class PrettifierFactory {
         prettifierMap.put("FOR", new FortunePrettifier());
         prettifierMap.put("BS", new BusinessStandardPrettifier());
         prettifierMap.put("TST", new TheStreetPrettifier());
+        prettifierMap.put("MM", new MoneyMorningPrettifier());
     }
 
     public Prettifier createPrettifier(String siteCode) {
