@@ -39,6 +39,7 @@ public class PrettifierFactory {
         prettifierMap.put("IFQ", new InfoqPrettifier());
         prettifierMap.put("IFW", new InfoWorldPrettifier());
         prettifierMap.put("DZN", new DzonePrettifier());
+        prettifierMap.put("TRP", new TechRepublicPrettifier());
     }
 
     public Prettifier createPrettifier(String siteCode) {

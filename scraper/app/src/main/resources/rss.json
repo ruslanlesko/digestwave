@@ -116,7 +116,8 @@
     "uri": "https://www.techrepublic.com/rssfeeds/topic/developer/",
     "code": "TRP",
     "topic": "PROGRAMMING",
-    "region": "INT"
+    "region": "INT",
+    "isImageExtractedFromMeta": true
   },
   {
     "uri": "https://sdtimes.com/feed/",
