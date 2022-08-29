@@ -121,7 +121,8 @@
     "uri": "https://www.economist.com/finance-and-economics/rss.xml",
     "code": "ECO",
     "topic": "FINANCE",
-    "region": "INT"
+    "region": "INT",
+    "isImageExtractedFromMeta": true
   },
   {
     "uri": "https://moneymorning.com/feed/",
