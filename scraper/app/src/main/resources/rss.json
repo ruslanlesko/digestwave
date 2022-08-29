@@ -109,7 +109,8 @@
     "uri": "http://feeds.dzone.com/home",
     "code": "DZN",
     "topic": "PROGRAMMING",
-    "region": "INT"
+    "region": "INT",
+    "isImageExtractedFromMeta": true
   },
   {
     "uri": "https://www.techrepublic.com/rssfeeds/topic/developer/",
