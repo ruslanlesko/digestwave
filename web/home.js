@@ -80,13 +80,16 @@ function displayArticlePreview(articlePreview) {
     newDiv.className = 'articlePreview';
     parent.appendChild(newDiv);
 
-    if (articlePreview.hasCoverImage) {
-        const newImg = document.createElement('img');
-        newImg.setAttribute("src", ARTICLE_IMAGE_URL + articlePreview.id + "/image");
-        newImg.setAttribute('alt', 'Article cover image');
-        newImg.setAttribute('width', '120px');
-        newDiv.appendChild(newImg);
-    }
+    const fallbackImg = "/assets/" + articlePreview.site + ".svg";
+    const newImg = document.createElement('img');
+    const imgSrc = articlePreview.hasCoverImage ? 
+        ARTICLE_IMAGE_URL + articlePreview.id + "/image"
+        : fallbackImg;
+    newImg.setAttribute("src", imgSrc);
+    newImg.setAttribute('alt', 'Article cover image');
+    newImg.setAttribute('width', '120px');
+    newImg.setAttribute('onerror', 'this.onerror=null;this.src="' + fallbackImg + '"')
+    newDiv.appendChild(newImg);
 
     newDiv.innerHTML += `<a href="/article.html?id=${articlePreview.id}">${articlePreview.title}</a>`;
 
