@@ -87,7 +87,6 @@ function displayArticlePreview(articlePreview) {
         : fallbackImg;
     newImg.setAttribute("src", imgSrc);
     newImg.setAttribute('alt', 'Article cover image');
-    newImg.setAttribute('width', '120px');
     newImg.setAttribute('onerror', 'this.onerror=null;this.src="' + fallbackImg + '"')
     newDiv.appendChild(newImg);
 

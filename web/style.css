@@ -1,11 +1,13 @@
 #articlesList {
     margin: 0.2em 0.2em 0.2em 0.2em;
+    clear: both;
 }
 
 #content {
     margin: 0.2em 0em 0.2em 0em;
     font-size: 1.2em;
     line-height: 1.4em;
+    clear: both;
 }
 
 #content p {
@@ -20,19 +22,22 @@
     margin: 0;
     position: absolute;
     left: 50%;
-    min-width: 50%;
+    min-width: 40em;
     -ms-transform: translate(-50%, 0%);
     transform: translate(-50%, 0%);
     font-family: 'Manrope', sans-serif;
 }
 
 #topicsBar {
-    float: right;
     font-size: 1.2em;
+    list-style: none;
+    overflow: hidden;
+    clear: both;
+    max-height: 0;
 }
 
 .topic {
-    display: inline;
+    display: block;
     margin-left: 1em;
 }
 
@@ -87,6 +92,7 @@ a.currentSelection {
 
 img {
     border-radius: 8px;
+    width: 120px;
 }
 
 .site {
@@ -107,4 +113,123 @@ h2 {
 
 .coverImage {
     float: right;
+}
+
+.menu-icon {
+    cursor: pointer;
+    display: inline-block;
+    float: right;
+    margin-top: -1em;
+    padding: 1.6em 1em;
+    position: relative;
+    user-select: none;
+}
+
+.menu-icon .navicon {
+    background: black;
+    display: block;
+    height: 0.18em;
+    position: relative;
+    transition: background .2s ease-out;
+    width: 2em;
+}
+
+.menu-icon .navicon:before,
+.menu-icon .navicon:after {
+    background: black;
+    content: '';
+    display: block;
+    height: 100%;
+    position: absolute;
+    transition: all .2s ease-out;
+    width: 100%;
+}
+
+.menu-icon .navicon:before {
+    top: 0.4em;
+}
+
+.menu-icon .navicon:after {
+    top: -0.4em;
+}
+
+.menu-btn {
+    display: none;
+}
+
+.menu-btn:checked~#topicsBar {
+    max-height:104em;
+}
+
+.menu-btn:checked~.menu-icon .navicon {
+    background: transparent;
+}
+
+.menu-btn:checked~.menu-icon .navicon:before {
+    transform: rotate(-45deg);
+}
+
+.menu-btn:checked~.menu-icon .navicon:after {
+    transform: rotate(45deg);
+}
+
+.menu-btn:checked~.menu-icon:not(.steps) .navicon:before,
+.menu-btn:checked~.menu-icon:not(.steps) .navicon:after {
+    top: 0;
+}
+
+@media only screen and (max-width: 768px) {
+    #center {
+        margin: 0em 1em 0em 1em;
+        position: relative;
+        left: 0%;
+        min-width: 0%;
+        -ms-transform: none;
+        transform: none;
+    }
+
+    #locale {
+        margin-left: 75%;
+    }
+
+    .topic {
+        margin-bottom: 1em;
+    }
+
+    .articlePreview img {
+        width: 72px;
+        float: right;
+        margin-left: 0.2em;
+    }
+
+    .articlePreview {
+        margin-bottom: 0em;
+        min-height: 64px;
+    }
+
+    .site {
+        margin-top: 0.2em;
+        margin-bottom: 1.6em;
+    }
+
+    .coverImage {
+        float: none;
+        width: auto;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    #topicsBar {
+        clear: none;
+        max-height: none;
+        float: right;
+    }
+
+    .topic {
+        float: left;
+    }
+
+    .menu-icon {
+        display: none;
+    }
 }
