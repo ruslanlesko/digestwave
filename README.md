@@ -37,7 +37,7 @@ The idea is to make font-ends as responsive and fast as possible. Technologies f
 
 ## Roadmap
 
-This is just the beginning, so I don't have any specific assumptions on when and how the project will become more or less usable. However, I do have a list of milestones I want to achieve **by the end of 2022**:
+This is just the beginning, so I don't have any specific assumptions on when and how the project will become more or less usable. However, I do have a list of milestones I want to achieve **by the beginning of 2023**:
 
 * Backend solution with minimal features and news sources. It should be able to periodically fetch and parse articles for later exposing them from public API.
 * Web client to render news feed and open each article.
