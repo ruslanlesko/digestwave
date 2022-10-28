@@ -1,11 +1,10 @@
 package com.leskor.sanitizer.prettifiers.sites;
 
+import java.util.List;
+import com.leskor.sanitizer.entities.Paragraph;
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.prettifiers.Prettifier;
 import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class KeddrComPrettifier implements Prettifier {
     private final ArticlePrefixTrimmingPrettifier articlePrefixTrimmingPrettifier;
@@ -15,7 +14,7 @@ public class KeddrComPrettifier implements Prettifier {
     }
 
     @Override
-    public List<String> parseParagraphs(Post post) {
+    public List<Paragraph> parseParagraphs(Post post) {
         return articlePrefixTrimmingPrettifier.parseParagraphs(post);
     }
 }

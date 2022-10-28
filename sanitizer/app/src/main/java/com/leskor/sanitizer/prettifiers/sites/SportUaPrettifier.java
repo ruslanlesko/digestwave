@@ -1,5 +1,6 @@
 package com.leskor.sanitizer.prettifiers.sites;
 
+import com.leskor.sanitizer.entities.Paragraph;
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.prettifiers.Prettifier;
 import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier;
@@ -17,12 +18,15 @@ public class SportUaPrettifier implements Prettifier {
     }
 
     @Override
-    public List<String> parseParagraphs(Post post) {
+    public List<Paragraph> parseParagraphs(Post post) {
         List<String> result = Jsoup.parse(post.html()).getElementsByTag("p").stream()
                 .map(p -> Jsoup.clean(p.html(), Safelist.none()))
                 .filter(p -> !p.toUpperCase().contains("ТЕКСТОВА ТРАНСЛЯЦІЯ МАТЧУ"))
                 .toList();
 
-        return articlePrefixTrimmingPrettifier.trimParagraphs(result);
+        return articlePrefixTrimmingPrettifier.trimParagraphs(result)
+                .stream()
+                .map(p -> new Paragraph(p, ""))
+                .toList();
     }
 }

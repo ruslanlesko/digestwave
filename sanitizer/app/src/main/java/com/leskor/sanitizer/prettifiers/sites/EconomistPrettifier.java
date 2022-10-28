@@ -3,6 +3,7 @@ package com.leskor.sanitizer.prettifiers.sites;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import com.leskor.sanitizer.entities.Paragraph;
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.prettifiers.Prettifier;
 import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier;
@@ -21,7 +22,7 @@ public class EconomistPrettifier implements Prettifier {
     }
 
     @Override
-    public List<String> parseParagraphs(Post post) {
+    public List<Paragraph> parseParagraphs(Post post) {
         Element outerWrapper = Jsoup.parse(post.html(), Parser.htmlParser()).getElementsByTag("div").first();
 
         if (outerWrapper == null) {
@@ -51,6 +52,9 @@ public class EconomistPrettifier implements Prettifier {
                 .map(p -> Jsoup.clean(p.html(), Safelist.none()).replaceAll("■", "").trim())
                 .toList();
 
-        return articlePrefixTrimmingPrettifier.trimParagraphs(result);
+        return articlePrefixTrimmingPrettifier.trimParagraphs(result)
+                .stream()
+                .map(p -> new Paragraph(p, ""))
+                .toList();
     }
 }

@@ -1,5 +1,6 @@
 package com.leskor.sanitizer.prettifiers.sites;
 
+import com.leskor.sanitizer.entities.Paragraph;
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.prettifiers.Prettifier;
 import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier;
@@ -16,7 +17,7 @@ public class LigaNetPrettifier implements Prettifier {
     }
 
     @Override
-    public List<String> parseParagraphs(Post post) {
+    public List<Paragraph> parseParagraphs(Post post) {
         List<String> result = Arrays.stream(post.content().split("\n"))
                 .filter(p -> !p.contains("Підписуйтесь на LIGA")
                         && !p.contains("Читайте також:")
@@ -24,6 +25,9 @@ public class LigaNetPrettifier implements Prettifier {
                 )
                 .toList();
 
-        return articlePrefixTrimmingPrettifier.trimParagraphs(result);
+        return articlePrefixTrimmingPrettifier.trimParagraphs(result)
+                .stream()
+                .map(p -> new Paragraph(p, ""))
+                .toList();
     }
 }

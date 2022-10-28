@@ -1,6 +1,7 @@
 package com.leskor.sanitizer.prettifiers.sites;
 
 import java.util.List;
+import com.leskor.sanitizer.entities.Paragraph;
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.prettifiers.Prettifier;
 import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier;
@@ -14,7 +15,7 @@ public class FortunePrettifier implements Prettifier {
     }
 
     @Override
-    public List<String> parseParagraphs(Post post) {
+    public List<Paragraph> parseParagraphs(Post post) {
         return articlePrefixTrimmingPrettifier.parseParagraphs(post);
     }
 }

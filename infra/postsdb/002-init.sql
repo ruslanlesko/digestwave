@@ -10,6 +10,7 @@ CREATE TABLE "public".posts (
     publication_time BIGINT,
     title TEXT,
     content TEXT,
+    style TEXT,
     url TEXT,
     image_url TEXT
 );

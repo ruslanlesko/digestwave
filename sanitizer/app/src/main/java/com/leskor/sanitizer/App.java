@@ -1,5 +1,6 @@
 package com.leskor.sanitizer;
 
+import com.leskor.sanitizer.entities.Paragraph;
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.entities.SanitizedPost;
 import com.leskor.sanitizer.prettifiers.Prettifier;
@@ -66,9 +67,9 @@ public class App {
         StreamsBuilder builder = new StreamsBuilder();
         KStream<String, Post> stream = builder.stream(INPUT_TOPIC, Consumed.with(Serdes.String(), postsSerde));
         stream.map((key, value) -> {
-            List<String> paragraphs = parseParagraphsFromPost(value)
+            List<Paragraph> paragraphs = parseParagraphsFromPost(value)
                     .stream()
-                    .filter(paragraph -> paragraph != null && paragraph.length() > 0)
+                    .filter(paragraph -> paragraph != null && paragraph.content().length() > 0)
                     .toList();
             SanitizedPost sanitizedPost = SanitizedPost.from(value, paragraphs);
             return new KeyValue<>(key, sanitizedPost);
@@ -104,7 +105,7 @@ public class App {
         System.exit(0);
     }
 
-    private List<String> parseParagraphsFromPost(Post post) {
+    private List<Paragraph> parseParagraphsFromPost(Post post) {
         Prettifier prettifier = prettifierFactory.createPrettifier(post.siteCode());
         return prettifier.parseParagraphs(post);
     }

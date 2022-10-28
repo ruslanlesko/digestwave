@@ -1,6 +1,7 @@
 package com.leskor.sanitizer.prettifiers.sites;
 
 import java.util.List;
+import com.leskor.sanitizer.entities.Paragraph;
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.prettifiers.Prettifier;
 import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier;
@@ -16,7 +17,7 @@ public class TechradarPrettifier implements Prettifier {
         articlePrefixTrimmingPrettifier = new ArticlePrefixTrimmingPrettifier("Via", Strategy.STARTS_WITH);
     }
     @Override
-    public List<String> parseParagraphs(Post post) {
+    public List<Paragraph> parseParagraphs(Post post) {
         Element wrapper = Jsoup.parse(post.html()).getElementById("article-body");
         if (wrapper == null) return List.of();
 
@@ -26,6 +27,9 @@ public class TechradarPrettifier implements Prettifier {
                 .filter(p -> !p.equalsIgnoreCase("See more"))
                 .toList();
 
-        return articlePrefixTrimmingPrettifier.trimParagraphs(result);
+        return articlePrefixTrimmingPrettifier.trimParagraphs(result)
+                .stream()
+                .map(p -> new Paragraph(p, ""))
+                .toList();
     }
 }

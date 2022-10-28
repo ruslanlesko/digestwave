@@ -1,5 +1,6 @@
 package com.leskor.sanitizer.prettifiers.sites;
 
+import com.leskor.sanitizer.entities.Paragraph;
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.prettifiers.Prettifier;
 
@@ -8,12 +9,14 @@ import java.util.List;
 
 public class EpravdaUaPrettifier implements Prettifier {
     @Override
-    public List<String> parseParagraphs(Post post) {
-        List<String> result = Arrays.stream(post.content().split("\n")).toList();
+    public List<Paragraph> parseParagraphs(Post post) {
+        List<Paragraph> result = Arrays.stream(post.content().split("\n"))
+                .map(p -> new Paragraph(p, ""))
+                .toList();
 
         int paragraphMarkingEndOfThePostIdx = -1;
         for (int i = 0; i < result.size(); i++) {
-            String[] words = result.get(i).split(" ");
+            String[] words = result.get(i).content().split(" ");
             if (words.length == 2 && "правда".equalsIgnoreCase(words[1])) {
                 paragraphMarkingEndOfThePostIdx = i;
                 break;

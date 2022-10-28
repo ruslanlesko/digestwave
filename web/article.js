@@ -95,7 +95,14 @@ function displayArticle(article) {
     content.appendChild(site);
 
     article.content
-        .forEach(p => {
+        .forEach((p, i, _) => {
+            if (article.styles[i] === 'code') {
+                const newCode = document.createElement('code');
+                newCode.innerHTML += p.trim().replaceAll('\n', '<br>');
+                content.appendChild(newCode);
+                return;
+            }
+
             const newP = document.createElement('p');
             newP.innerHTML += p.trim();
             content.appendChild(newP);

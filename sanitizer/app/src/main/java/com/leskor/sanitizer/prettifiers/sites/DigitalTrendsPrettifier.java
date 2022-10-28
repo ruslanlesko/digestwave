@@ -1,6 +1,7 @@
 package com.leskor.sanitizer.prettifiers.sites;
 
 import java.util.List;
+import com.leskor.sanitizer.entities.Paragraph;
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.prettifiers.Prettifier;
 import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier;
@@ -16,7 +17,7 @@ public class DigitalTrendsPrettifier implements Prettifier {
     }
 
     @Override
-    public List<String> parseParagraphs(Post post) {
+    public List<Paragraph> parseParagraphs(Post post) {
         Element wrapper = Jsoup.parse(post.html()).getElementsByTag("article").first();
         if (wrapper == null) return List.of();
 
@@ -26,6 +27,9 @@ public class DigitalTrendsPrettifier implements Prettifier {
                 .filter(p -> !p.equalsIgnoreCase("Contents") && !p.equalsIgnoreCase("Jump to details"))
                 .toList();
 
-        return articlePrefixTrimmingPrettifier.trimParagraphs(result);
+        return articlePrefixTrimmingPrettifier.trimParagraphs(result)
+                .stream()
+                .map(p -> new Paragraph(p, ""))
+                .toList();
     }
 }

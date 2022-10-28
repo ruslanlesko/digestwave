@@ -1,5 +1,6 @@
 package com.leskor.sanitizer.prettifiers.sites;
 
+import com.leskor.sanitizer.entities.Paragraph;
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.prettifiers.Prettifier;
 import org.jsoup.Jsoup;
@@ -14,13 +15,15 @@ import java.util.List;
 
 public class FootballUaPrettifier implements Prettifier {
     @Override
-    public List<String> parseParagraphs(Post post) {
+    public List<Paragraph> parseParagraphs(Post post) {
         Document document = Jsoup.parse(post.html(), Parser.htmlParser());
 
         Element wrapper = document.getElementById("ctl00_columnTop");
 
         if (wrapper == null || wrapper.getElementsByTag("article").isEmpty()) {
-            return Arrays.stream(post.content().split("\n")).toList();
+            return Arrays.stream(post.content().split("\n"))
+                    .map(p -> new Paragraph(p, ""))
+                    .toList();
         }
 
         Element article = wrapper.getElementsByTag("article").first();
@@ -46,6 +49,8 @@ public class FootballUaPrettifier implements Prettifier {
             }
         }
 
-        return result;
+        return result.stream()
+                .map(p -> new Paragraph(p, ""))
+                .toList();
     }
 }

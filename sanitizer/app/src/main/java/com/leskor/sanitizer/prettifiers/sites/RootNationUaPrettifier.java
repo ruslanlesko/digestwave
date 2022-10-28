@@ -1,5 +1,6 @@
 package com.leskor.sanitizer.prettifiers.sites;
 
+import com.leskor.sanitizer.entities.Paragraph;
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.prettifiers.Prettifier;
 import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier;
@@ -19,7 +20,7 @@ public class RootNationUaPrettifier implements Prettifier {
     }
 
     @Override
-    public List<String> parseParagraphs(Post post) {
+    public List<Paragraph> parseParagraphs(Post post) {
         Element wrapper = Jsoup.parse(post.html(), Parser.htmlParser())
                 .getElementsByAttribute("data-td-block-uid").first();
 
@@ -38,6 +39,9 @@ public class RootNationUaPrettifier implements Prettifier {
                 )
                 .toList();
 
-        return articlePrefixTrimmingPrettifier.trimParagraphs(result);
+        return articlePrefixTrimmingPrettifier.trimParagraphs(result)
+                .stream()
+                .map(p -> new Paragraph(p, ""))
+                .toList();
     }
 }

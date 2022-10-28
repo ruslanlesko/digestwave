@@ -9,23 +9,32 @@ import javax.persistence.Table;
 @Table(name = "posts")
 public class Post {
     @Id
-    public String hash;
+    private String hash;
 
     @Column(name = "publication_time")
-    public long publicationTime;
+    private long publicationTime;
 
     @Column(name = "site_code")
-    public String siteCode;
+    private String siteCode;
 
-    public String title;
-    public String content;
-    public String url;
+    private String title;
+    private String content;
+    private String style;
+    private String url;
 
     @Column(name = "image_url")
-    public String imageURL;
+    private String imageURL;
 
-    public String topic;
-    public String region;
+    private String topic;
+    private String region;
+
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
 
     public String getTopic() {
         return topic;
