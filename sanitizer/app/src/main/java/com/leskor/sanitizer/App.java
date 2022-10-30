@@ -73,7 +73,9 @@ public class App {
                     .toList();
             SanitizedPost sanitizedPost = SanitizedPost.from(value, paragraphs);
             return new KeyValue<>(key, sanitizedPost);
-        }).to(OUTPUT_TOPIC, Produced.with(Serdes.String(), sanitizedPostSerde));
+        })
+                .filter((key, post) -> post.paragraphs().size() > 2)
+                .to(OUTPUT_TOPIC, Produced.with(Serdes.String(), sanitizedPostSerde));
 
         final KafkaStreams streams = new KafkaStreams(builder.build(), props);
         final CountDownLatch latch = new CountDownLatch(1);
