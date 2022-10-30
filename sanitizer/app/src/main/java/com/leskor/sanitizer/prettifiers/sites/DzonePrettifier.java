@@ -45,7 +45,6 @@ public class DzonePrettifier implements Prettifier {
     }
 
     private String encodeCode(String raw) {
-        String fixed = raw.replaceAll("\\n", "<:<newline>:>");
-        return fixed;
+        return raw.replaceAll("\\n", "<:<newline>:>");
     }
 }

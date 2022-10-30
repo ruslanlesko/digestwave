@@ -47,14 +47,12 @@ public class EconomistPrettifier implements Prettifier {
             return List.of();
         }
 
-        List<String> result = middleWrapper.get().children().stream()
+        List<Paragraph> result = middleWrapper.get().children().stream()
                 .filter(e -> "p".equals(e.tagName()))
                 .map(p -> Jsoup.clean(p.html(), Safelist.none()).replaceAll("■", "").trim())
-                .toList();
-
-        return articlePrefixTrimmingPrettifier.trimParagraphs(result)
-                .stream()
                 .map(p -> new Paragraph(p, ""))
                 .toList();
+
+        return articlePrefixTrimmingPrettifier.trimParagraphs(result);
     }
 }

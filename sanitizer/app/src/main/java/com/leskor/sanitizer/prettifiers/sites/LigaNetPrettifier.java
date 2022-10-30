@@ -18,16 +18,14 @@ public class LigaNetPrettifier implements Prettifier {
 
     @Override
     public List<Paragraph> parseParagraphs(Post post) {
-        List<String> result = Arrays.stream(post.content().split("\n"))
+        List<Paragraph> result = Arrays.stream(post.content().split("\n"))
                 .filter(p -> !p.contains("Підписуйтесь на LIGA")
                         && !p.contains("Читайте також:")
                         && !p.contains("Приєднуйтесь до нас у Facebook")
                 )
-                .toList();
-
-        return articlePrefixTrimmingPrettifier.trimParagraphs(result)
-                .stream()
                 .map(p -> new Paragraph(p, ""))
                 .toList();
+
+        return articlePrefixTrimmingPrettifier.trimParagraphs(result);
     }
 }

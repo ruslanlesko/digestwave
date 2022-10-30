@@ -28,7 +28,7 @@ public class RootNationUaPrettifier implements Prettifier {
             return List.of();
         }
 
-        List<String> result = wrapper.children().stream()
+        List<Paragraph> result = wrapper.children().stream()
                 .filter(e -> "p".equals(e.tagName()) && e.getElementsByTag("strong").isEmpty())
                 .map(Element::html)
                 .filter(html -> !html.contains(post.title()))
@@ -37,11 +37,9 @@ public class RootNationUaPrettifier implements Prettifier {
                         && !p.startsWith("Ціни в магазинах")
                         && !p.startsWith("Теж цікаво:")
                 )
-                .toList();
-
-        return articlePrefixTrimmingPrettifier.trimParagraphs(result)
-                .stream()
                 .map(p -> new Paragraph(p, ""))
                 .toList();
+
+        return articlePrefixTrimmingPrettifier.trimParagraphs(result);
     }
 }

@@ -21,15 +21,13 @@ public class TechradarPrettifier implements Prettifier {
         Element wrapper = Jsoup.parse(post.html()).getElementById("article-body");
         if (wrapper == null) return List.of();
 
-        List<String> result = wrapper.getElementsByTag("p")
+        List<Paragraph> result = wrapper.getElementsByTag("p")
                 .stream()
                 .map(p -> Jsoup.clean(p.html(), Safelist.none()))
                 .filter(p -> !p.equalsIgnoreCase("See more"))
-                .toList();
-
-        return articlePrefixTrimmingPrettifier.trimParagraphs(result)
-                .stream()
                 .map(p -> new Paragraph(p, ""))
                 .toList();
+
+        return articlePrefixTrimmingPrettifier.trimParagraphs(result);
     }
 }

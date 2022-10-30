@@ -18,13 +18,11 @@ public class GagadgetComPrettifier implements Prettifier {
 
     @Override
     public List<Paragraph> parseParagraphs(Post post) {
-        List<String> result = Arrays.stream(post.content().split("\n"))
+        List<Paragraph> result = Arrays.stream(post.content().split("\n"))
                 .filter(p -> !p.toUpperCase().contains("ЗА ПІДТРИМКИ") && !p.toUpperCase().contains("GG"))
-                .toList();
-
-        return articlePrefixTrimmingPrettifier.trimParagraphs(result)
-                .stream()
                 .map(p -> new Paragraph(p, ""))
                 .toList();
+
+        return articlePrefixTrimmingPrettifier.trimParagraphs(result);
     }
 }

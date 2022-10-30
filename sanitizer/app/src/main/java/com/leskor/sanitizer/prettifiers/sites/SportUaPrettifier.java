@@ -19,14 +19,12 @@ public class SportUaPrettifier implements Prettifier {
 
     @Override
     public List<Paragraph> parseParagraphs(Post post) {
-        List<String> result = Jsoup.parse(post.html()).getElementsByTag("p").stream()
+        List<Paragraph> result = Jsoup.parse(post.html()).getElementsByTag("p").stream()
                 .map(p -> Jsoup.clean(p.html(), Safelist.none()))
                 .filter(p -> !p.toUpperCase().contains("ТЕКСТОВА ТРАНСЛЯЦІЯ МАТЧУ"))
-                .toList();
-
-        return articlePrefixTrimmingPrettifier.trimParagraphs(result)
-                .stream()
                 .map(p -> new Paragraph(p, ""))
                 .toList();
+
+        return articlePrefixTrimmingPrettifier.trimParagraphs(result);
     }
 }

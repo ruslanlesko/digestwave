@@ -21,15 +21,13 @@ public class DigitalTrendsPrettifier implements Prettifier {
         Element wrapper = Jsoup.parse(post.html()).getElementsByTag("article").first();
         if (wrapper == null) return List.of();
 
-        List<String> result = wrapper.getElementsByTag("p")
+        List<Paragraph> result = wrapper.getElementsByTag("p")
                 .stream()
                 .map(p -> Jsoup.clean(p.html(), Safelist.none()))
                 .filter(p -> !p.equalsIgnoreCase("Contents") && !p.equalsIgnoreCase("Jump to details"))
-                .toList();
-
-        return articlePrefixTrimmingPrettifier.trimParagraphs(result)
-                .stream()
                 .map(p -> new Paragraph(p, ""))
                 .toList();
+
+        return articlePrefixTrimmingPrettifier.trimParagraphs(result);
     }
 }

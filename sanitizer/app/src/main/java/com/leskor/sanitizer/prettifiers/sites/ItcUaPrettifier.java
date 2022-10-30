@@ -29,16 +29,14 @@ public class ItcUaPrettifier implements Prettifier {
             return List.of();
         }
 
-        List<String> result = wrapper.children().stream()
+        List<Paragraph> result = wrapper.children().stream()
                 .filter(e -> "p".equals(e.tagName()))
                 .map(Element::html)
                 .filter(html -> !html.contains(post.title()))
                 .map(html -> Jsoup.clean(html, Safelist.none()))
-                .toList();
-
-        return articlePrefixTrimmingPrettifier.trimParagraphs(result)
-                .stream()
                 .map(p -> new Paragraph(p, ""))
                 .toList();
+
+        return articlePrefixTrimmingPrettifier.trimParagraphs(result);
     }
 }

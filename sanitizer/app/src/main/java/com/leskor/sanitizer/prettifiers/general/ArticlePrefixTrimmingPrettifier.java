@@ -33,16 +33,16 @@ public class ArticlePrefixTrimmingPrettifier implements Prettifier {
 
     @Override
     public List<Paragraph> parseParagraphs(Post post) {
-        return trimParagraphs(Arrays.stream(post.content().split("\n")).toList())
-                .stream()
+        List<Paragraph> paragraphs = Arrays.stream(post.content().split("\n"))
                 .map(p -> new Paragraph(p, ""))
                 .toList();
+        return trimParagraphs(paragraphs);
     }
 
-    public List<String> trimParagraphs(List<String> paragraphs) {
+    public List<Paragraph> trimParagraphs(List<Paragraph> paragraphs) {
         int paragraphEndingPostIdx = -1;
         for (int i = 0; i < paragraphs.size(); i++) {
-            String p = paragraphs.get(i).trim().toUpperCase();
+            String p = paragraphs.get(i).content().trim().toUpperCase();
             Predicate<String> matcher = switch (strategy) {
                 case CONTAINS -> p::contains;
                 case STARTS_WITH -> p::startsWith;
