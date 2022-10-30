@@ -1,6 +1,7 @@
 package com.leskor.sanitizer.prettifiers.sites;
 
 import java.util.List;
+import java.util.stream.Stream;
 import com.leskor.sanitizer.entities.Paragraph;
 import com.leskor.sanitizer.entities.Post;
 import com.leskor.sanitizer.prettifiers.Prettifier;
@@ -18,8 +19,24 @@ public class InfoWorldPrettifier implements Prettifier {
         }
         return wrapper.getElementsByTag("p")
                 .stream()
-                .map(p -> Jsoup.clean(p.html(), Safelist.none()).trim())
-                .map(p -> new Paragraph(p, ""))
+                .flatMap(this::extractParagraphWithCodeElements)
+                .map(this::createParagraph)
                 .toList();
+    }
+
+    private Stream<Element> extractParagraphWithCodeElements(Element p) {
+        Element nextSibling = p.nextElementSibling();
+        Element nextCodeElement = null;
+        if (nextSibling != null && !"p".equals(nextSibling.tagName())) {
+            nextCodeElement = nextSibling.getElementsByTag("pre").first();
+        }
+        return nextCodeElement == null ? Stream.of() : Stream.of(p, nextCodeElement);
+    }
+
+    private Paragraph createParagraph(Element element) {
+        if ("pre".equals(element.tagName())) {
+            return new Paragraph(element.html(), "code");
+        }
+        return new Paragraph(Jsoup.clean(element.html(), Safelist.none()).trim(), "");
     }
 }
