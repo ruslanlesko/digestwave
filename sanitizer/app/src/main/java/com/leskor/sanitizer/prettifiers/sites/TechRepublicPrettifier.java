@@ -11,7 +11,6 @@ import com.leskor.sanitizer.prettifiers.general.ArticlePrefixTrimmingPrettifier.
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
-import org.jsoup.safety.Safelist;
 
 public class TechRepublicPrettifier implements Prettifier {
     private final ArticlePrefixTrimmingPrettifier articlePrefixTrimmingPrettifier;
@@ -56,16 +55,5 @@ public class TechRepublicPrettifier implements Prettifier {
             elements.add(nextCodeElement);
         }
         return elements.stream();
-    }
-
-    private Paragraph createParagraph(Element element) {
-        if ("code".equals(element.tagName())) {
-            return new Paragraph(encodeCode(element.html()), "code");
-        }
-        return new Paragraph(Jsoup.clean(element.html(), Safelist.none()).trim(), "");
-    }
-
-    private String encodeCode(String raw) {
-        return raw.replaceAll("\\n", "<:<newline>:>");
     }
 }

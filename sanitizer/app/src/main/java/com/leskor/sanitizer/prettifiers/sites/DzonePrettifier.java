@@ -30,21 +30,25 @@ public class DzonePrettifier implements Prettifier {
 
         return innerWrapper.get().children()
                 .stream()
-                .filter(e -> "p".equals(e.tagName()) || e.hasAttr("data-lang"))
-                .map(this::createParagraph)
+                .filter(e -> "p".equals(e.tagName()) || e.hasAttr("data-lang") || !e.getElementsByTag("pre").isEmpty())
+                .map(this::createDzoneParagraph)
                 .filter(Objects::nonNull)
                 .toList();
     }
 
-    private Paragraph createParagraph(Element element) {
+    private Paragraph createDzoneParagraph(Element element) {
         if (element.hasAttr("data-lang")) {
             Element codeElement = element.getElementsByTag("code").first();
             return codeElement == null ? null : new Paragraph(encodeCode(codeElement.html()), "code");
+        }
+        Element preElem = element.getElementsByTag("pre").first();
+        if (preElem != null) {
+            return new Paragraph(encodeCode(encodeCode(preElem.html())), "code");
         }
         return new Paragraph(Jsoup.clean(element.html(), Safelist.none()).trim(), "");
     }
 
     private String encodeCode(String raw) {
-        return raw.replaceAll("\\n", "<:<newline>:>");
+        return raw.replaceAll("\\n", "<br>");
     }
 }

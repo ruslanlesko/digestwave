@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -27,9 +26,7 @@ public record Article(
         String id = hash.startsWith("-") ? "n" + hash.substring(1) : "p" + hash;
         String site = siteCodeResolverFunction.apply(post.getSiteCode());
         boolean hasCoverImage = post.getImageURL() != null && !post.getImageURL().isBlank();
-        List<String> content = Arrays.stream(post.getContent().split("\n"))
-                .map(p -> p.replaceAll("<:<newline>:>", "\n"))
-                .toList();
+        List<String> content = Arrays.asList(post.getContent().split("\n"));
         Map<String, String> styles = null;
         try {
             styles = new ObjectMapper().readValue(post.getStyle(), Map.class);

@@ -8,7 +8,6 @@ import com.leskor.sanitizer.prettifiers.Prettifier;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
-import org.jsoup.safety.Safelist;
 
 public class InfoWorldPrettifier implements Prettifier {
     @Override
@@ -31,12 +30,5 @@ public class InfoWorldPrettifier implements Prettifier {
             nextCodeElement = nextSibling.getElementsByTag("pre").first();
         }
         return nextCodeElement == null ? Stream.of() : Stream.of(p, nextCodeElement);
-    }
-
-    private Paragraph createParagraph(Element element) {
-        if ("pre".equals(element.tagName())) {
-            return new Paragraph(element.html(), "code");
-        }
-        return new Paragraph(Jsoup.clean(element.html(), Safelist.none()).trim(), "");
     }
 }
