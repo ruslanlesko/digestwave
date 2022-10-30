@@ -88,11 +88,11 @@ a.currentSelection {
 .articlePreview img {
     float: left;
     margin-right: 1em;
+    width: 120px;
 }
 
 img {
     border-radius: 8px;
-    width: 120px;
 }
 
 .site {
@@ -248,5 +248,9 @@ code {
 
     .menu-icon {
         display: none;
+    }
+
+    #content img {
+        margin-left: 1em;
     }
 }
