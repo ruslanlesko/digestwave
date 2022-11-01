@@ -87,7 +87,7 @@ function displayArticlePreview(articlePreview) {
         : fallbackImg;
     newImg.setAttribute("src", imgSrc);
     newImg.setAttribute('alt', 'Article cover image');
-    newImg.setAttribute('onerror', 'this.onerror=null;this.src="' + fallbackImg + '"')
+    newImg.setAttribute('onerror', 'this.onerror=null;this.src="' + fallbackImg + '"');
     newDiv.appendChild(newImg);
 
     newDiv.innerHTML += `<a href="/article.html?id=${articlePreview.id}">${articlePreview.title}</a>`;
@@ -96,6 +96,24 @@ function displayArticlePreview(articlePreview) {
     site.className = 'site';
     site.innerHTML = `<a href="https://${articlePreview.site}">${articlePreview.site}</a>`;
     newDiv.appendChild(site);
+}
+
+function handleFailureToFetchArticlesList(error) {
+    console.log(`Error while fetching articles list: ${error}`);
+    const parent = document.getElementById('articlesList');
+    if (parent.childElementCount > 0) {
+        return;
+    }
+    const errorNode = document.createElement('div');
+    errorNode.className = 'error';
+    const errorImage = document.createElement('img');
+    errorImage.setAttribute('src', '/assets/error.svg');
+    errorImage.setAttribute('width', '72px');
+    errorNode.appendChild(errorImage);
+    const errorText = document.createElement('p');
+    errorText.innerText = 'Failed to load data from server, please try again later.';
+    errorNode.appendChild(errorText);
+    parent.appendChild(errorNode);
 }
 
 function fetchArticlesList(topic, page) {
@@ -114,9 +132,13 @@ function fetchArticlesList(topic, page) {
             if (articles.length > 0) {
                 articles.forEach(displayArticlePreview);
                 alreadyFetched = false;
+            } else {
+                if (document.getElementById('articlesList').childElementCount === 0) {
+                    throw ('Server returned empty list of articles');
+                }
             }
         })
-        .catch(e => console.log(`Error while fetching articles list: ${e}`));
+        .catch(e => handleFailureToFetchArticlesList(e));
 }
 
 // Determine if an element is in the visible viewport: https://gist.github.com/jjmu15/8646226

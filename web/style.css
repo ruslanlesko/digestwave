@@ -68,6 +68,7 @@ a:hover {
     text-align: center;
     margin-bottom: 2em;
     font-size: 1.2em;
+    visibility: hidden;
 }
 
 #locale {
@@ -130,6 +131,19 @@ code {
     padding: 1em 1.5em;
     display: block;
     word-wrap: break-word;
+}
+
+.error {
+    margin-top: 8em;
+    text-align: center;
+}
+
+#content .error p {
+    text-align: center;
+}
+
+#articlesList .error p {
+    font-size: 1.2em;
 }
 
 .menu-icon {

@@ -70,7 +70,25 @@ function highlightCurrentTopic(topic) {
     }
 }
 
+function handleNotFoundArticle() {
+    const content = document.getElementById('content');
+    const errorNode = document.createElement('div');
+    errorNode.className = 'error';
+    const errorImage = document.createElement('img');
+    errorImage.setAttribute('src', '/assets/not_found.svg');
+    errorImage.setAttribute('width', '72px');
+    errorNode.appendChild(errorImage);
+    const errorText = document.createElement('p');
+    errorText.innerText = 'Artcile is not found, please search for other one.';
+    errorNode.appendChild(errorText);
+    content.appendChild(errorNode);
+}
+
 function displayArticle(article) {
+    if (article == null) {
+        handleNotFoundArticle();
+        return;
+    }
     document.getElementsByTagName('title')[0].innerHTML = article.title;
 
     const content = document.getElementById('content');
@@ -110,9 +128,25 @@ function displayArticle(article) {
 
     const originalLinkDiv = document.getElementById('originalArticleLink');
     const link = originalLinkDiv.getElementsByTagName('a')[0];
+    originalLinkDiv.setAttribute('style', 'visibility: visible');
     link.setAttribute('href', article.url);
 
     highlightCurrentTopic(article.topic.toLowerCase());
+}
+
+function handleFailureToFetchArticle(error) {
+    console.log(`Error while fetching article: ${error}`);
+    const content = document.getElementById('content');
+    const errorNode = document.createElement('div');
+    errorNode.className = 'error';
+    const errorImage = document.createElement('img');
+    errorImage.setAttribute('src', '/assets/error.svg');
+    errorImage.setAttribute('width', '72px');
+    errorNode.appendChild(errorImage);
+    const errorText = document.createElement('p');
+    errorText.innerText = 'Failed to load article from server, please try again later.';
+    errorNode.appendChild(errorText);
+    content.appendChild(errorNode);
 }
 
 function fetchArticle(id) {
@@ -121,11 +155,15 @@ function fetchArticle(id) {
             if (resp.status == 200) {
                 return resp.json();
             } else {
-                throw (`Server responded with status ${resp.status}`);
+                if (resp.status === 404) {
+                    return null;
+                } else {
+                    throw (`Server responded with status ${resp.status}`);
+                }
             }
         })
         .then(displayArticle)
-        .catch(e => console.log(`Error while fetching article: ${e}`));
+        .catch(e => handleFailureToFetchArticle(e));
 }
 
 fillTopics();
