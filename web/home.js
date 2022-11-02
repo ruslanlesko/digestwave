@@ -73,6 +73,27 @@ function highlightCurrentTopic(topic) {
     }
 }
 
+function formatDate(date) {
+    return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
+}
+
+function parsePublicationTime(stamp) {
+    var date = formatDate(new Date(stamp * 1000));
+    var currentDate = new Date();
+    var today = formatDate(currentDate);
+    currentDate.setDate(currentDate.getDate() - 1);
+    
+    var yesterday = formatDate(currentDate);
+    switch (date) {
+        case today:
+            return "Today";
+        case yesterday:
+            return "Yesterday";
+        default:
+            return date;
+    }
+}
+
 function displayArticlePreview(articlePreview) {
     const parent = document.getElementById('articlesList');
 
@@ -92,9 +113,10 @@ function displayArticlePreview(articlePreview) {
 
     newDiv.innerHTML += `<a href="/article.html?id=${articlePreview.id}">${articlePreview.title}</a>`;
 
+    const publicationTime = parsePublicationTime(articlePreview.publicationTime);
     const site = document.createElement('div');
     site.className = 'site';
-    site.innerHTML = `<a href="https://${articlePreview.site}">${articlePreview.site}</a>`;
+    site.innerHTML = `<a href="https://${articlePreview.site}">${articlePreview.site}</a><span> • ${publicationTime}</span>`;
     newDiv.appendChild(site);
 }
 

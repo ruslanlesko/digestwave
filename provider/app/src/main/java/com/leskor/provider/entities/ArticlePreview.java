@@ -5,9 +5,17 @@ public record ArticlePreview(
         String title,
         String site,
         String topic,
-        boolean hasCoverImage
+        boolean hasCoverImage,
+        long publicationTime
 ) {
     public static ArticlePreview from(Article article) {
-        return new ArticlePreview(article.id(), article.title(), article.site(), article.topic(), article.hasCoverImage());
+        return new ArticlePreview(
+                article.id(),
+                article.title(),
+                article.site(),
+                article.topic(),
+                article.hasCoverImage(),
+                article.publicationTime()
+        );
     }
 }

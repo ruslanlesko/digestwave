@@ -84,6 +84,27 @@ function handleNotFoundArticle() {
     content.appendChild(errorNode);
 }
 
+function formatDate(date) {
+    return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
+}
+
+function parsePublicationTime(stamp) {
+    var date = formatDate(new Date(stamp * 1000));
+    var currentDate = new Date();
+    var today = formatDate(currentDate);
+    currentDate.setDate(currentDate.getDate() - 1);
+    
+    var yesterday = formatDate(currentDate);
+    switch (date) {
+        case today:
+            return "Today";
+        case yesterday:
+            return "Yesterday";
+        default:
+            return date;
+    }
+}
+
 function displayArticle(article) {
     if (article == null) {
         handleNotFoundArticle();
@@ -106,10 +127,11 @@ function displayArticle(article) {
     }
 
     content.appendChild(newTitle);
+    const publicationTime = parsePublicationTime(article.publicationTime);
 
     const site = document.createElement('div');
     site.className = 'site';
-    site.innerHTML = `<a href="https://${article.site}">${article.site}</a>`;
+    site.innerHTML = `<a href="https://${article.site}">${article.site}</a><span> • ${publicationTime}</span>`;
     content.appendChild(site);
 
     article.content
