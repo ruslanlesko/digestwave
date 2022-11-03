@@ -1,98 +1,11 @@
+import { getRegion, fillTopics, setUpLocaleSelector, highlightCurrentTopic, parsePublicationTime } from "./common.js";
+
 const ARTICLES_LIST_URL = 'http://localhost:8080/v1/preview/articles';
 const ARTICLE_IMAGE_URL = 'http://localhost:8080/v1/articles/';
-const HEADERS = { 'Accept': 'application/json' }
+const HEADERS = { 'Accept': 'application/json' };
 
 var page = 1;
 var alreadyFetched = false;
-
-function getRegion() {
-    const userLocale =
-        navigator.languages && navigator.languages.length
-            ? navigator.languages[0]
-            : navigator.language;
-
-    const fromLocalStore = localStorage.getItem('locale');
-    if (fromLocalStore !== null) return fromLocalStore;
-
-    return userLocale.startsWith('ua') ? 'ua' : 'int';
-}
-
-function fillTopics() {
-    const uaTopicKeys = ['tech', 'finance', 'football'];
-    const uaTopicVals = ['Technology', 'Finance', 'Football'];
-
-    const intTopicKeys = ['tech', 'finance', 'programming'];
-    const intTopicVals = ['Technology', 'Finance', 'Programming'];
-
-    const region = getRegion();
-    var topicKeys = intTopicKeys;
-    var topicVals = intTopicVals;
-    if (region === 'ua') {
-        topicKeys = uaTopicKeys;
-        topicVals = uaTopicVals;
-    }
-
-    const parent = document.getElementById('topicsBar');
-    for (var i = 0; i < topicKeys.length; i++) {
-        const topicDiv = document.createElement('div');
-        topicDiv.className = 'topic';
-        const ref = document.createElement('a');
-        ref.setAttribute('href', "/?topic=" + topicKeys[i] + "&region=" + region);
-        ref.innerHTML = topicVals[i];
-        topicDiv.appendChild(ref);
-        parent.appendChild(topicDiv);
-    }
-}
-
-function setUpLocaleSelector() {
-    const region = getRegion();
-    const selector = document.getElementById('locale-names');
-    const options = selector.getElementsByTagName('option');
-    for (var opt = 0; opt < options.length; opt++) {
-        if (options[opt].getAttribute('value') === region) {
-            options[opt].selected = true;
-        } else {
-            options[opt].selected = false;
-        }
-    }
-
-    selector.addEventListener("change", (_) => {
-        const val = document.getElementById('locale-names').value;
-        localStorage.setItem('locale', val);
-        window.location.reload();
-    });
-}
-
-function highlightCurrentTopic(topic) {
-    const links = document.getElementsByTagName('a');
-    for (var a in links) {
-        if (links[a].getAttribute('href').startsWith('/?topic=' + topic)) {
-            links[a].className = 'currentSelection';
-            break;
-        }
-    }
-}
-
-function formatDate(date) {
-    return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
-}
-
-function parsePublicationTime(stamp) {
-    var date = formatDate(new Date(stamp * 1000));
-    var currentDate = new Date();
-    var today = formatDate(currentDate);
-    currentDate.setDate(currentDate.getDate() - 1);
-    
-    var yesterday = formatDate(currentDate);
-    switch (date) {
-        case today:
-            return "Today";
-        case yesterday:
-            return "Yesterday";
-        default:
-            return date;
-    }
-}
 
 function displayArticlePreview(articlePreview) {
     const parent = document.getElementById('articlesList');
@@ -138,8 +51,8 @@ function handleFailureToFetchArticlesList(error) {
     parent.appendChild(errorNode);
 }
 
-function fetchArticlesList(topic, page) {
-    const region = getRegion();
+async function fetchArticlesList(topic, page) {
+    const region = await getRegion();
     const url = topic === null || topic === "" ? ARTICLES_LIST_URL + "?page=" + page + "&size=20" + "&region=" + region
         : ARTICLES_LIST_URL + "?topic=" + topic + "&region=" + region + "&page=" + page + "&size=20";
     fetch(url, { 'headers': HEADERS })
