@@ -1,4 +1,4 @@
-import { fillTopics, setUpLocaleSelector, highlightCurrentTopic, parsePublicationTime } from "./common.js";
+import { fillTopics, setUpLocaleSelector, highlightCurrentTopic, parsePublicationTime, handleTheme } from "./common.js";
 
 const ARTICLE_URL = 'http://localhost:8080/v1/articles/';
 const ARTICLE_IMAGE_URL = 'http://localhost:8080/v1/articles/';
@@ -103,6 +103,8 @@ function fetchArticle(id) {
 
 fillTopics();
 setUpLocaleSelector();
+
+handleTheme();
 
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");

@@ -1,3 +1,8 @@
+body {
+    background-color: var(--theme, white);
+    color: var(--content, black);
+}
+
 #articlesList {
     margin: 0.2em 0.2em 0.2em 0.2em;
     clear: both;
@@ -47,7 +52,7 @@
 }
 
 a {
-    color: black;
+    color: var(--content, black);
     font-weight: bolder;
 }
 
@@ -56,7 +61,7 @@ a:link {
 }
 
 a:hover {
-    color: purple;
+    color: var(--accent, purple);
     text-decoration: underline;
 }
 
@@ -78,11 +83,11 @@ a:hover {
 }
 
 #originalArticleLink a {
-    color: purple;
+    color: var(--accent, purple);
 }
 
 a.currentSelection {
-    color: purple;
+    color: var(--accent, purple);
     text-decoration: underline;
 }
 
@@ -107,6 +112,26 @@ h1 {
     margin-top: -0.3em
 }
 
+button {
+    padding: 0;
+    font: inherit;
+    background: 0 0;
+    border: 0;
+    cursor: pointer;
+}
+
+svg {
+    float: left;
+    margin-left: 1em;
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke-width: 2;
+    stroke: currentColor;
+    stroke-linecap: round;
+    color: var(--content, black);
+}
+
 h2 {
     font-size: 1.6em;
     line-height: 1.2em;
@@ -123,10 +148,10 @@ span {
 }
 
 code {
-    background: #f4f4f4;
-    border: 1px solid #ddd;
-    border-left: 3px solid purple;
-    color: #666;
+    background: var(--codeback, #f4f4f4);
+    border: 1px solid var(--codeborder, #ddd);
+    border-left: 3px solid var(--accent, purple);
+    color: var(--codecontent, #666);
     page-break-inside: avoid;
     font-family: monospace;
     font-size: 15px;
@@ -144,12 +169,27 @@ code {
     text-align: center;
 }
 
+.error img {
+    --webkit-filter: var(--invert, none);
+    filter: var(--invert, none);
+}
+
 #content .error p {
     text-align: center;
 }
 
 #articlesList .error p {
     font-size: 1.2em;
+}
+
+.dark {
+    --theme: rgb(29, 30, 32);
+    --content: #f4f4f4;
+    --accent: rgb(212, 115, 209);
+    --invert: invert();
+    --codeback: rgb(91, 91, 91);
+    --codeborder: grey;
+    --codecontent: #f2f2f2;
 }
 
 .menu-icon {
@@ -163,7 +203,7 @@ code {
 }
 
 .menu-icon .navicon {
-    background: black;
+    background: var(--content, black);
     display: block;
     height: 0.18em;
     position: relative;
@@ -173,7 +213,7 @@ code {
 
 .menu-icon .navicon:before,
 .menu-icon .navicon:after {
-    background: black;
+    background: var(--content, black);
     content: '';
     display: block;
     height: 100%;

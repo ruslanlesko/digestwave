@@ -1,4 +1,4 @@
-import { getRegion, fillTopics, setUpLocaleSelector, highlightCurrentTopic, parsePublicationTime } from "./common.js";
+import { getRegion, fillTopics, setUpLocaleSelector, highlightCurrentTopic, parsePublicationTime, handleTheme } from "./common.js";
 
 const ARTICLES_LIST_URL = 'http://localhost:8080/v1/preview/articles';
 const ARTICLE_IMAGE_URL = 'http://localhost:8080/v1/articles/';
@@ -100,6 +100,8 @@ if (topic != null && topic != "") {
 } else {
     fetchArticlesList("", 1);
 }
+
+handleTheme();
 
 window.addEventListener("scroll", () => {
     if (alreadyFetched) return;
