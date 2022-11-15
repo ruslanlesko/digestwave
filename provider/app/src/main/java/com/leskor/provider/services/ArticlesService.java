@@ -1,15 +1,17 @@
 package com.leskor.provider.services;
 
-import com.leskor.provider.entities.Article;
-import com.leskor.provider.entities.ArticlePreview;
-import com.leskor.provider.entities.Post;
-import com.leskor.provider.repositories.PostsRepository;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import com.leskor.provider.entities.Article;
+import com.leskor.provider.entities.ArticlePreview;
+import com.leskor.provider.entities.Post;
+import com.leskor.provider.repositories.PostsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,24 +26,23 @@ public class ArticlesService {
     }
 
     public List<Article> fetchArticles(String topic, String region, int page, int size) {
-        return extractPosts(topic.toUpperCase(), region.toUpperCase()).stream()
+        return extractPosts(topic.toUpperCase(), region.toUpperCase(), page, size).stream()
                 .map(p -> Article.from(p, sitesService::siteForCode))
-                .skip((long) (page - 1) * size)
-                .limit(size)
                 .toList();
     }
 
-    private List<Post> extractPosts(String topic, String region) {
+    private List<Post> extractPosts(String topic, String region, int page, int size) {
+        var pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publicationTime"));
         if ((topic == null || topic.isBlank()) && (region == null || region.isBlank())) {
-            return postsRepository.findAllByOrderByPublicationTimeDesc();
+            return postsRepository.findAll(pageRequest).toList();
         }
         if ((topic == null || topic.isBlank())) {
-            return postsRepository.findByRegionOrderByPublicationTimeDesc(region);
+            return postsRepository.findByRegion(region, pageRequest);
         }
         if ((region == null || region.isBlank())) {
-            return postsRepository.findByTopicOrderByPublicationTimeDesc(topic);
+            return postsRepository.findByTopic(topic, pageRequest);
         }
-        return postsRepository.findByTopicAndRegionOrderByPublicationTimeDesc(topic, region);
+        return postsRepository.findByTopicAndRegion(topic, region, pageRequest);
     }
 
     public List<ArticlePreview> fetchArticlePreviews(String topic, String region, int page, int size) {
