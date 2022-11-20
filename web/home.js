@@ -1,4 +1,5 @@
 import { getRegion, fillTopics, setUpLocaleSelector, highlightCurrentTopic, parsePublicationTime, handleTheme } from "./common.js";
+import { translate } from "./language.js";
 
 const ARTICLES_LIST_URL = 'http://localhost:8080/v1/preview/articles';
 const ARTICLE_IMAGE_URL = 'http://localhost:8080/v1/articles/';
@@ -29,7 +30,7 @@ function displayArticlePreview(articlePreview) {
     const publicationTime = parsePublicationTime(articlePreview.publicationTime);
     const site = document.createElement('div');
     site.className = 'site';
-    site.innerHTML = `<a href="https://${articlePreview.site}">${articlePreview.site}</a><span> • ${publicationTime}</span>`;
+    site.innerHTML = `<a href="https://${articlePreview.site}">${articlePreview.site}</a><span class="translatable"> • ${publicationTime}</span>`;
     newDiv.appendChild(site);
 }
 
@@ -47,6 +48,7 @@ function handleFailureToFetchArticlesList(error) {
     errorNode.appendChild(errorImage);
     const errorText = document.createElement('p');
     errorText.innerText = 'Failed to load data from server, please try again later.';
+    errorText.className = 'translatable';
     errorNode.appendChild(errorText);
     parent.appendChild(errorNode);
 }
@@ -67,13 +69,17 @@ async function fetchArticlesList(topic, page) {
             if (articles.length > 0) {
                 articles.forEach(displayArticlePreview);
                 alreadyFetched = false;
+                translate(region);
             } else {
                 if (document.getElementById('articlesList').childElementCount === 0) {
                     throw ('Server returned empty list of articles');
                 }
             }
         })
-        .catch(e => handleFailureToFetchArticlesList(e));
+        .catch(e => {
+            handleFailureToFetchArticlesList(e);
+            translate(region);
+        });
 }
 
 // Determine if an element is in the visible viewport: https://gist.github.com/jjmu15/8646226

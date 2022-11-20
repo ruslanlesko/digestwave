@@ -1,4 +1,5 @@
 import { fillTopics, setUpLocaleSelector, highlightCurrentTopic, parsePublicationTime, handleTheme } from "./common.js";
+import { translate } from "./language.js";
 
 const ARTICLE_URL = 'http://localhost:8080/v1/articles/';
 const ARTICLE_IMAGE_URL = 'http://localhost:8080/v1/articles/';
@@ -14,6 +15,7 @@ function handleNotFoundArticle() {
     errorNode.appendChild(errorImage);
     const errorText = document.createElement('p');
     errorText.innerText = 'Artcile is not found, please search for other one.';
+    errorText.className = 'translatable';
     errorNode.appendChild(errorText);
     content.appendChild(errorNode);
 }
@@ -21,6 +23,7 @@ function handleNotFoundArticle() {
 function displayArticle(article) {
     if (article == null) {
         handleNotFoundArticle();
+        translate(localStorage.getItem('locale'));
         return;
     }
     document.getElementsByTagName('title')[0].innerHTML = article.title;
@@ -44,7 +47,7 @@ function displayArticle(article) {
 
     const site = document.createElement('div');
     site.className = 'site';
-    site.innerHTML = `<a href="https://${article.site}">${article.site}</a><span> • ${publicationTime}</span>`;
+    site.innerHTML = `<a href="https://${article.site}">${article.site}</a><span class="translatable"> • ${publicationTime}</span>`;
     content.appendChild(site);
 
     article.content
@@ -67,6 +70,7 @@ function displayArticle(article) {
     link.setAttribute('href', article.url);
 
     highlightCurrentTopic(article.topic.toLowerCase());
+    translate(localStorage.getItem('locale'));
 }
 
 function handleFailureToFetchArticle(error) {
@@ -80,6 +84,7 @@ function handleFailureToFetchArticle(error) {
     errorNode.appendChild(errorImage);
     const errorText = document.createElement('p');
     errorText.innerText = 'Failed to load article from server, please try again later.';
+    errorText.className = 'translatable';
     errorNode.appendChild(errorText);
     content.appendChild(errorNode);
 }
@@ -98,7 +103,10 @@ function fetchArticle(id) {
             }
         })
         .then(displayArticle)
-        .catch(e => handleFailureToFetchArticle(e));
+        .catch(e => {
+            handleFailureToFetchArticle(e);
+            translate(localStorage.getItem('locale'));
+        });
 }
 
 fillTopics();

@@ -1,3 +1,5 @@
+import { translate } from "./language.js";
+
 export async function getRegion() {
     const fromLocalStore = localStorage.getItem('locale');
     if (fromLocalStore !== null) return fromLocalStore;
@@ -33,10 +35,12 @@ export async function fillTopics() {
         topicDiv.className = 'topic';
         const ref = document.createElement('a');
         ref.setAttribute('href', "/?topic=" + topicKeys[i] + "&region=" + region);
+        ref.className = 'translatable';
         ref.innerHTML = topicVals[i];
         topicDiv.appendChild(ref);
         parent.appendChild(topicDiv);
     }
+    translate(region);
 }
 
 export async function setUpLocaleSelector() {
