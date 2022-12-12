@@ -32,7 +32,7 @@ public class ArticlesService {
     }
 
     private List<Post> extractPosts(String topic, String region, int page, int size) {
-        var pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publicationTime"));
+        var pageRequest = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "publicationTime"));
         if ((topic == null || topic.isBlank()) && (region == null || region.isBlank())) {
             return postsRepository.findAll(pageRequest).toList();
         }
