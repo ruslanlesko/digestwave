@@ -19,8 +19,9 @@ public class LigaNetPrettifier implements Prettifier {
     @Override
     public List<Paragraph> parseParagraphs(Post post) {
         List<Paragraph> result = Arrays.stream(post.content().split("\n"))
-                .filter(p -> !p.contains("Підписуйтесь на LIGA")
+                .filter(p -> !p.contains("Підписуйтесь на")
                         && !p.contains("Читайте також:")
+                        && !p.contains("Читайте нас")
                         && !p.contains("Приєднуйтесь до нас у Facebook")
                 )
                 .map(p -> new Paragraph(p, ""))

@@ -103,14 +103,4 @@ public class Tribuna extends Site {
 
         return Post.from(siteCode, topic, region, time, title, textContent, wrapper.html(), uri, imageURL.orElse(""));
     }
-
-    private Optional<String> extractImageURLFromDocument(Document document) {
-        return document.getElementsByTag("meta")
-                .stream()
-                .filter(e -> e.hasAttr("property") && e.hasAttr("content")
-                        && "og:image".equals(e.attr("property"))
-                )
-                .map(e -> e.attr("content"))
-                .findFirst();
-    }
 }

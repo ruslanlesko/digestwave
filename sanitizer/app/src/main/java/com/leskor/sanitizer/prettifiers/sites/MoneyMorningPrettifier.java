@@ -13,7 +13,10 @@ public class MoneyMorningPrettifier implements Prettifier {
 
     public MoneyMorningPrettifier() {
         this.articlePrefixTrimmingPrettifier =
-                new ArticlePrefixTrimmingPrettifier(Set.of("Follow Money", "Today's Momentum"), Strategy.STARTS_WITH);
+                new ArticlePrefixTrimmingPrettifier(
+                        Set.of("Follow Money", "Today's Momentum", "Get the latest trading and investing recommendations"),
+                        Strategy.STARTS_WITH
+                );
     }
 
     @Override

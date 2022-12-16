@@ -16,6 +16,11 @@ public class SDTimesPrettifier implements Prettifier {
     }
     @Override
     public List<Paragraph> parseParagraphs(Post post) {
-        return articlePrefixTrimmingPrettifier.parseParagraphs(post);
+        return articlePrefixTrimmingPrettifier.parseParagraphs(post).stream()
+                .map(p -> new Paragraph(p.content().trim(), p.style()))
+                .filter(p -> !p.content().startsWith("NewsWire")
+                        && !"-".equals(p.content())
+                        && !p.content().startsWith("To learn more, visit the website"))
+                .toList();
     }
 }

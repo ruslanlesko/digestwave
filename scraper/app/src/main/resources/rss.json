@@ -24,6 +24,7 @@
     "code": "AIN",
     "topic": "TECH",
     "region": "UA",
+    "isImageExtractedFromMeta": true,
     "excludedCategories": [
       "пиар",
       "Спецпроекты"
@@ -34,7 +35,8 @@
     "code": "FIN",
     "topic": "FINANCE",
     "region": "UA",
-    "titleSuffixToTrim": "— Finance.ua"
+    "titleSuffixToTrim": "— Finance.ua",
+    "isImageExtractedFromMeta": true
   },
   {
     "uri": "https://minfin.com.ua/ua/data/rss/news.xml",
@@ -177,7 +179,8 @@
     "code": "CNT",
     "topic": "TECH",
     "region": "INT",
-    "titleSuffixToTrim": " - CNET"
+    "titleSuffixToTrim": " - CNET",
+    "isImageExtractedFromMeta": true
   },
   {
     "uri": "https://techcrunch.com/feed/",

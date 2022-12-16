@@ -184,7 +184,7 @@ public abstract class Site {
                 : CompletableFuture.completedFuture(Optional.empty());
     }
 
-    private Optional<String> extractImageURLFromDocument(Document document) {
+    protected Optional<String> extractImageURLFromDocument(Document document) {
         return document.getElementsByTag("meta")
                 .stream()
                 .filter(e -> e.hasAttr("property") && e.hasAttr("content")

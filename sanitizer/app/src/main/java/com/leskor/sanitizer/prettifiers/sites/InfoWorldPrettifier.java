@@ -28,7 +28,10 @@ public class InfoWorldPrettifier implements Prettifier {
         Element nextCodeElement = null;
         if (nextSibling != null && !"p".equals(nextSibling.tagName())) {
             nextCodeElement = nextSibling.getElementsByTag("pre").first();
+            if (nextCodeElement != null && !nextCodeElement.getElementsByTag("code").isEmpty()) {
+                nextCodeElement = nextCodeElement.getElementsByTag("code").first();
+            }
         }
-        return nextCodeElement == null ? Stream.of() : Stream.of(p, nextCodeElement);
+        return nextCodeElement == null ? Stream.of(p) : Stream.of(p, nextCodeElement);
     }
 }

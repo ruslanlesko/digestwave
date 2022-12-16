@@ -2,6 +2,7 @@ package com.leskor.sanitizer.prettifiers.sites;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 import com.leskor.sanitizer.entities.Paragraph;
 import com.leskor.sanitizer.entities.Post;
@@ -17,11 +18,18 @@ public class TechRepublicPrettifier implements Prettifier {
 
     public TechRepublicPrettifier() {
         this.articlePrefixTrimmingPrettifier =
-                new ArticlePrefixTrimmingPrettifier("Subscribe to", Strategy.STARTS_WITH);
+                new ArticlePrefixTrimmingPrettifier(
+                        Set.of("Subscribe to", "Prices and availability are subject to change"),
+                        Strategy.STARTS_WITH
+                );
     }
 
     @Override
     public List<Paragraph> parseParagraphs(Post post) {
+        if (post.title().startsWith("Job description:") || post.title().startsWith("Hiring kit:")) {
+            return List.of();
+        }
+
         List<Paragraph> result = Jsoup.parse(post.html(), Parser.htmlParser()).getElementsByTag("p")
                 .stream()
                 .flatMap(this::extractParagraphWithCodeElements)
@@ -30,6 +38,10 @@ public class TechRepublicPrettifier implements Prettifier {
                         && !p.content().startsWith("SEE:")
                         && !p.content().startsWith("Jump to:"))
                 .toList();
+
+        if (!result.isEmpty() && result.get(0).content().startsWith("on")) {
+            result = result.stream().skip(1).toList();
+        }
 
         return articlePrefixTrimmingPrettifier.trimParagraphs(result);
     }

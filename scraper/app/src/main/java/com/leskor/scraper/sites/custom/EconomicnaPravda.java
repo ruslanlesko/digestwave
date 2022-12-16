@@ -123,7 +123,7 @@ public class EconomicnaPravda extends Site {
     private Post createPost(Document document, String title, URI postURI, ZonedDateTime publicationTime) {
         String html = extractHtml(document);
         String text = extractTextContent(document);
-        String imageURI = extractImageUri(document);
+        String imageURI = extractImageURLFromDocument(document).orElse("");
         return Post.from(siteCode, topic, region, publicationTime, title, text, html, postURI, imageURI);
     }
 

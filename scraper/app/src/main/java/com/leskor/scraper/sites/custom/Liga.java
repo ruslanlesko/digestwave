@@ -100,10 +100,10 @@ public class Liga extends Site {
     protected CompletableFuture<Optional<String>> extractImageURI(Post post) {
         return post == null ? CompletableFuture.completedFuture(Optional.empty())
                 : extractArticlePage(URI.create(post.url()))
-                .thenApply(document -> document == null ? Optional.empty() : extractImageURLFromDocument(document));
+                .thenApply(document -> document == null ? Optional.empty() : extractImageURL(document));
     }
 
-    private Optional<String> extractImageURLFromDocument(Document document) {
+    private Optional<String> extractImageURL(Document document) {
         return document.getElementsByTag("img")
                 .stream()
                 .filter(e -> e.hasAttr("src")
