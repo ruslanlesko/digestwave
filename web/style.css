@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'PT Sans';
+    src: url('/assets/PTSans-Regular.ttf');
+}
+
 body {
     background-color: var(--theme, white);
     color: var(--content, black);
@@ -30,7 +35,7 @@ body {
     min-width: 40em;
     -ms-transform: translate(-50%, 0%);
     transform: translate(-50%, 0%);
-    font-family: 'Manrope', sans-serif;
+    font-family: 'PT Sans', sans-serif;
 }
 
 #topicsBar {
@@ -84,6 +89,7 @@ a:hover {
 
 #originalArticleLink a {
     color: var(--accent, purple);
+    text-decoration: underline;
 }
 
 a.currentSelection {
@@ -95,6 +101,7 @@ a.currentSelection {
     float: left;
     margin-right: 1em;
     width: 120px;
+    max-height: 120px;
 }
 
 img {
@@ -255,6 +262,32 @@ code {
     top: 0;
 }
 
+#corner-footer {
+    position: fixed;
+    bottom: 1em;
+    right: 2em;
+    color: grey;
+    font-family: 'PT Sans', sans-serif;
+    font-size: small;
+}
+
+#corner-footer a {
+    color: grey;
+    text-decoration: underline;
+}
+
+#footer {
+    text-align: center;
+    margin-bottom: 2em;
+    color: grey;
+    font-size: small;
+}
+
+#footer a {
+    color: grey;
+    text-decoration: underline;
+}
+
 @media only screen and (max-width: 768px) {
     #center {
         margin: 0em 1em 0em 1em;
@@ -292,6 +325,14 @@ code {
     .coverImage {
         float: none;
         width: auto;
+    }
+
+    svg {
+        margin-left: 0.6em;
+    }
+
+    #corner-footer {
+        display: none;
     }
 }
 

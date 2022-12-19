@@ -8,9 +8,9 @@ const ukrainian = {
     "Failed to load data from server, please try again later.": "Невдалося завантажити дані з серверу. Будь-ласка, спробуйте пізніше.",
     "Artcile is not found, please search for other one.": "Публікація не знайдена, спробуйте іншу.",
     "Failed to load article from server, please try again later.": "Невдалося завантажити публікацію з сервера. Будь-ласка, спробуйте пізніше.",
-    "Go to the original article": "Перейти на оригінальну сторінку",
-    " • Today": " • Сьогодні",
-    " • Yesterday": " • Вчора"
+    "Original article": "Оригінальна сторінка",
+    " • today": " • cьогодні",
+    " • yesterday": " • вчора"
 };
 
 function scanAndTranslate(languageMap) {

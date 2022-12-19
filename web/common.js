@@ -86,9 +86,9 @@ export function parsePublicationTime(stamp) {
     var yesterday = formatDate(currentDate);
     switch (date) {
         case today:
-            return "Today";
+            return "today";
         case yesterday:
-            return "Yesterday";
+            return "yesterday";
         default:
             return date;
     }

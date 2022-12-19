@@ -23,9 +23,15 @@ function displayArticlePreview(articlePreview) {
     newImg.setAttribute("src", imgSrc);
     newImg.setAttribute('alt', 'Article cover image');
     newImg.setAttribute('onerror', 'this.onerror=null;this.src="' + fallbackImg + '"');
-    newDiv.appendChild(newImg);
+    const imgLink = document.createElement('a');
+    imgLink.setAttribute('href', `/article.html?id=${articlePreview.id}`);
+    imgLink.appendChild(newImg);
+    newDiv.appendChild(imgLink);
 
-    newDiv.innerHTML += `<a href="/article.html?id=${articlePreview.id}">${articlePreview.title}</a>`;
+    var title = articlePreview.title.length > 120 ? 
+        articlePreview.title.substring(0, 110) + "..." : articlePreview.title;
+
+    newDiv.innerHTML += `<a href="/article.html?id=${articlePreview.id}">${title}</a>`;
 
     const publicationTime = parsePublicationTime(articlePreview.publicationTime);
     const site = document.createElement('div');
