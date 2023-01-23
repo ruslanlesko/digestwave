@@ -40,6 +40,7 @@ public class App {
             "http://localhost:8081" : getenv("SNT_SCHEMA_REGISTRY_ADDRESS");
 
     private final PrettifierFactory prettifierFactory = new PrettifierFactory();
+    private final GlobalFilter globalFilter = new GlobalFilter();
 
     private Properties prepareStreamProperties() {
         Properties props = new Properties();
@@ -69,12 +70,12 @@ public class App {
         stream.map((key, value) -> {
             List<Paragraph> paragraphs = parseParagraphsFromPost(value)
                     .stream()
-                    .filter(paragraph -> paragraph != null && paragraph.content().length() > 0)
+                    .filter(globalFilter::filterParagraph)
                     .toList();
             SanitizedPost sanitizedPost = SanitizedPost.from(value, paragraphs);
             return new KeyValue<>(key, sanitizedPost);
         })
-                .filter((key, post) -> post.paragraphs().size() > 2)
+                .filter((key, post) -> globalFilter.validatePost(post))
                 .to(OUTPUT_TOPIC, Produced.with(Serdes.String(), sanitizedPostSerde));
 
         final KafkaStreams streams = new KafkaStreams(builder.build(), props);
