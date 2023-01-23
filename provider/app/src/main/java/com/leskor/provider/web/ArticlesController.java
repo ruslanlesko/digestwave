@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@CrossOrigin(origins = "http://localhost:8090", maxAge = 3600)
+@CrossOrigin(origins = {"http://localhost:8090", "https://digestwave.com"}, maxAge = 3600)
 @RestController
 public class ArticlesController {
     private final ArticlesService articlesService;
