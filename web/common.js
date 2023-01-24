@@ -1,5 +1,9 @@
 import { translate } from "./language.js";
 
+export function getBaseURL() {
+    return "https://api.leskor.com/digestwave";
+}
+
 export async function getRegion() {
     const fromLocalStore = localStorage.getItem('locale');
     if (fromLocalStore !== null) return fromLocalStore;

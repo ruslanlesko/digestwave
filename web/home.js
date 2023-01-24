@@ -1,8 +1,8 @@
-import { getRegion, fillTopics, setUpLocaleSelector, highlightCurrentTopic, parsePublicationTime, handleTheme } from "./common.js";
+import { getRegion, fillTopics, setUpLocaleSelector, highlightCurrentTopic, parsePublicationTime, handleTheme, getBaseURL } from "./common.js";
 import { translate } from "./language.js";
 
-const ARTICLES_LIST_URL = 'http://localhost:8080/v1/preview/articles';
-const ARTICLE_IMAGE_URL = 'http://localhost:8080/v1/articles/';
+const ARTICLES_LIST_URL = getBaseURL() + '/v1/preview/articles';
+const ARTICLE_IMAGE_URL = getBaseURL() +  '/v1/articles/';
 const HEADERS = { 'Accept': 'application/json' };
 
 var page = 1;
