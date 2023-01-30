@@ -137,6 +137,7 @@ svg {
     stroke: currentColor;
     stroke-linecap: round;
     color: var(--content, black);
+    margin-top: 0.2em;
 }
 
 h2 {
@@ -329,6 +330,7 @@ code {
 
     svg {
         margin-left: 0.6em;
+        margin-top: 0.2em;
     }
 
     #corner-footer {
