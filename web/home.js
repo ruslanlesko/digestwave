@@ -61,7 +61,7 @@ function handleFailureToFetchArticlesList(error) {
 
 async function fetchArticlesList(topic, page) {
     const region = await getRegion();
-    const url = topic === null || topic === "" ? ARTICLES_LIST_URL + "?page=" + page + "&size=20" + "&region=" + region
+    const url = topic === null || topic === "" || !isTopicCompatibleWithRegion(topic, region) ? ARTICLES_LIST_URL + "?page=" + page + "&size=20" + "&region=" + region
         : ARTICLES_LIST_URL + "?topic=" + topic + "&region=" + region + "&page=" + page + "&size=20";
     fetch(url, { 'headers': HEADERS })
         .then(resp => {
@@ -86,6 +86,13 @@ async function fetchArticlesList(topic, page) {
             handleFailureToFetchArticlesList(e);
             translate(region);
         });
+}
+
+function isTopicCompatibleWithRegion(topic, region) {
+    if (region === 'ua') {
+        return topic !== 'programming';
+    }
+    return topic !== 'football';
 }
 
 // Determine if an element is in the visible viewport: https://gist.github.com/jjmu15/8646226
