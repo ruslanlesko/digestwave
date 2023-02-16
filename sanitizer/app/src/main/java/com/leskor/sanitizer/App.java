@@ -41,6 +41,7 @@ public class App {
 
     private final PrettifierFactory prettifierFactory = new PrettifierFactory();
     private final GlobalFilter globalFilter = new GlobalFilter();
+    private final DuplicationFilter duplicationFilter = new DuplicationFilter();
 
     private Properties prepareStreamProperties() {
         Properties props = new Properties();
@@ -76,6 +77,7 @@ public class App {
             return new KeyValue<>(key, sanitizedPost);
         })
                 .filter((key, post) -> globalFilter.validatePost(post))
+                .filter((key, post) -> duplicationFilter.filter(post))
                 .to(OUTPUT_TOPIC, Produced.with(Serdes.String(), sanitizedPostSerde));
 
         final KafkaStreams streams = new KafkaStreams(builder.build(), props);
