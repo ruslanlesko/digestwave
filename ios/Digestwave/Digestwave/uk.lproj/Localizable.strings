@@ -1,0 +1,18 @@
+/* 
+  Localizable.strings
+  Digestwave
+
+  Created by Ruslan Lesko on 04.03.2023.
+  
+*/
+"topics" = "Категорії";
+"topic" = "Категорія";
+"news" = "Новини";
+"edition" = "Редакція";
+"all" = "Все";
+"technology" = "Технології";
+"finance" = "Фінанси";
+"football" = "Футбол";
+"programming" = "Програмування";
+"international" = "Міжнародна";
+"ukrainian" = "Українська";
