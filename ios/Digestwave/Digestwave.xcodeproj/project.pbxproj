@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		440DD60A29BD21C8003A7D6E /* Edition.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 440DD60829BD21C8003A7D6E /* Edition.xcdatamodeld */; };
+		440DD60C29BD22CA003A7D6E /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440DD60B29BD22CA003A7D6E /* Persistence.swift */; };
 		449822F829B1487D003C17CE /* DigestwaveApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449822F729B1487D003C17CE /* DigestwaveApp.swift */; };
 		449822FA29B1487D003C17CE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449822F929B1487D003C17CE /* ContentView.swift */; };
 		449822FC29B1487E003C17CE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 449822FB29B1487E003C17CE /* Assets.xcassets */; };
@@ -17,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		440DD60929BD21C8003A7D6E /* Edition.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Edition.xcdatamodel; sourceTree = "<group>"; };
+		440DD60B29BD22CA003A7D6E /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		449822F429B1487D003C17CE /* Digestwave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Digestwave.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		449822F729B1487D003C17CE /* DigestwaveApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DigestwaveApp.swift; sourceTree = "<group>"; };
 		449822F929B1487D003C17CE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -67,6 +71,8 @@
 				4498230A29B22C81003C17CE /* ArticleView.swift */,
 				4498230C29B29877003C17CE /* Model.swift */,
 				4498231229B3738A003C17CE /* Localizable.strings */,
+				440DD60829BD21C8003A7D6E /* Edition.xcdatamodeld */,
+				440DD60B29BD22CA003A7D6E /* Persistence.swift */,
 			);
 			path = Digestwave;
 			sourceTree = "<group>";
@@ -153,6 +159,8 @@
 				449822FA29B1487D003C17CE /* ContentView.swift in Sources */,
 				449822F829B1487D003C17CE /* DigestwaveApp.swift in Sources */,
 				4498230B29B22C81003C17CE /* ArticleView.swift in Sources */,
+				440DD60C29BD22CA003A7D6E /* Persistence.swift in Sources */,
+				440DD60A29BD21C8003A7D6E /* Edition.xcdatamodeld in Sources */,
 				4498230D29B29877003C17CE /* Model.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -385,6 +393,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		440DD60829BD21C8003A7D6E /* Edition.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				440DD60929BD21C8003A7D6E /* Edition.xcdatamodel */,
+			);
+			currentVersion = 440DD60929BD21C8003A7D6E /* Edition.xcdatamodel */;
+			path = Edition.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 449822EC29B1487D003C17CE /* Project object */;
 }

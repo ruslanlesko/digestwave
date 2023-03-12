@@ -5,7 +5,7 @@
 //  Created by Ruslan Lesko on 03.03.2023.
 //
 
-enum Edition: String, CaseIterable, Identifiable {
+enum EditionOpt: String, CaseIterable, Identifiable {
     case international, ukrainian
     var id: Self { self }
 }
