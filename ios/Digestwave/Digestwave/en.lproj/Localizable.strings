@@ -10,9 +10,12 @@
 "news" = "News";
 "edition" = "Edition";
 "all" = "All";
-"technology" = "Technology";
+"tech" = "Technology";
 "finance" = "Finance";
 "football" = "Football";
 "programming" = "Programming";
 "international" = "International";
 "ukrainian" = "Ukrainian";
+"today" = "today";
+"yesterday" = "yesterday";
+"failure_loading" = "Cannot load news from server. Please try again later.";

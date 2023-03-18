@@ -16,6 +16,7 @@
 		4498230B29B22C81003C17CE /* ArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4498230A29B22C81003C17CE /* ArticleView.swift */; };
 		4498230D29B29877003C17CE /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4498230C29B29877003C17CE /* Model.swift */; };
 		4498231029B3738A003C17CE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4498231229B3738A003C17CE /* Localizable.strings */; };
+		44F5168329BE41E8009728D0 /* api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F5168229BE41E8009728D0 /* api.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		4498230C29B29877003C17CE /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		4498231129B3738A003C17CE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4498231329B3738F003C17CE /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
+		44F5168229BE41E8009728D0 /* api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = api.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +75,7 @@
 				4498231229B3738A003C17CE /* Localizable.strings */,
 				440DD60829BD21C8003A7D6E /* Edition.xcdatamodeld */,
 				440DD60B29BD22CA003A7D6E /* Persistence.swift */,
+				44F5168229BE41E8009728D0 /* api.swift */,
 			);
 			path = Digestwave;
 			sourceTree = "<group>";
@@ -156,6 +159,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				44F5168329BE41E8009728D0 /* api.swift in Sources */,
 				449822FA29B1487D003C17CE /* ContentView.swift in Sources */,
 				449822F829B1487D003C17CE /* DigestwaveApp.swift in Sources */,
 				4498230B29B22C81003C17CE /* ArticleView.swift in Sources */,

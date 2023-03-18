@@ -9,8 +9,3 @@ enum EditionOpt: String, CaseIterable, Identifiable {
     case international, ukrainian
     var id: Self { self }
 }
-
-struct Article: Hashable {
-    var title: String
-    var site: String
-}
