@@ -55,6 +55,14 @@ extension DigestwaveAPI {
         return agent.run(request)
             .eraseToAnyPublisher()
     }
+    
+    static func article(id: String) -> AnyPublisher<Agent.Response<Article>, Error> {
+        var request = URLRequest(url: URL(string: base.absoluteString + "/articles/\(id)")!)
+        request.httpMethod = "GET"
+        
+        return agent.run(request)
+            .eraseToAnyPublisher()
+    }
 }
 
 struct ArticlePreview: Codable, Hashable, Identifiable {
@@ -72,5 +80,27 @@ struct ArticlePreview: Codable, Hashable, Identifiable {
         hasher.combine(topic)
         hasher.combine(hasCoverImage)
         hasher.combine(publicationTime)
+    }
+}
+
+struct Article: Codable, Hashable, Identifiable {
+    var id: String
+    var title: String
+    var content: [String]
+    var styles: [String: String]
+    var site: String
+    var topic: String
+    var hasCoverImage: Bool
+    var publicationTime: Int64
+    var url: String
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(title)
+        hasher.combine(site)
+        hasher.combine(topic)
+        hasher.combine(hasCoverImage)
+        hasher.combine(publicationTime)
+        hasher.combine(url)
     }
 }

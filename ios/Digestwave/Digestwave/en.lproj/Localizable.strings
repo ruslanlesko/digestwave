@@ -19,3 +19,4 @@
 "today" = "today";
 "yesterday" = "yesterday";
 "failure_loading" = "Cannot load news from server. Please try again later.";
+"to_original" = "Original Article";

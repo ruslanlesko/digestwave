@@ -13,8 +13,14 @@ import Foundation
 let intTopics = ["all", "tech", "finance", "programming"]
 let uaTopics = ["all", "tech", "finance", "football"]
 
+enum EditionOpt: String, CaseIterable, Identifiable {
+    case international, ukrainian
+    var id: Self { self }
+}
+
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.colorScheme) var colorScheme
     
     @State private var cancellable: AnyCancellable?
     
@@ -29,6 +35,7 @@ struct ContentView: View {
     @State private var loading = false
     @State private var page = 1
     @State private var errorLoading = false
+    @State private var article: Article? = nil
     
     #if os(iOS)
     @State private var columnVisibility =
@@ -134,6 +141,11 @@ struct ContentView: View {
             .refreshable {
                 doRefresh()
             }
+            .onChange(of: selectedArticle, perform: { value in
+                if value != nil {
+                    DispatchQueue.main.async { fetchArticle(id: value!.id) }
+                }
+            })
             #if os(macOS)
             .navigationSplitViewColumnWidth(min: 340, ideal: 400, max: 450)
             .toolbar {
@@ -149,8 +161,92 @@ struct ContentView: View {
             #endif
             .navigationTitle((topic == nil || topic == "all" ? Text("news") : Text(LocalizedStringKey(topic!))))
         } detail: {
-            ArticleView()
+            if selectedArticle == nil {
+                Image(systemName: "newspaper")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .foregroundColor(.secondary)
+                    .frame(width: 128, height: 128)
+            } else {
+                ScrollView {
+                    #if os(macOS)
+                    Text(selectedArticle!.site)
+                        .fontWeight(.light)
+                        .foregroundColor(.secondary)
+                        .padding([.vertical], 8)
+                    #endif
+                    HStack {
+                        Text(selectedArticle!.title)
+                            .font(.title)
+                            #if os(iOS)
+                            .navigationTitle(selectedArticle!.site)
+                            .navigationBarTitleDisplayMode(.inline)
+                            #endif
+                        Spacer()
+                    }
+                    HStack {
+                        Text(LocalizedStringKey(dateToString(timestamp: selectedArticle!.publicationTime)))
+                            .fontWeight(.light)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                    }.padding([.top], 1)
+                    if selectedArticle!.hasCoverImage {
+                        HStack {
+                            AsyncImage(url: URL(string: "https://api.leskor.com/digestwave/v1/articles/\(selectedArticle!.id)/image")) {image in
+                                image.resizable()
+                                    .aspectRatio(contentMode: .fill)
+                            } placeholder: {
+                                EmptyView()
+                            }
+                            .frame(width: 200, height: 128)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            Spacer()
+                        }.padding([.vertical], 12)
+                    }
+                    if article != nil {
+                        ForEach(article!.content, id: \.self) { p in
+                            HStack {
+                                if let style = article!.styles[String(article!.content.firstIndex(of: p)!)] {
+                                    if style == "code" {
+                                        Text(replaceHtml(p))
+                                            .font(.monospaced(Font.system(size: 11))())
+                                            .foregroundColor(Color(red: 193, green: 184, blue: 155))
+                                            .padding([.all], 10)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .background(.black)
+                                            .border(Color.black, width: 4)
+                                            .cornerRadius(8)
+                                    } else {
+                                        Text(replaceHtml(p)).padding([.vertical], 10)
+                                    }
+                                } else {
+                                    Text(replaceHtml(p)).padding([.vertical], 10)
+                                }
+                                Spacer()
+                            }
+                        }
+                        Link(destination: URL(string: article!.url)!, label: {
+                            Text("to_original")
+                        }).padding([.bottom], 16)
+                    }
+                    Spacer()
+                }.padding([.horizontal], 12)
+                #if os(iOS)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        if article != nil {
+                            Link(destination: URL(string: article!.url)!, label: {
+                                Image(systemName: "safari")
+                            }).padding([.bottom], 8)
+                        } else {
+                            EmptyView()
+                        }
+                    }
+                }
+                #endif
+            }
         }
+        .background(colorScheme == .dark ? Color.black : Color.white)
         .navigationSplitViewStyle(.balanced)
     }
     
@@ -217,6 +313,32 @@ struct ContentView: View {
                 errorLoading = true
             }
         }
+    }
+    
+    private func fetchArticle(id: String) {
+        self.cancellable = DigestwaveAPI.article(id: id)
+            .sink(receiveCompletion: { completion in
+            switch completion {
+                case let .failure(error):
+                    print("Couldn't fetch article: \(error)")
+                case .finished: break
+            }
+        }) { response in
+            if response.status == 200 {
+                self.article = response.value!
+            }
+            else {
+                print("Error making request to article")
+            }
+        }
+    }
+    
+    private func replaceHtml(_ string: String) -> String {
+        return string.replacingOccurrences(of: "<br>", with: "\n")
+            .replacingOccurrences(of: "&nbsp;", with: " ")
+            .replacingOccurrences(of: "&lt;", with: "<")
+            .replacingOccurrences(of: "&gt;", with: ">")
+            .replacingOccurrences(of: "\t", with: "")
     }
     
     private func doRefresh() {
