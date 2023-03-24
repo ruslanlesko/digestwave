@@ -71,6 +71,7 @@ struct ContentView: View {
                     ForEach(topics, id: \.self) {t in
                         NavigationLink(value: t) {
                             Image(systemName: topicIcon(topicName: t))
+                                .foregroundColor(.accentColor)
                             Text(LocalizedStringKey(t))
                         }
                     }
@@ -248,6 +249,7 @@ struct ContentView: View {
         }
         .background(colorScheme == .dark ? Color.black : Color.white)
         .navigationSplitViewStyle(.balanced)
+        .tint(.purple)
     }
     
     private func initEdition() {
