@@ -26,7 +26,7 @@ public class FinanceUaPrettifier implements Prettifier {
             result = result.stream().skip(1).toList();
         }
 
-        if (result.get(result.size() - 1).content().length() < 42) {
+        if (!result.isEmpty() && result.get(result.size() - 1).content().length() < 42) {
             return result.stream().limit(result.size() - 2).toList();
         }
 

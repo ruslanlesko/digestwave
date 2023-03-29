@@ -72,6 +72,7 @@ public class App {
             List<Paragraph> paragraphs = parseParagraphsFromPost(value)
                     .stream()
                     .filter(globalFilter::filterParagraph)
+                    .map(Paragraph::trimmed)
                     .toList();
             SanitizedPost sanitizedPost = SanitizedPost.from(value, paragraphs);
             return new KeyValue<>(key, sanitizedPost);
