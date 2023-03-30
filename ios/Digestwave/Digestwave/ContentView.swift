@@ -99,7 +99,7 @@ struct ContentView: View {
                     HStack {
                         VStack {
                             HStack {
-                                Text(formatTitle(title: article.title))
+                                Text(formatTitle(title: replaceHtml(article.title)))
                                 Spacer()
                             }
                             #if os(iOS)
@@ -143,6 +143,7 @@ struct ContentView: View {
                 doRefresh()
             }
             .onChange(of: selectedArticle, perform: { value in
+                self.article = nil
                 if value != nil {
                     DispatchQueue.main.async { fetchArticle(id: value!.id) }
                 }
@@ -177,7 +178,7 @@ struct ContentView: View {
                         .padding([.vertical], 8)
                     #endif
                     HStack {
-                        Text(selectedArticle!.title)
+                        Text(replaceHtml(selectedArticle!.title))
                             .font(.title)
                             #if os(iOS)
                             .navigationTitle(selectedArticle!.site)
@@ -341,6 +342,8 @@ struct ContentView: View {
             .replacingOccurrences(of: "&lt;", with: "<")
             .replacingOccurrences(of: "&gt;", with: ">")
             .replacingOccurrences(of: "\t", with: "")
+            .replacingOccurrences(of: "&quot;", with: "\"")
+        
     }
     
     private func doRefresh() {
