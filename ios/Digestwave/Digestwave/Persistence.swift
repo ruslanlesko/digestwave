@@ -16,7 +16,11 @@ struct PersistenceController {
     
         let edition = Edition(context: viewContext)
         edition.value = "int"
+        let bookmark = Bookmark(context: viewContext)
+        bookmark.id = "42"
+        bookmark.timestamp = 1693737660
         do {
+            bookmark.json = String(data: try JSONEncoder().encode(Article(id: "42", title: "Sample", content: [], styles: [:], site: "sample.com", topic: "sample", hasCoverImage: true, publicationTime: 1693737660, url: "sample.com")), encoding: .utf8)
             try viewContext.save()
         } catch {
             // Replace this implementation with code to handle the error appropriately.

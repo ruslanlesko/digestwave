@@ -27,6 +27,9 @@ struct ContentView: View {
     @FetchRequest(entity: Edition.entity(), sortDescriptors: [])
     var editions: FetchedResults<Edition>
     
+    @FetchRequest(entity: Bookmark.entity(), sortDescriptors: [])
+    var bookmarks: FetchedResults<Bookmark>
+    
     @State private var edition: EditionOpt = .international
     @State private var topics: [String] = intTopics
     @State private var articlePreviews: [ArticlePreview] = []
@@ -76,8 +79,24 @@ struct ContentView: View {
                         }
                     }
                 }
+                
+                #if os(macOS)
+                Section {
+                    EmptyView()
+                }
+                #endif
+                
+                NavigationLink(value: "bookmarks") {
+                    Image(systemName: "bookmark")
+                        .foregroundColor(.accentColor)
+                    Text(LocalizedStringKey("bookmarks"))
+                }
             }
             .onChange(of: topic, perform: { value in
+                if topic == "bookmarks" {
+                    displayBookmarks()
+                    return;
+                }
                 if topic != nil {
                     DispatchQueue.main.async { fetchPreviewArticles() }
                 }
@@ -94,50 +113,53 @@ struct ContentView: View {
                     .frame(width: 56, height: 46)
                 Text("failure_loading")
             }
-            List(articlePreviews, id: \.id, selection: $selectedArticle) { article in
-                NavigationLink(value: article) {
-                    HStack {
-                        VStack {
-                            HStack {
-                                Text(formatTitle(title: replaceHtml(article.title)))
-                                Spacer()
+            List(selection: $selectedArticle) {
+                ForEach(articlePreviews, id: \.id) { article in
+                    NavigationLink(value: article) {
+                        HStack {
+                            VStack {
+                                HStack {
+                                    Text(formatTitle(title: replaceHtml(article.title)))
+                                    Spacer()
+                                }
+                                #if os(iOS)
+                                .padding([.top], 2)
+                                #else
+                                .padding([.bottom], 12)
+                                #endif
+                                Spacer(minLength: 1)
+                                HStack {
+                                    Text(article.site)
+                                    Text("•")
+                                    Text(LocalizedStringKey(dateToString(timestamp: article.publicationTime)))
+                                    Spacer()
+                                }.font(.system(size: 14).weight(.light))
+                                    .foregroundColor(.secondary)
+                                    #if os(iOS)
+                                    .padding([.bottom], 2)
+                                    #else
+                                    .padding([.bottom], 12)
+                                    #endif
                             }
-                            #if os(iOS)
-                            .padding([.top], 2)
-                            #else
-                            .padding([.bottom], 12)
-                            #endif
-                            Spacer(minLength: 1)
-                            HStack {
-                                Text(article.site)
-                                Text("•")
-                                Text(LocalizedStringKey(dateToString(timestamp: article.publicationTime)))
-                                Spacer()
-                            }.font(.system(size: 14).weight(.light))
-                                .foregroundColor(.secondary)
-                            #if os(iOS)
-                            .padding([.bottom], 2)
-                            #else
-                            .padding([.bottom], 12)
-                            #endif
-                        }
-                        Spacer()
-                        if article.hasCoverImage {
-                            AsyncImage(url: URL(string: "https://api.leskor.com/digestwave/v1/articles/\(article.id)/image")) {image in
-                                image.resizable()
-                                    .aspectRatio(contentMode: .fill)
-                            } placeholder: {
-                                EmptyView()
+                            Spacer()
+                            if article.hasCoverImage {
+                                AsyncImage(url: URL(string: "https://api.leskor.com/digestwave/v1/articles/\(article.id)/image")) {image in
+                                    image.resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                } placeholder: {
+                                    EmptyView()
+                                }
+                                .frame(width: 104, height: 74)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
                             }
-                            .frame(width: 104, height: 74)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                     }
+                    .listRowSeparator(.visible)
+                    .onAppear {
+                        handleAppear(articlePreview: article)
+                    }
                 }
-                .listRowSeparator(.visible)
-                .onAppear {
-                    handleAppear(articlePreview: article)
-                }
+                .onDelete(perform: topic == "bookmarks" ? deleteBookmark : nil)
             }
             .refreshable {
                 doRefresh()
@@ -237,9 +259,27 @@ struct ContentView: View {
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         if article != nil {
-                            Link(destination: URL(string: article!.url)!, label: {
-                                Image(systemName: "safari")
-                            }).padding([.bottom], 8)
+                            HStack {
+                                Button { handleBookmarkClick(article: article!) } label: {
+                                    Image(systemName: isArticleBookmarked(article!) ? "bookmark.circle.fill" : "bookmark.circle")
+                                }
+                                Link(destination: URL(string: article!.url)!, label: {
+                                    Image(systemName: "safari")
+                                })
+                            }
+                        } else {
+                            EmptyView()
+                        }
+                    }
+                }
+                #endif
+                #if os(macOS)
+                .toolbar {
+                    ToolbarItem(placement: .primaryAction) {
+                        if article != nil {
+                            Button { handleBookmarkClick(article: article!) } label: {
+                                Image(systemName: isArticleBookmarked(article!) ? "bookmark.circle.fill" : "bookmark.circle")
+                            }
                         } else {
                             EmptyView()
                         }
@@ -287,6 +327,9 @@ struct ContentView: View {
     }
     
     private func fetchPreviewArticles(page: Int = 1) {
+        if (topic == "bookmarks") {
+            return;
+        }
         self.loading = true
         self.page = page
         self.cancellable = DigestwaveAPI.articlePreviews(
@@ -319,6 +362,17 @@ struct ContentView: View {
     }
     
     private func fetchArticle(id: String) {
+        if topic == "bookmarks" {
+            do {
+                article = try bookmarks.filter{b in b.id == id}.map { b in
+                    let decoded = try JSONDecoder().decode(Article.self, from: b.json!.data(using: .utf8)!)
+                    return Article(id: b.id!, title: decoded.title, content: decoded.content, styles: decoded.styles, site: decoded.site, topic: decoded.topic, hasCoverImage: decoded.hasCoverImage, publicationTime: b.timestamp, url: decoded.url)
+                }[0]
+            }
+            catch { print(error.localizedDescription) }
+            return;
+        }
+        
         self.cancellable = DigestwaveAPI.article(id: id)
             .sink(receiveCompletion: { completion in
             switch completion {
@@ -347,7 +401,7 @@ struct ContentView: View {
     }
     
     private func doRefresh() {
-        if loading {
+        if loading || topic == "bookmarks" {
             return
         }
         self.articlePreviews = []
@@ -393,6 +447,55 @@ struct ContentView: View {
             DispatchQueue.main.async {
                 fetchPreviewArticles(page: self.page + 1)
             }
+        }
+    }
+    
+    private func isArticleBookmarked(_ article: Article) -> Bool {
+        return bookmarks.first(where: {b in b.id == article.id}) != nil;
+    }
+    
+    private func handleBookmarkClick(article: Article) {
+        if isArticleBookmarked(article) {
+            let bookmark = bookmarks.first(where: {b in b.id == article.id})!
+            viewContext.delete(bookmark)
+            do {
+                try viewContext.save()
+            }
+            catch { print(error.localizedDescription) }
+            if (topic == "bookmarks") {
+                displayBookmarks()
+            }
+            return;
+        }
+        let bookmark = Bookmark(context: viewContext)
+        bookmark.id = article.id
+        bookmark.timestamp = article.publicationTime
+        do {
+            bookmark.json = String(data: try JSONEncoder().encode(article), encoding: .utf8)
+            try viewContext.save()
+        }
+        catch { print(error.localizedDescription) }
+    }
+    
+    private func displayBookmarks() {
+        do {
+            self.articlePreviews = try bookmarks.map { b in
+                let decoded = try JSONDecoder().decode(Article.self, from: b.json!.data(using: .utf8)!)
+                return ArticlePreview(id: b.id!, title: decoded.title, site: decoded.site, topic: decoded.topic, hasCoverImage: decoded.hasCoverImage, publicationTime: b.timestamp)
+            }
+        }
+        catch { print(error.localizedDescription) }
+    }
+    
+    private func deleteBookmark(at offsets: IndexSet) {
+        self.articlePreviews.remove(atOffsets: offsets)
+        offsets.forEach { idx in
+            viewContext.delete(bookmarks[idx])
+        }
+        do {
+            try viewContext.save()
+        } catch {
+            print(error.localizedDescription)
         }
     }
 }
