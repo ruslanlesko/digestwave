@@ -263,6 +263,9 @@ struct ContentView: View {
                                 Button { handleBookmarkClick(article: article!) } label: {
                                     Image(systemName: isArticleBookmarked(article!) ? "bookmark.circle.fill" : "bookmark.circle")
                                 }
+                                ShareLink(item: URL(string: article!.url)!, label: {
+                                    Image(systemName: "square.and.arrow.up.circle")
+                                })
                                 Link(destination: URL(string: article!.url)!, label: {
                                     Image(systemName: "safari")
                                 })
@@ -277,8 +280,13 @@ struct ContentView: View {
                 .toolbar {
                     ToolbarItem(placement: .primaryAction) {
                         if article != nil {
-                            Button { handleBookmarkClick(article: article!) } label: {
-                                Image(systemName: isArticleBookmarked(article!) ? "bookmark.circle.fill" : "bookmark.circle")
+                            HStack {
+                                Button { handleBookmarkClick(article: article!) } label: {
+                                    Image(systemName: isArticleBookmarked(article!) ? "bookmark.circle.fill" : "bookmark.circle")
+                                }
+                                ShareLink(item: URL(string: article!.url)!, label: {
+                                    Image(systemName: "square.and.arrow.up.circle")
+                                })
                             }
                         } else {
                             EmptyView()
