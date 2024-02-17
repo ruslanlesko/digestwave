@@ -1,5 +1,11 @@
 package com.leskor.scraper.sites.custom;
 
+import static java.time.Duration.ofSeconds;
+
+import com.leskor.scraper.entities.Post;
+import com.leskor.scraper.entities.Region;
+import com.leskor.scraper.entities.Topic;
+import com.leskor.scraper.sites.Site;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.time.ZoneId;
@@ -9,16 +15,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import com.leskor.scraper.entities.Post;
-import com.leskor.scraper.entities.Region;
-import com.leskor.scraper.entities.Topic;
-import com.leskor.scraper.sites.Site;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.safety.Safelist;
-
-import static java.time.Duration.ofSeconds;
 
 public class Tribuna extends Site {
     private static final URI INDEX_URI = URI.create("https://ua.tribuna.com/uk/football/");
@@ -41,8 +41,9 @@ public class Tribuna extends Site {
     protected List<CompletableFuture<Post>> extractPostsBasedOnPage(String page) {
         Document document = Jsoup.parse(page);
         List<CompletableFuture<Post>> result = new ArrayList<>();
-        for (var elem : document.getElementsByClass("NewsItem_news-item__text-wrapper__xiCs4")) {
-            Element timeElem = elem.getElementsByClass("NewsItem_news-item__published-time__ifpYI").first();
+        for (var elem : document.getElementsByClass("NewsItem_news-item___nkvX  ")) {
+            Element timeElem =
+                    elem.getElementsByClass("NewsItem_news-item__published-time__3fFXs").first();
             Element linkElem = elem.getElementsByTag("a").first();
 
             if (timeElem == null || linkElem == null) {
@@ -93,7 +94,7 @@ public class Tribuna extends Site {
     }
 
     private Post parsePost(Document document, String title, URI uri, ZonedDateTime time) {
-        Element wrapper = document.getElementsByClass("ContentCard_card__content__TX_NI").first();
+        Element wrapper = document.getElementsByClass("card__content").first();
         if (wrapper == null) {
             return null;
         }
@@ -101,6 +102,7 @@ public class Tribuna extends Site {
         String textContent = Jsoup.clean(wrapper.html(), Safelist.none());
         Optional<String> imageURL = extractImageURLFromDocument(document);
 
-        return Post.from(siteCode, topic, region, time, title, textContent, wrapper.html(), uri, imageURL.orElse(""));
+        return Post.from(siteCode, topic, region, time, title, textContent, wrapper.html(), uri,
+                imageURL.orElse(""));
     }
 }
