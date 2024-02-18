@@ -1,5 +1,12 @@
 package com.leskor.scraper.sites.custom;
 
+import static com.leskor.scraper.dto.ReadabilityResponse.fromTitleAndExistingResponse;
+import static java.time.Duration.ofSeconds;
+
+import com.leskor.scraper.entities.Post;
+import com.leskor.scraper.entities.Region;
+import com.leskor.scraper.entities.Topic;
+import com.leskor.scraper.sites.Site;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.time.ZoneId;
@@ -8,19 +15,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import com.leskor.scraper.entities.Post;
-import com.leskor.scraper.entities.Region;
-import com.leskor.scraper.entities.Topic;
-import com.leskor.scraper.sites.Site;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.leskor.scraper.dto.ReadabilityResponse.fromTitleAndExistingResponse;
-import static java.time.Duration.ofSeconds;
 
 public class Liga extends Site {
     private static final Logger logger = LoggerFactory.getLogger("Application");
@@ -29,23 +29,25 @@ public class Liga extends Site {
     private static final int POSTS_LIMIT = 10;
 
     public Liga(URI readabilityUri, HttpClient httpClient) {
-        super(INDEX_URI, readabilityUri, "LIG", httpClient, ofSeconds(60), Topic.FINANCE, Region.UA, Set.of(), false);
+        super(INDEX_URI, readabilityUri, "LIG", httpClient, ofSeconds(60), Topic.FINANCE, Region.UA,
+                Set.of(), false);
     }
 
     @Override
     protected List<CompletableFuture<Post>> extractPostsBasedOnPage(String page) {
         Document document = Jsoup.parse(page, Parser.htmlParser());
-        Element newsElem = document.getElementById("news-list-right");
+        Element newsElem = document.getElementsByTag("aside").first();
         if (newsElem == null) {
             logger.warn("Failed to locate news on Liga.net");
             return List.of();
         }
 
-        return newsElem.getElementsByTag("li").stream()
-                .filter(e -> e.getElementsByClass("other-project").isEmpty())
+        return newsElem.getElementsByTag("article").stream()
                 .filter(parentElem -> {
                     Element e = parentElem.getElementsByTag("a").first();
-                    return e != null && e.hasAttr("href") && e.hasText();
+                    return e != null && e.hasAttr("href") && e.hasText() &&
+                            parentElem.getElementsByTag("a").stream()
+                                    .noneMatch(a -> "Новини".equals(a.text()));
                 })
                 .limit(POSTS_LIMIT)
                 .map(parentElem -> {
@@ -53,24 +55,29 @@ public class Liga extends Site {
                     return extractPost(
                             e.text(),
                             URI.create(e.attr("href")),
-                            parseTime(parentElem.getElementsByClass("time").first())
+                            parseTime(parentElem.getElementsByTag("time").first())
                     );
                 })
                 .toList();
     }
 
     private CompletableFuture<Post> extractPost(String title, URI uri, ZonedDateTime time) {
-        if (time == null) return CompletableFuture.completedFuture(null);
+        if (time == null) {
+            return CompletableFuture.completedFuture(null);
+        }
 
         return retrieveReadabilityResponse(uri)
                 .thenApply(r -> r == null ? null
-                        : Post.from(siteCode, topic, region, time, fromTitleAndExistingResponse(title, r), uri));
+                        : Post.from(siteCode, topic, region, time,
+                        fromTitleAndExistingResponse(title, r), uri));
     }
 
     private ZonedDateTime parseTime(Element timeElem) {
-        if (timeElem == null || !timeElem.hasText()) return null;
+        if (timeElem == null || !timeElem.hasText()) {
+            return null;
+        }
 
-        String raw = timeElem.text();
+        String raw = timeElem.text().toLowerCase();
         String yesterdayPrefix = "вчора о ";
         boolean isYesterday = false;
         if (raw.startsWith(yesterdayPrefix)) {
@@ -100,7 +107,8 @@ public class Liga extends Site {
     protected CompletableFuture<Optional<String>> extractImageURI(Post post) {
         return post == null ? CompletableFuture.completedFuture(Optional.empty())
                 : extractArticlePage(URI.create(post.url()))
-                .thenApply(document -> document == null ? Optional.empty() : extractImageURL(document));
+                .thenApply(document -> document == null ? Optional.empty() :
+                        extractImageURL(document));
     }
 
     private Optional<String> extractImageURL(Document document) {
