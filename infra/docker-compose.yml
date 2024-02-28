@@ -153,3 +153,16 @@ services:
       resources:
         limits:
           memory: 128M
+
+  ollama:
+    image: ollama/ollama:0.1.27
+    container_name: ollama
+    restart: "always"
+    ports:
+      - "11434:11434"
+    volumes:
+      - "./ollama:/root/.ollama"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
