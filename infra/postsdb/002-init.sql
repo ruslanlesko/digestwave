@@ -15,9 +15,19 @@ CREATE TABLE "public".posts (
     image_url TEXT
 );
 
+CREATE TABLE "public".top_posts (
+    topic VARCHAR(16) NOT NULL,
+    region VARCHAR(3) NOT NULL,
+    post_hash VARCHAR(16) NOT NULL,
+    rating INT NOT NULL,
+    PRIMARY KEY (topic, region, rating),
+    FOREIGN KEY (post_hash) REFERENCES posts(hash) ON DELETE CASCADE
+);
+
 SELECT cron.schedule('0 */6 * * *', $$WITH latest AS (
         SELECT ROW_NUMBER() OVER (ORDER BY publication_time DESC), publication_time, hash FROM posts
     ) DELETE FROM posts USING latest WHERE latest.hash = posts.hash AND latest.row_number > 1000$$
 );
 
 SELECT cron.schedule('0 4 * * *', 'VACUUM FULL posts');
+SELECT cron.schedule('0 5 * * *', 'VACUUM FULL top_posts');
