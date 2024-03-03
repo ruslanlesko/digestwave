@@ -16,12 +16,12 @@ CREATE TABLE "public".posts (
 );
 
 CREATE TABLE "public".top_posts (
+    id SERIAL PRIMARY KEY,
     topic VARCHAR(16) NOT NULL,
     region VARCHAR(3) NOT NULL,
-    post_hash VARCHAR(16) NOT NULL,
+    hash VARCHAR(16) NOT NULL,
     rating INT NOT NULL,
-    PRIMARY KEY (topic, region, rating),
-    FOREIGN KEY (post_hash) REFERENCES posts(hash) ON DELETE CASCADE
+    FOREIGN KEY (hash) REFERENCES posts(hash) ON DELETE CASCADE
 );
 
 SELECT cron.schedule('0 */6 * * *', $$WITH latest AS (
