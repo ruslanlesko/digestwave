@@ -166,7 +166,8 @@
     "uri": "https://www.digitaltrends.com/feed/",
     "code": "DT",
     "topic": "TECH",
-    "region": "INT"
+    "region": "INT",
+    "isImageExtractedFromMeta": true
   },
   {
     "uri": "https://www.tomsguide.com/feeds/all",
@@ -177,6 +178,7 @@
       "Fitness",
       "Sports",
       "Sale",
+      "Sales Events",
       "Entertainment"
     ]
   },
