@@ -11,6 +11,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -75,6 +76,10 @@ public class Liga extends Site {
     private ZonedDateTime parseTime(Element timeElem) {
         if (timeElem == null || !timeElem.hasText()) {
             return null;
+        }
+
+        if (timeElem.hasAttr("datetime")) {
+            return ZonedDateTime.parse(timeElem.attr("datetime"), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         }
 
         String raw = timeElem.text().toLowerCase();

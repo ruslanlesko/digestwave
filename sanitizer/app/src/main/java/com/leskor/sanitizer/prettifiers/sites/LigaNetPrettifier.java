@@ -18,11 +18,24 @@ public class LigaNetPrettifier implements Prettifier {
 
     @Override
     public List<Paragraph> parseParagraphs(Post post) {
-        List<Paragraph> result = Arrays.stream(post.content().split("\n"))
+        StringBuilder contentBuilder = new StringBuilder("");
+        for (int i = 0; i < post.content().length() - 1; i++) {
+            if (post.content().charAt(i) == '.' && post.content().charAt(i + 1) != ' ') {
+                contentBuilder.append(".\n");
+            } else {
+                contentBuilder.append(post.content().charAt(i));
+            }
+        }
+        String content = contentBuilder.toString();
+        List<Paragraph> result = Arrays.stream(content.split("\n"))
                 .filter(p -> !p.contains("Підписуйтесь на")
                         && !p.contains("Читайте також:")
                         && !p.contains("Читайте нас")
                         && !p.contains("Приєднуйтесь до нас у Facebook")
+                        && !p.contains(post.title())
+                        && !p.contains("Фото:")
+                        && !p.contains("Дивіться також:")
+                        && p.length() > 4
                 )
                 .map(p -> new Paragraph(p, ""))
                 .toList();
