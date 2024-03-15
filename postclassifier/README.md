@@ -35,3 +35,4 @@ needs. Scraper is configured via environment variables.
 | PC_OLLAMA_TIMEOUT | No       | 120                        | Ollama timeout in seconds                                 |
 | PC_PROMPT         | No       | Defined in the source code | Prompt for Ollama request                                 |
 | PC_LOG_LEVEL      | No       | INFO                       | Logging level                                             |
+| PC_KAFKA_HOST     | No       | localhost:19092            | Address of Kafka broker                                   |

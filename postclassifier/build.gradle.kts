@@ -18,11 +18,13 @@ repositories {
 }
 
 val ollama4JVersion = "1.0.57"
+val springKafkaVersion = "3.1.2"
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("io.github.amithkoujalgi:ollama4j:$ollama4JVersion")
+	implementation("org.springframework.kafka:spring-kafka:$springKafkaVersion")
 	runtimeOnly("org.postgresql:postgresql")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("com.h2database:h2")

@@ -7,27 +7,25 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.leskor.postclassifier.model.RegionWithTopic;
 import com.leskor.postclassifier.model.TopPost;
 
 @RestController
 public class Controller {
 	private static final Logger logger = LoggerFactory.getLogger(Controller.class);
 
-	private static final List<RegionWithTopic> REGIONS_AND_TOPICS = List.of(
-			new RegionWithTopic("INT", "TECH"),
-			new RegionWithTopic("INT", "FINANCE"),
-			new RegionWithTopic("INT", "PROGRAMMING"),
-			new RegionWithTopic("UA", "TECH"),
-			new RegionWithTopic("UA", "FINANCE"),
-			new RegionWithTopic("UA", "FOOTBALL"));
-
 	private final RatingService ratingService;
+	private final List<RegionWithTopic> regionsAndTopics;
 
-	public Controller(RatingService ratingService) {
+	public Controller(
+			RatingService ratingService,
+			@Qualifier("regionsAndTopics") List<RegionWithTopic> regionsAndTopics) {
 		this.ratingService = ratingService;
+		this.regionsAndTopics = regionsAndTopics;
 	}
 
 	@PostMapping(value = "/top", produces = APPLICATION_JSON_VALUE)
@@ -35,7 +33,7 @@ public class Controller {
 		List<RegionPosts> regionPosts = new ArrayList<>();
 
 		List<TopPost> totalTopPosts = new ArrayList<>();
-		for (RegionWithTopic rt : REGIONS_AND_TOPICS) {
+		for (RegionWithTopic rt : regionsAndTopics) {
 			final String region = rt.region();
 			final String topic = rt.topic();
 			logger.debug("Rating top posts for region {} and topic {}", region, topic);
@@ -59,10 +57,6 @@ public class Controller {
 	}
 
 	public record Response(List<RegionPosts> regionPosts) {
-
-	}
-
-	public record RegionWithTopic(String region, String topic) {
 
 	}
 
