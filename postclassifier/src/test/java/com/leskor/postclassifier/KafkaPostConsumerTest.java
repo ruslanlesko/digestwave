@@ -4,6 +4,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.leskor.postclassifier.service.AiRatingService;
+import com.leskor.postclassifier.service.RatingService;
+import com.leskor.postclassifier.service.RatingServiceFactory;
+import com.leskor.postclassifier.service.TopPostUpdater;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -20,35 +24,42 @@ import com.leskor.postclassifier.model.TopPost;
 
 @ExtendWith(MockitoExtension.class)
 class KafkaPostConsumerTest {
-	private static final List<TopPost> TOP_POSTS = List.of(new TopPost(0, "TECH", "INT", "123", 0));
+    private static final List<TopPost> TOP_POSTS = List.of(new TopPost(0, "TECH", "INT", "123", 0));
 
-	@Mock
-	RatingService ratingService;
+    @Mock
+    RatingService ratingService;
 
-	ExecutorService executorService;
+    @Mock
+    RatingServiceFactory ratingServiceFactory;
 
-	KafkaPostConsumer kafkaPostConsumer;
+    @Mock
+    TopPostUpdater topPostUpdater;
 
-	@BeforeEach
-	void setup() {
-		executorService = Executors.newSingleThreadExecutor();
-		kafkaPostConsumer = new KafkaPostConsumer(ratingService, executorService,
-				List.of(new RegionWithTopic("INT", "TECH")), Duration.ofSeconds(1));
-	}
+    ExecutorService executorService;
 
-	@Test
-	void processWithMultipleInvocationProcessOnlyLatest() throws InterruptedException {
-		when(ratingService.ratePosts("TECH", "INT")).thenReturn(TOP_POSTS);
+    KafkaPostConsumer kafkaPostConsumer;
 
-		kafkaPostConsumer.process();
-		Thread.sleep(250);
-		kafkaPostConsumer.process();
-		Thread.sleep(250);
-		kafkaPostConsumer.process();
+    @BeforeEach
+    void setup() {
+        executorService = Executors.newSingleThreadExecutor();
+        kafkaPostConsumer = new KafkaPostConsumer(ratingServiceFactory, topPostUpdater, executorService,
+                List.of(new RegionWithTopic("INT", "TECH")), Duration.ofSeconds(1));
+    }
 
-		Thread.sleep(3500);
+    @Test
+    void processWithMultipleInvocationProcessOnlyLatest() throws InterruptedException {
+        when(ratingServiceFactory.getRatingService("INT")).thenReturn(ratingService);
+        when(ratingService.ratePosts("TECH", "INT")).thenReturn(TOP_POSTS);
 
-		verify(ratingService, times(1)).ratePosts("TECH", "INT");
-		verify(ratingService, times(1)).saveTopPosts(TOP_POSTS);
-	}
+        kafkaPostConsumer.process();
+        Thread.sleep(250);
+        kafkaPostConsumer.process();
+        Thread.sleep(250);
+        kafkaPostConsumer.process();
+
+        Thread.sleep(3500);
+
+        verify(ratingService, times(1)).ratePosts("TECH", "INT");
+        verify(topPostUpdater, times(1)).updateTopPosts(TOP_POSTS);
+    }
 }

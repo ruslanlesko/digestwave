@@ -85,6 +85,6 @@ public class Application {
 
 	@Bean(name = "delay")
 	Duration delay() {
-		return Duration.ofMinutes(1);
+		return Duration.ofSeconds(10);
 	}
 }
