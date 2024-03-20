@@ -69,7 +69,11 @@ public class AiRatingService implements RatingService {
             validateOllamaAPI();
 
             StringBuilder promptBuilder = new StringBuilder(promptPrefix);
-            posts.forEach(p -> promptBuilder.append('\n').append(p.title()));
+            posts.forEach(p -> {
+                if (p.imageUrl() != null && !p.imageUrl().isEmpty()) {
+                    promptBuilder.append('\n').append(p.title());
+                }
+            });
 
             String prompt = promptBuilder.toString();
             logger.debug("Prompting ollama with the following:\n{}", prompt);

@@ -52,7 +52,7 @@ class AiRatingServiceTest {
                 case 2 -> "Third article, good title";
                 default -> i + "th article, average material";
             };
-            return new Post(String.valueOf(i).repeat(4), title, TOPIC, REGION, 0L, "", "");
+            return new Post(String.valueOf(i).repeat(4), title, TOPIC, REGION, 0L, "url", "");
         }).toList();
 
         OllamaResult ollamaResult = new OllamaResult("""
