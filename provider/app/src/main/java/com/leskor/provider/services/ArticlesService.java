@@ -2,6 +2,9 @@ package com.leskor.provider.services;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -65,11 +68,26 @@ public class ArticlesService {
 
         String imageURL = postsRepository.findById(postId).map(Post::getImageURL).orElse(null);
         if (imageURL == null) return Optional.empty();
-        try (InputStream input = new URL(imageURL).openStream()) {
+        InputStream input = null;
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URI(imageURL).toURL().openConnection();
+            connection.addRequestProperty("User-Agent", "Mozilla/5.0");
+            input = connection.getInputStream();
             return Optional.of(input.readAllBytes());
         } catch (IOException e) {
             e.printStackTrace();
             return Optional.empty();
+        } catch (URISyntaxException e) {
+            System.out.println("Image URL is malformed: " + imageURL);
+            return Optional.empty();
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
