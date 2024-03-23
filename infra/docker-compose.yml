@@ -166,3 +166,20 @@ services:
       resources:
         limits:
           memory: 2G
+
+  classifier:
+    build: ../postclassifier
+    container_name: postclassifier
+    restart: "always"
+    environment:
+      DB_HOST: "db"
+      DB_USER: "connect"
+      DB_PWD: "connectpass"
+      PC_MODEL: "gemma:2b"
+      PC_OLLAMA_HOST: "http://ollama:11434"
+      PC_OLLAMA_TIMEOUT: "300"
+      PC_KAFKA_HOST: "kafka:9092"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
