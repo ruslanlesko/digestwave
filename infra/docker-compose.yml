@@ -61,28 +61,28 @@ services:
         limits:
           memory: 256M
 
-  zookeeper:
-    image: wurstmeister/zookeeper
-    container_name: zookeeper
-    deploy:
-      resources:
-        limits:
-          memory: 128M
-
   kafka:
-    image: wurstmeister/kafka:2.13-2.7.1
+    image: confluentinc/cp-kafka:7.6.0
     container_name: kafka
+    hostname: kafka
     ports:
       - "9092:9092"
       - "19092:19092"
     restart: "on-failure"
     environment:
-      KAFKA_ADVERTISED_LISTENERS: LISTENER_A://kafka:9092,LISTENER_B://localhost:19092
-      KAFKA_LISTENERS: LISTENER_A://0.0.0.0:9092,LISTENER_B://0.0.0.0:19092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_A:PLAINTEXT,LISTENER_B:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_A
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "posts:1:1,sanitized-posts:1:1"
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_NODE_ID: 1
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
+      KAFKA_LISTENERS: BROKER://kafka:9092,EXTERNAL://kafka:19092,CONTROLLER://kafka:9093
+      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka:9092,EXTERNAL://localhost:19092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,BROKER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      KAFKA_NUM_PARTITIONS: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     deploy:
       resources:
         limits:
