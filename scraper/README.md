@@ -4,7 +4,7 @@ Service for parsing websites and extracting posts into Kafka topic.
 
 ## Requirements
 
-* Java 17
+* Java 21
 * Kafka 2.7.1
 * Confluent Schema Registry 7.0.1
 * [Mozilla's Readability](https://github.com/phpdocker-io/readability-js-server) service
