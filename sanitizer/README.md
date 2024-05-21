@@ -4,7 +4,7 @@ Service for sanitizing post contents from HTML tags and extra text.
 
 ## Requirements
 
-* Java 17
+* Java 21
 * Kafka 2.7.1
 * Confluent Schema Registry 7.0.1
 
