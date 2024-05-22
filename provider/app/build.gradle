@@ -1,9 +1,9 @@
 plugins {
-    id 'org.springframework.boot' version '2.5.12'
+    id 'org.springframework.boot' version '3.2.4'
     id 'java'
 }
 
-def springVersion = "2.5.12"
+def springVersion = "3.2.4"
 
 version = "0.1.0"
 
@@ -12,26 +12,22 @@ repositories {
 }
 
 java {
-    sourceCompatibility = 17
-    targetCompatibility = 17
+    sourceCompatibility = 21
+    targetCompatibility = 21
 }
 
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web:${springVersion}"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa:${springVersion}"
 
-    implementation 'org.postgresql:postgresql:42.3.3'
-    implementation 'io.springfox:springfox-swagger2:2.7.0'
-    implementation 'io.springfox:springfox-swagger-ui:2.7.0'
+    implementation 'org.postgresql:postgresql:42.7.3'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 
-    implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
-
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 }
 
-bootJar {
-    mainClassName = 'com.leskor.provider.App'
-    archiveName = 'app.jar'
+springBoot {
+    mainClass = 'com.leskor.provider.App'
 }
 
 test {
