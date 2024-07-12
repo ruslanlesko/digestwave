@@ -3,3 +3,4 @@ Crawl-delay: 5
 Disallow: /article.html
 Disallow: /privacy-policy.html
 Disallow: /assets/
+Allow: /assets/*.png
