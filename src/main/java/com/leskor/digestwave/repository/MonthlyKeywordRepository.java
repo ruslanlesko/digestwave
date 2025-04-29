@@ -1,0 +1,16 @@
+package com.leskor.digestwave.repository;
+
+import java.util.List;
+import com.leskor.digestwave.model.MonthlyKeyword;
+import org.springframework.data.cassandra.repository.CassandraRepository;
+import org.springframework.data.cassandra.repository.Query;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface MonthlyKeywordRepository extends CassandraRepository<MonthlyKeyword, MonthlyKeyword.Key> {
+
+    @Query("UPDATE monthlykeyword SET count = count + ?2 WHERE monthyear = ?0 AND keyword = ?1")
+    void incrementCount(String monthYear, String keyword, long count);
+
+    List<MonthlyKeyword> findByMonthYearIs(String monthYear);
+}
