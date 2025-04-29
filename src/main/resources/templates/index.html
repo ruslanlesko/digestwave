@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Digestwave</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f8fafc;
+            margin: 0;
+            padding: 0;
+            font-weight: 300;
+        }
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+            padding: 32px 24px;
+        }
+        h1 {
+            text-align: center;
+            color: #22223b;
+            margin-bottom: 32px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        .carousel-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .carousel-wrapper {
+            overflow: hidden;
+            width: 100%;
+            position: relative;
+            height: 3.5em;
+            margin-bottom: 0;
+        }
+        ul.tag-cloud {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 32px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            align-items: center;
+            animation: carousel-move 20s linear infinite;
+            will-change: transform;
+        }
+        /* Alternate direction for odd rows */
+        .carousel-wrapper:nth-child(even) ul.tag-cloud {
+            animation-direction: reverse;
+            animation-duration: 24s;
+        }
+        .carousel-wrapper:nth-child(odd) ul.tag-cloud {
+            animation-duration: 20s;
+        }
+        ul.tag-cloud li {
+            background: none;
+            border: none;
+            color: #ffb347;
+            padding: 0 10px;
+            border-radius: 0;
+            font-size: 1.1rem;
+            font-weight: 100;
+            font-family: inherit;
+            box-shadow: none;
+            transition: transform 0.2s, color 0.2s;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+        ul.tag-cloud li:hover {
+            transform: scale(1.15) rotate(-2deg);
+            color: #ffd700;
+            text-shadow: 0 2px 12px #ffb34755;
+        }
+        @keyframes carousel-move {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+    </style>
+    <script>
+        // Helper to randomize font size and duplicate tags for seamless carousel
+        function setupTagCloudRow(ul) {
+            Array.from(ul.children).forEach((li) => {
+                const min = 0.8, max = 2.2;
+                const size = (Math.random() * (max - min) + min).toFixed(2);
+                li.style.fontSize = size + 'rem';
+                li.style.fontWeight = '100';
+            });
+            if (!ul.dataset.duplicated) {
+                const tags = Array.from(ul.children);
+                tags.forEach(li => {
+                    const clone = li.cloneNode(true);
+                    ul.appendChild(clone);
+                });
+                ul.dataset.duplicated = "true";
+            }
+        }
+        // Distribute tags across rows
+        function distributeTagsAcrossRows(tags, rowCount) {
+            const rows = Array.from({length: rowCount}, () => []);
+            tags.forEach((tag, i) => {
+                rows[i % rowCount].push(tag);
+            });
+            return rows;
+        }
+        function setupAllTagClouds() {
+            const allWrappers = document.querySelectorAll('.carousel-wrapper');
+            allWrappers.forEach(wrapper => {
+                const ul = wrapper.querySelector('.tag-cloud');
+                if (ul) setupTagCloudRow(ul);
+            });
+        }
+        // After tags are loaded, split them into multiple rows
+        function handleTagsLoaded() {
+            const ul = document.querySelector('.tag-cloud');
+            if (!ul) return;
+            const tags = Array.from(ul.children);
+            const rowCount = 3;
+            const rows = distributeTagsAcrossRows(tags, rowCount);
+
+            const carouselRows = document.createElement('div');
+            carouselRows.className = 'carousel-rows';
+            rows.forEach((rowTags, idx) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'carousel-wrapper';
+                const rowUl = document.createElement('ul');
+                rowUl.className = 'tag-cloud';
+                rowTags.forEach(tag => rowUl.appendChild(tag));
+                wrapper.appendChild(rowUl);
+                carouselRows.appendChild(wrapper);
+            });
+
+            const container = ul.parentElement.parentElement;
+            container.querySelector('.carousel-rows')?.remove();
+            container.appendChild(carouselRows);
+
+            setupAllTagClouds();
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            // Wait for tags to load via htmx, then split into rows
+            document.body.addEventListener('htmx:afterSwap', (evt) => {
+                if (evt.target.classList.contains('tag-cloud')) {
+                    handleTagsLoaded();
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Digestwave</h1>
+        <div class="carousel-wrapper">
+            <ul class="tag-cloud"
+                hx-get="/api/keywords"
+                hx-trigger="load"
+                hx-swap="innerHTML">
+                <!-- Tags will be loaded here -->
+            </ul>
+        </div>
+        <!-- .carousel-rows will be injected here by JS -->
+    </div>
+</body>
+</html>
