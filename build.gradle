@@ -28,6 +28,10 @@ dependencies {
     implementation 'org.springframework.ai:spring-ai-ollama-spring-boot-starter'
     implementation 'com.rometools:rome:2.1.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.testcontainers:cassandra:1.21.0'
+    testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
+    testImplementation "org.testcontainers:testcontainers:1.21.0"
+    testImplementation "org.testcontainers:junit-jupiter:1.21.0"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -38,5 +42,14 @@ dependencyManagement {
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags 'integration'
+    }
+}
+
+tasks.register('integrationTest', Test) {
+    useJUnitPlatform {
+        includeTags 'integration'
+    }
+    shouldRunAfter tasks.named('test')
 }
