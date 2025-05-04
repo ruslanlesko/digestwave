@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MonthlyKeywordRepository extends CassandraRepository<MonthlyKeyword, MonthlyKeyword.Key> {
 
-    @Query("UPDATE monthlykeyword SET count = count + ?2 WHERE monthyear = ?0 AND keyword = ?1")
+    @Query("UPDATE monthly_keywords SET count = count + ?2 WHERE month_year = ?0 AND keyword = ?1")
     void incrementCount(String monthYear, String keyword, long count);
 
     List<MonthlyKeyword> findByMonthYearIs(String monthYear);

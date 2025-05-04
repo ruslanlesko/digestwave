@@ -24,9 +24,9 @@ public class KeywordService {
         String currentMonthYear = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
         List<MonthlyKeyword> keywords = monthlyKeywordRepository.findByMonthYearIs(currentMonthYear);
         return keywords.stream()
-                .sorted(comparing(MonthlyKeyword::getCount).reversed())
+                .sorted(comparing(MonthlyKeyword::count).reversed())
                 .limit(64)
-                .map(MonthlyKeyword::getKeyword)
+                .map(MonthlyKeyword::keyword)
                 .collect(Collectors.toList());
     }
 }
