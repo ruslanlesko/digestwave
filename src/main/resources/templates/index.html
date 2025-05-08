@@ -5,6 +5,7 @@
     <title>Digestwave</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -84,6 +85,39 @@
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
+        .chart-container {
+            margin-top: 32px;
+            text-align: center;
+        }
+        canvas {
+            max-width: 100%;
+        }
+        .no-results {
+            color: #ff6b6b;
+            font-size: 1.2rem;
+            margin-top: 16px;
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .search-container input {
+            flex: 1;
+        }
+        .search-container button {
+            padding: 8px 16px;
+            background-color: #ffb347;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        .search-container button:hover {
+            background-color: #ffd700;
+            transform: scale(1.05);
+        }
     </style>
     <script>
         // Helper to randomize font size and duplicate tags for seamless carousel
@@ -152,17 +186,131 @@
                 }
             });
         });
+
+        function renderChart(data) {
+            const ctx = document.getElementById('mentionsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(item => new Date(item.publishedAt).toLocaleDateString('en-US')),
+                    datasets: [{
+                        label: 'Mentions',
+                        data: data.map(item => Math.round(item.count)),
+                        borderColor: '#4caf50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Days'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Occurrences'
+                            },
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return Number.isInteger(value) ? value : null;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function handleMentionsResponse(data) {
+            const resultContainer = document.getElementById('resultContainer');
+            resultContainer.innerHTML = ''; // Clear previous results
+
+            if (data.length === 0) {
+                const noResultsMessage = document.createElement('div');
+                noResultsMessage.className = 'no-results';
+                noResultsMessage.textContent = 'No mentions found for the given keyword.';
+                resultContainer.appendChild(noResultsMessage);
+            } else {
+                const chartContainer = document.createElement('div');
+                chartContainer.className = 'chart-container';
+                chartContainer.innerHTML = '<canvas id="mentionsChart"></canvas>';
+                resultContainer.appendChild(chartContainer);
+                renderChart(data);
+            }
+        }
+
+        function setTagAndSearch(tag) {
+            const input = document.getElementById('keywordInput');
+            input.value = tag;
+            fetchMentions();
+        }
+
+        function attachTagClickHandlers() {
+            const tags = document.querySelectorAll('.tag-cloud li');
+            tags.forEach(tag => {
+                tag.addEventListener('click', () => setTagAndSearch(tag.textContent));
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Wait for tags to load via htmx, then attach click handlers
+            document.body.addEventListener('htmx:afterSwap', (evt) => {
+                if (evt.target.classList.contains('tag-cloud')) {
+                    attachTagClickHandlers();
+                }
+            });
+        });
+
+        async function fetchMentions() {
+            const keyword = document.getElementById('keywordInput').value.trim();
+            if (!keyword) {
+                alert('Please enter a keyword.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/mentions/${encodeURIComponent(keyword)}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch mentions');
+                }
+                const data = await response.json();
+                handleMentionsResponse(data);
+            } catch (error) {
+                console.error('Error fetching mentions:', error);
+                alert('An error occurred while fetching mentions.');
+            }
+        }
     </script>
 </head>
 <body>
     <div class="container">
         <h1>Digestwave</h1>
+        <div class="search-container">
+            <input type="text" id="keywordInput" placeholder="Enter keyword" style="padding: 8px;">
+            <button onclick="fetchMentions()">Search</button>
+        </div>
+        <div id="resultContainer"></div>
         <div class="carousel-wrapper">
             <ul class="tag-cloud"
                 hx-get="/api/keywords"
                 hx-trigger="load"
                 hx-swap="innerHTML">
                 <!-- Tags will be loaded here -->
+                <li onclick="setTagAndSearch(this.textContent)">Example Tag</li>
             </ul>
         </div>
         <!-- .carousel-rows will be injected here by JS -->

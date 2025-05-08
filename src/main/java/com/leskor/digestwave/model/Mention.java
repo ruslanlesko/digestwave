@@ -1,7 +1,7 @@
 package com.leskor.digestwave.model;
 
 import java.io.Serializable;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
 import org.springframework.data.cassandra.core.mapping.CassandraType;
 import org.springframework.data.cassandra.core.mapping.Column;
@@ -15,12 +15,12 @@ public record Mention(
         String keyword,
         @PrimaryKeyColumn(name = "published_at", type = PrimaryKeyType.CLUSTERED)
         @CassandraType(type = CassandraType.Name.TIMESTAMP)
-        ZonedDateTime publishedAt,
+        Instant publishedAt,
         @Column("article_url")
         String articleUrl,
         @Column("article_title")
         String articleTitle,
-        @Column
+        @CassandraType(type = CassandraType.Name.INT)
         int sentiment
 ) {
 
@@ -31,7 +31,7 @@ public record Mention(
     public static Mention of(Article article, String keyword, Sentiment sentiment) {
         return new Mention(
                 keyword,
-                article.publishedAt(),
+                article.publishedAt().toInstant(),
                 article.uri().toString(),
                 article.title(),
                 switch (sentiment) {
@@ -48,6 +48,6 @@ public record Mention(
             String keyword,
             @PrimaryKeyColumn(name = "published_at", type = PrimaryKeyType.CLUSTERED)
             @CassandraType(type = CassandraType.Name.TIMESTAMP)
-            ZonedDateTime publishedAt
+            Instant publishedAt
     ) implements Serializable {}
 }
