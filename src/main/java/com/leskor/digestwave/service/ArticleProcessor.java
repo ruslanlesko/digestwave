@@ -1,21 +1,20 @@
 package com.leskor.digestwave.service;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
+
 import com.leskor.digestwave.model.Article;
 import com.leskor.digestwave.model.Mention;
 import com.leskor.digestwave.repository.MentionRepository;
 import com.leskor.digestwave.repository.MonthlyKeywordRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.counting;
-import static java.util.stream.Collectors.groupingBy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ArticleProcessor {

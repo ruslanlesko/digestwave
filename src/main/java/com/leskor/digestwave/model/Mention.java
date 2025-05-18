@@ -2,6 +2,7 @@ package com.leskor.digestwave.model;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Locale;
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
 import org.springframework.data.cassandra.core.mapping.CassandraType;
 import org.springframework.data.cassandra.core.mapping.Column;
@@ -16,6 +17,8 @@ public record Mention(
         @PrimaryKeyColumn(name = "published_at", type = PrimaryKeyType.CLUSTERED)
         @CassandraType(type = CassandraType.Name.TIMESTAMP)
         Instant publishedAt,
+        @Column("original_keyword")
+        String originalKeyword,
         @Column("article_url")
         String articleUrl,
         @Column("article_title")
@@ -24,14 +27,15 @@ public record Mention(
         int sentiment
 ) {
 
-    public Mention(Key key, String articleUrl, String articleTitle, int sentiment) {
-        this(key.keyword, key.publishedAt, articleUrl, articleTitle, sentiment);
+    public Mention(Key key, String originalKeyword, String articleUrl, String articleTitle, int sentiment) {
+        this(key.keyword, key.publishedAt, originalKeyword, articleUrl, articleTitle, sentiment);
     }
 
     public static Mention of(Article article, String keyword, Sentiment sentiment) {
         return new Mention(
-                keyword,
+                keyword.toLowerCase(Locale.ROOT),
                 article.publishedAt().toInstant(),
+                keyword,
                 article.uri().toString(),
                 article.title(),
                 switch (sentiment) {

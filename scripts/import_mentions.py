@@ -8,8 +8,8 @@ def import_mentions(csv_file, cassandra_host):
     session = cluster.connect('digestwave')
 
     insert_stmt = session.prepare("""
-        INSERT INTO mentions (keyword, published_at, article_title, article_url, sentiment)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO mentions (keyword, published_at, original_keyword, article_title, article_url, sentiment)
+        VALUES (?, ?, ?, ?, ?, ?)
     """)
 
     with open(csv_file, newline='', encoding='utf-8') as f:
@@ -22,6 +22,7 @@ def import_mentions(csv_file, cassandra_host):
             session.execute(insert_stmt, (
                 row['keyword'],
                 datetime.fromisoformat(row['published_at']),
+                row['original_keyword'],
                 row['article_title'],
                 row['article_url'],
                 int(row['sentiment']) if row['sentiment'] else None

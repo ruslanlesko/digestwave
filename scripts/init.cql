@@ -2,11 +2,12 @@ CREATE KEYSPACE digestwave WITH replication = {'class' : 'SimpleStrategy', 'repl
 
 CREATE TABLE digestwave.mentions
 (
-    keyword       text,
-    published_at  timestamp,
-    article_title text,
-    article_url   text,
-    sentiment     int,
+    keyword          text,
+    published_at     timestamp,
+    original_keyword text,
+    article_title    text,
+    article_url      text,
+    sentiment        int,
     PRIMARY KEY (keyword, published_at)
 ) WITH CLUSTERING ORDER BY (published_at ASC);
 

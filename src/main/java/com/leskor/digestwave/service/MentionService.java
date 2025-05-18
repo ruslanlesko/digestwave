@@ -10,6 +10,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class MentionService {
     }
     
     public List<MentionPayload> fetchMentions(String keyword) {
-        List<Mention> mentions = mentionRepository.findByKeyword(keyword);
+        List<Mention> mentions = mentionRepository.findByKeyword(keyword.toLowerCase(Locale.ROOT));
 
         return mentions.stream()
                 .collect(groupingBy(

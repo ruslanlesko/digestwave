@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +45,7 @@ class MentionServiceTest {
                         now.plusDays(1).atZone(ZoneOffset.UTC)), keyword, Sentiment.NEUTRAL)
         );
 
-        when(mentionRepository.findByKeyword(keyword)).thenReturn(mentions);
+        when(mentionRepository.findByKeyword(keyword.toLowerCase(Locale.ROOT))).thenReturn(mentions);
 
         List<MentionPayload> result = mentionService.fetchMentions(keyword);
 

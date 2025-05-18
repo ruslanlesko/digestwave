@@ -7,18 +7,19 @@ def export_mentions(csv_file, cassandra_host):
     session = cluster.connect('digestwave')
 
     rows = session.execute("""
-        SELECT keyword, published_at, article_title, article_url, sentiment
+        SELECT keyword, published_at, original_keyword, article_title, article_url, sentiment
         FROM mentions
     """)
 
     with open(csv_file, 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
-        writer.writerow(['keyword', 'published_at', 'article_title', 'article_url', 'sentiment'])  # header
+        writer.writerow(['keyword', 'published_at', 'original_keyword', 'article_title', 'article_url', 'sentiment'])  # header
 
         for row in rows:
             writer.writerow([
                 row.keyword,
                 row.published_at.isoformat() if row.published_at else '',
+                row.original_keyword,
                 row.article_title,
                 row.article_url,
                 row.sentiment
