@@ -49,3 +49,9 @@ sh cassandra-init.sh
 ```bash
 docker exec -it cassandra cqlsh
 ```
+
+## Data Import/Export
+
+Python scripts for loading and exporting data to/from Cassandra are provided in the `scripts` directory. These scripts can be used to import/export data in CSV format.
+
+Currently, Python 3.11 is required to run the scripts. You can install it using venv.
