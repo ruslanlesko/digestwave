@@ -1,18 +1,24 @@
 package com.leskor.digestwave.cache;
 
+import com.leskor.digestwave.model.LastFetchTime;
+import com.leskor.digestwave.repository.LastFetchTimeRepository;
 import java.net.URI;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Bookkeeper is a simple in-memory cache that stores the last fetch time for each URI.
+ * Bookkeeper is a simple cache that stores the last fetch time for each URI.
  */
 @Component
 public class Bookkeeper {
-    private final Map<URI, Instant> cache = new HashMap<>();
+    private final LastFetchTimeRepository lastFetchTimeRepository;
+
+    @Autowired
+    Bookkeeper(LastFetchTimeRepository lastFetchTimeRepository) {
+        this.lastFetchTimeRepository = lastFetchTimeRepository;
+    }
 
     /**
      * Saves the fetch time for a given URI.
@@ -30,7 +36,7 @@ public class Bookkeeper {
             throw new IllegalArgumentException("Fetch time cannot be null");
         }
 
-        cache.put(uri, fetchTime);
+        lastFetchTimeRepository.save(new LastFetchTime(uri.toString(), fetchTime));
     }
 
     /**
@@ -46,6 +52,6 @@ public class Bookkeeper {
             throw new IllegalArgumentException("URI cannot be null");
         }
 
-        return Optional.ofNullable(cache.get(uri));
+        return lastFetchTimeRepository.findByUri(uri.toString()).map(LastFetchTime::fetchTime);
     }
 }

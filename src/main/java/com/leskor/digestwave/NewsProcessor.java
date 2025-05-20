@@ -53,11 +53,11 @@ public class NewsProcessor {
         Instant lastFetchTime = bookkeeper.lastFetchTime(uri).orElse(Instant.EPOCH);
 
         try (InputStream is = uri.toURL().openStream()) {
-            Instant latestArticleTime = feedLoader.loadArticles(is, lastFetchTime).stream()
-                    .map(articleProcessor::processArticle).max(Instant::compareTo)
-                    .orElse(Instant.now());
-
-            bookkeeper.saveFetchTime(uri, latestArticleTime);
+            feedLoader.loadArticles(is, lastFetchTime)
+                    .stream()
+                    .map(articleProcessor::processArticle)
+                    .max(Instant::compareTo)
+                    .ifPresent(latestPublished -> bookkeeper.saveFetchTime(uri, latestPublished));
         }
     }
 }
