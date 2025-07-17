@@ -1,0 +1,9 @@
+feeds:
+  urls:
+    - "https://techcrunch.com/feed/"
+    - "https://feed.infoq.com/"
+    - "https://www.theverge.com/rss/index.xml"
+    - "https://thenextweb.com/feed"
+    - "https://www.theguardian.com/us/rss"
+    - "https://feeds.washingtonpost.com/rss/business"
+    - "https://feeds.dzone.com/home"

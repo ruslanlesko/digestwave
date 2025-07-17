@@ -1,15 +1,15 @@
 package com.leskor.digestwave;
 
+import com.leskor.digestwave.cache.Bookkeeper;
+import com.leskor.digestwave.config.FeedProperties;
+import com.leskor.digestwave.service.ArticleProcessor;
+import com.leskor.digestwave.service.FeedLoader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-import com.leskor.digestwave.cache.Bookkeeper;
-import com.leskor.digestwave.service.ArticleProcessor;
-import com.leskor.digestwave.service.FeedLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,17 +20,18 @@ import org.springframework.stereotype.Component;
 public class NewsProcessor {
     private static final Logger logger = LoggerFactory.getLogger(NewsProcessor.class);
 
-    private static final List<String> FEED_URLS =
-            List.of("https://techcrunch.com/feed/", "https://feed.infoq.com/",
-                    "https://www.theverge.com/rss/index.xml");
-
+    private final FeedProperties feedProperties;
     private final FeedLoader feedLoader;
     private final Bookkeeper bookkeeper;
     private final ArticleProcessor articleProcessor;
 
     @Autowired
-    public NewsProcessor(FeedLoader feedLoader, Bookkeeper bookkeeper,
-                         ArticleProcessor articleProcessor) {
+    public NewsProcessor(
+            FeedProperties feedProperties,
+            FeedLoader feedLoader,
+            Bookkeeper bookkeeper,
+            ArticleProcessor articleProcessor) {
+        this.feedProperties = feedProperties;
         this.feedLoader = feedLoader;
         this.bookkeeper = bookkeeper;
         this.articleProcessor = articleProcessor;
@@ -38,7 +39,7 @@ public class NewsProcessor {
 
     @Scheduled(fixedDelay = 2, timeUnit = TimeUnit.HOURS)
     public void process() {
-        for (String url : FEED_URLS) {
+        for (String url : feedProperties.urls()) {
             try {
                 processUrl(url);
             } catch (Exception e) {
