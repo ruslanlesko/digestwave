@@ -31,7 +31,7 @@ public class FeedLoader {
                             entry.getPublishedDate() != null
                                     && entry.getPublishedDate().toInstant().isAfter(from))
                     .map(entry -> new Article(
-                                    URI.create(entry.getUri()),
+                                    URI.create(entry.getLink()),
                                     entry.getTitle(),
                                     entry.getPublishedDate().toInstant().atZone(ZoneOffset.UTC)
                             )

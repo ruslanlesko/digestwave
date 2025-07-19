@@ -71,7 +71,7 @@ class FeedLoaderTest {
 
         assertEquals(1, articles.size());
         assertIterableEquals(List.of(new Article(URI.create(
-                "https://techcrunch.com/?p=2990400"),
+                "https://techcrunch.com/2025/04/07/meta-exec-denies-the-company-artificially-boosted-llama-4s-benchmark-scores/"),
                 "Meta exec denies the company artificially boosted Llama 4’s benchmark scores",
                 ZonedDateTime.parse("2025-04-07T18:45:07Z"))), articles);
     }
@@ -120,7 +120,7 @@ class FeedLoaderTest {
 
         assertEquals(1, articles.size());
         assertIterableEquals(List.of(new Article(URI.create(
-                "https://techcrunch.com/?p=2990345"),
+                "https://techcrunch.com/2025/04/07/former-tesla-exec-drew-baglinos-new-startup-is-rethinking-the-electrical-transformer/"),
                 "Former Tesla exec Drew Baglino’s new startup is rethinking the electrical transformer",
                 ZonedDateTime.parse("2025-04-05T17:54:48Z"))), articles);
     }
