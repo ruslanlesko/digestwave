@@ -303,6 +303,15 @@
                     attachTagClickHandlers();
                 }
             });
+
+            // Add Enter key listener to search input
+            const keywordInput = document.getElementById('keywordInput');
+            keywordInput.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    fetchMentions();
+                }
+            });
         });
 
         async function fetchMentions() {
