@@ -187,6 +187,7 @@
             });
         });
 
+        let mentionsData = [];
         function renderChart(data) {
             const ctx = document.getElementById('mentionsChart').getContext('2d');
             new Chart(ctx, {
@@ -211,6 +212,13 @@
                             position: 'top'
                         }
                     },
+                    onClick: (evt, elements) => {
+                        if (elements.length > 0) {
+                            const idx = elements[0].index;
+                            const mention = mentionsData[idx];
+                            renderArticleList(mention);
+                        }
+                    },
                     scales: {
                         x: {
                             title: {
@@ -225,7 +233,7 @@
                             },
                             beginAtZero: true,
                             ticks: {
-                                callback: function(value) {
+                                callback: function (value) {
                                     return Number.isInteger(value) ? value : null;
                                 }
                             }
@@ -235,10 +243,31 @@
             });
         }
 
-        function handleMentionsResponse(data) {
-            const resultContainer = document.getElementById('resultContainer');
-            resultContainer.innerHTML = ''; // Clear previous results
+        function renderArticleList(mention) {
+            const container = document.getElementById('article-list');
+            container.innerHTML = '';
+            if (!mention || !mention.instances || mention.instances.length === 0) {
+                container.innerHTML = '<div class="no-results">No articles for this date.</div>';
+                return;
+            }
+            const list = document.createElement('ul');
+            mention.instances.forEach(instance => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = instance.articleUrl;
+                a.textContent = instance.articleUrl;
+                a.target = '_blank';
+                li.appendChild(a);
+                li.appendChild(document.createTextNode(' (' + instance.sentiment + ')'));
+                list.appendChild(li);
+            });
+            container.appendChild(list);
+        }
 
+        function handleMentionsResponse(data) {
+            mentionsData = data;
+            const resultContainer = document.getElementById('resultContainer');
+            resultContainer.innerHTML = '';
             if (data.length === 0) {
                 const noResultsMessage = document.createElement('div');
                 noResultsMessage.className = 'no-results';
@@ -251,6 +280,7 @@
                 resultContainer.appendChild(chartContainer);
                 renderChart(data);
             }
+            document.getElementById('article-list').innerHTML = '';
         }
 
         function setTagAndSearch(tag) {
@@ -304,6 +334,7 @@
             <button onclick="fetchMentions()">Search</button>
         </div>
         <div id="resultContainer"></div>
+        <div id="article-list" style="margin-top:32px;"></div>
         <div class="carousel-wrapper">
             <ul class="tag-cloud"
                 hx-get="/api/keywords"
