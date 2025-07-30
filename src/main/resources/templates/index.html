@@ -6,45 +6,136 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-50: #f0f9ff;
+            --primary-100: #e0f2fe;
+            --primary-200: #bae6fd;
+            --primary-300: #7dd3fc;
+            --primary-500: #0ea5e9;
+            --primary-600: #0284c7;
+            --primary-700: #0369a1;
+            --primary-900: #0c4a6e;
+
+            --secondary-50: #f8fafc;
+            --secondary-100: #f1f5f9;
+            --secondary-200: #e2e8f0;
+            --secondary-300: #cbd5e1;
+            --secondary-400: #94a3b8;
+            --secondary-500: #64748b;
+            --secondary-600: #475569;
+            --secondary-700: #334155;
+            --secondary-800: #1e293b;
+            --secondary-900: #0f172a;
+
+            --accent-400: #fb7185;
+            --accent-500: #f43f5e;
+            --accent-600: #e11d48;
+
+            --success-400: #4ade80;
+            --success-500: #22c55e;
+            --success-600: #16a34a;
+
+            --warning-400: #fbbf24;
+            --warning-500: #f59e0b;
+
+            --error-50: #fef2f2;
+            --error-200: #fecaca;
+            --error-400: #f87171;
+            --error-500: #ef4444;
+
+            --gradient-primary: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+            --gradient-secondary: linear-gradient(135deg, var(--secondary-100) 0%, var(--secondary-200) 100%);
+            --gradient-accent: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-600) 100%);
+
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+            --border-radius-sm: 0.375rem;
+            --border-radius-md: 0.5rem;
+            --border-radius-lg: 0.75rem;
+            --border-radius-xl: 1rem;
+            --border-radius-2xl: 1.5rem;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #f8fafc;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gradient-secondary);
             margin: 0;
-            padding: 0;
-            font-weight: 300;
+            padding: 1.5rem;
+            font-weight: 400;
+            line-height: 1.6;
+            color: var(--secondary-700);
+            min-height: 100vh;
         }
+
         .container {
-            max-width: 700px;
-            margin: 40px auto;
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-            padding: 32px 24px;
+            max-width: 56rem;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--border-radius-2xl);
+            box-shadow: var(--shadow-xl);
+            padding: 3rem 2.5rem;
+            border: 1px solid var(--secondary-200);
+            position: relative;
+            overflow: hidden;
         }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
         h1 {
             text-align: center;
-            color: #22223b;
-            margin-bottom: 32px;
-            font-weight: 300;
-            letter-spacing: 1px;
+            color: var(--secondary-900);
+            margin: 0 0 3rem 0;
+            font-weight: 700;
+            font-size: 2.5rem;
+            letter-spacing: -0.025em;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
+
         .carousel-rows {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            padding: 1.5rem;
+            background: var(--secondary-50);
+            border-radius: var(--border-radius-xl);
+            border: 1px solid var(--secondary-200);
         }
+
         .carousel-wrapper {
             overflow: hidden;
             width: 100%;
             position: relative;
-            height: 3.5em;
+            height: 3.5rem;
             margin-bottom: 0;
+            mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
         }
+
         ul.tag-cloud {
             display: flex;
             flex-wrap: nowrap;
-            gap: 32px;
+            gap: 2rem;
             list-style: none;
             padding: 0;
             margin: 0;
@@ -52,81 +143,223 @@
             animation: carousel-move 20s linear infinite;
             will-change: transform;
         }
-        /* Alternate direction for odd rows */
+
         .carousel-wrapper:nth-child(even) ul.tag-cloud {
             animation-direction: reverse;
             animation-duration: 24s;
         }
+
         .carousel-wrapper:nth-child(odd) ul.tag-cloud {
             animation-duration: 20s;
         }
+
         ul.tag-cloud li {
-            background: none;
-            border: none;
-            color: #ffb347;
-            padding: 0 10px;
-            border-radius: 0;
-            font-size: 1.1rem;
-            font-weight: 100;
+            background: white;
+            border: 2px solid var(--primary-200);
+            color: var(--primary-700);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-lg);
+            font-size: 0.95rem;
+            font-weight: 500;
             font-family: inherit;
-            box-shadow: none;
-            transition: transform 0.2s, color 0.2s;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
             cursor: pointer;
             user-select: none;
             white-space: nowrap;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.01em;
+            display: inline-block;
         }
+
         ul.tag-cloud li:hover {
-            transform: scale(1.15) rotate(-2deg);
-            color: #ffd700;
-            text-shadow: 0 2px 12px #ffb34755;
+            background: var(--primary-500);
+            color: white;
+            border-color: var(--primary-600);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
         }
+
         @keyframes carousel-move {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
-        .chart-container {
-            margin-top: 32px;
-            text-align: center;
-        }
-        canvas {
-            max-width: 100%;
-        }
-        .no-results {
-            color: #ff6b6b;
-            font-size: 1.2rem;
-            margin-top: 16px;
-        }
+
         .search-container {
             display: flex;
-            align-items: center;
-            gap: 8px;
+            align-items: stretch;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
         }
+
         .search-container input {
             flex: 1;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--secondary-200);
+            border-radius: var(--border-radius-lg);
+            font-size: 1rem;
+            font-family: inherit;
+            color: var(--secondary-700);
+            background: white;
+            transition: all 0.2s ease;
+            outline: none;
         }
+
+        .search-container input:focus {
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgb(14 165 233 / 0.1);
+        }
+
+        .search-container input::placeholder {
+            color: var(--secondary-400);
+            font-weight: 400;
+        }
+
         .search-container button {
-            padding: 8px 16px;
-            background-color: #ffb347;
+            padding: 1rem 2rem;
+            background: var(--gradient-primary);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: var(--border-radius-lg);
             cursor: pointer;
-            transition: background-color 0.2s, transform 0.2s;
+            font-weight: 600;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-md);
+            white-space: nowrap;
         }
+
         .search-container button:hover {
-            background-color: #ffd700;
-            transform: scale(1.05);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .search-container button:active {
+            transform: translateY(0);
+        }
+
+        .chart-container {
+            margin-top: 2rem;
+            text-align: center;
+            padding: 2rem;
+            background: var(--secondary-50);
+            border-radius: var(--border-radius-xl);
+            border: 1px solid var(--secondary-200);
+        }
+
+        canvas {
+            max-width: 100%;
+            border-radius: var(--border-radius-md);
+        }
+
+        .no-results {
+            color: var(--error-500);
+            font-size: 1.125rem;
+            margin-top: 2rem;
+            text-align: center;
+            padding: 2rem;
+            background: var(--error-50);
+            border: 1px solid var(--error-200);
+            border-radius: var(--border-radius-lg);
+            font-weight: 500;
+        }
+
+        #article-list {
+            margin-top: 2rem;
+        }
+
+        #article-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            gap: 1rem;
+        }
+
+        #article-list li {
+            padding: 1.25rem;
+            background: white;
+            border: 1px solid var(--secondary-200);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+
+        #article-list li:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-300);
+        }
+
+        #article-list a {
+            color: var(--primary-600);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            word-break: break-all;
+            transition: color 0.2s ease;
+        }
+
+        #article-list a:hover {
+            color: var(--primary-700);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 2rem 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 2rem;
+            }
+
+            .search-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .search-container button {
+                padding: 1rem;
+            }
+
+            .carousel-rows {
+                padding: 1rem;
+            }
+
+            ul.tag-cloud {
+                gap: 1rem;
+            }
+
+            ul.tag-cloud li {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            ul.tag-cloud {
+                animation: none;
+            }
+
+            * {
+                transition: none !important;
+            }
         }
     </style>
     <script>
         // Helper to randomize font size and duplicate tags for seamless carousel
         function setupTagCloudRow(ul) {
             Array.from(ul.children).forEach((li) => {
-                const min = 0.8, max = 2.2;
+                const min = 0.9, max = 1.4;
                 const size = (Math.random() * (max - min) + min).toFixed(2);
                 li.style.fontSize = size + 'rem';
-                li.style.fontWeight = '100';
+                li.style.fontWeight = '500';
             });
             if (!ul.dataset.duplicated) {
                 const tags = Array.from(ul.children);
@@ -197,11 +430,19 @@
                     datasets: [{
                         label: 'Mentions',
                         data: data.map(item => Math.round(item.count)),
-                        borderColor: '#4caf50',
-                        backgroundColor: 'rgba(76, 175, 80, 0.2)',
-                        borderWidth: 2,
+                        borderColor: '#0ea5e9',
+                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                        borderWidth: 3,
                         fill: true,
-                        tension: 0.3
+                        tension: 0.4,
+                        pointBackgroundColor: '#0ea5e9',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        pointHoverBackgroundColor: '#0284c7',
+                        pointHoverBorderColor: '#ffffff',
+                        pointHoverBorderWidth: 3
                     }]
                 },
                 options: {
@@ -209,7 +450,16 @@
                     plugins: {
                         legend: {
                             display: true,
-                            position: 'top'
+                            position: 'top',
+                            labels: {
+                                color: '#334155',
+                                font: {
+                                    family: 'Inter, sans-serif',
+                                    size: 14,
+                                    weight: 500
+                                },
+                                padding: 20
+                            }
                         }
                     },
                     onClick: (evt, elements) => {
@@ -223,19 +473,51 @@
                         x: {
                             title: {
                                 display: true,
-                                text: 'Days'
+                                text: 'Days',
+                                color: '#64748b',
+                                font: {
+                                    family: 'Inter, sans-serif',
+                                    size: 12,
+                                    weight: 500
+                                }
+                            },
+                            ticks: {
+                                color: '#64748b',
+                                font: {
+                                    family: 'Inter, sans-serif',
+                                    size: 11
+                                }
+                            },
+                            grid: {
+                                color: '#e2e8f0',
+                                drawBorder: false
                             }
                         },
                         y: {
                             title: {
                                 display: true,
-                                text: 'Occurrences'
+                                text: 'Occurrences',
+                                color: '#64748b',
+                                font: {
+                                    family: 'Inter, sans-serif',
+                                    size: 12,
+                                    weight: 500
+                                }
                             },
                             beginAtZero: true,
                             ticks: {
                                 callback: function (value) {
                                     return Number.isInteger(value) ? value : null;
+                                },
+                                color: '#64748b',
+                                font: {
+                                    family: 'Inter, sans-serif',
+                                    size: 11
                                 }
+                            },
+                            grid: {
+                                color: '#e2e8f0',
+                                drawBorder: false
                             }
                         }
                     }
@@ -339,11 +621,11 @@
     <div class="container">
         <h1>Digestwave</h1>
         <div class="search-container">
-            <input type="text" id="keywordInput" placeholder="Enter keyword" style="padding: 8px;">
+            <input type="text" id="keywordInput" placeholder="Enter keyword">
             <button onclick="fetchMentions()">Search</button>
         </div>
         <div id="resultContainer"></div>
-        <div id="article-list" style="margin-top:32px;"></div>
+        <div id="article-list"></div>
         <div class="carousel-wrapper">
             <ul class="tag-cloud"
                 hx-get="/api/keywords"
