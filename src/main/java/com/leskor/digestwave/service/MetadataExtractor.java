@@ -1,21 +1,22 @@
 package com.leskor.digestwave.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leskor.digestwave.model.Sentiment;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-import com.leskor.digestwave.model.Sentiment;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.ollama.OllamaChatModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MetadataExtractor {
     private static final String SYSTEM_PROMPT = """
         You are a helpful assistant that processes news titles. Your task is to extract keywords and determine the sentiment of the article.
+
+        Avoid extracting numbers out of context such as versions 2.0 or 3.5. Focus on meaningful keywords that capture the essence of the news.
         
         Respond with a JSON object containing the following fields: keywords (array of strings) and sentiment (string: "positive", "negative", "neutral").
         For example:
@@ -39,7 +40,6 @@ public class MetadataExtractor {
     private final OllamaChatModel ollamaChatModel;
     private final ObjectMapper objectMapper;
 
-    @Autowired
     public MetadataExtractor(OllamaChatModel ollamaChatModel, ObjectMapper objectMapper) {
         this.ollamaChatModel = ollamaChatModel;
         this.objectMapper = objectMapper;
