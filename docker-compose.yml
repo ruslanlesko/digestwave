@@ -14,3 +14,20 @@ services:
     container_name: ollama
     ports:
       - "11434:11434"
+    restart: on-failure
+
+  app:
+    build: .
+    container_name: digestwave
+    ports:
+      - "8080:8080"
+    environment:
+      - CASSANDRA_HOST=cassandra
+      - CASSANDRA_PORT=9042
+      - OLLAMA_BASE_URL=http://ollama:11434
+    depends_on:
+      - db
+      - ai
+    profiles:
+      - app
+    restart: on-failure
