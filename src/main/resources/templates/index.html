@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Digestwave</title>
@@ -8,7 +9,8 @@
 
     <meta name="og:title" property="og:title" content="Digestwave">
     <meta name="og:locale" property="og:locale" content="en_US">
-    <meta name="og:description" property="og:description" content="News monitoring platform for keyword frequency and sentiment analysis.">
+    <meta name="og:description" property="og:description"
+        content="News monitoring platform for keyword frequency and sentiment analysis.">
     <meta name="og:url" property="og:url" content="https://digestwave.com">
     <meta name="og:site_name" property="og:site_name" content="Digestwave">
     <meta name="og:image" property="og:image" content="/assets/ms-icon-310x310.png" />
@@ -214,8 +216,13 @@
         }
 
         @keyframes carousel-move {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
         }
 
         .search-container {
@@ -270,6 +277,35 @@
 
         .search-container button:active {
             transform: translateY(0);
+        }
+
+        .search-secondary {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .preset-button {
+            padding: 0.85rem 1.5rem;
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--primary-200);
+            background: white;
+            color: var(--primary-700);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .preset-button:hover {
+            border-color: var(--primary-500);
+            color: var(--primary-600);
+        }
+
+        .form-error {
+            color: var(--error-500);
+            font-size: 0.9rem;
         }
 
         .chart-container {
@@ -362,6 +398,11 @@
                 padding: 1rem;
             }
 
+            .search-secondary {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
             .carousel-rows {
                 padding: 1rem;
             }
@@ -406,7 +447,7 @@
         }
         // Distribute tags across rows
         function distributeTagsAcrossRows(tags, rowCount) {
-            const rows = Array.from({length: rowCount}, () => []);
+            const rows = Array.from({ length: rowCount }, () => []);
             tags.forEach((tag, i) => {
                 rows[i % rowCount].push(tag);
             });
@@ -602,6 +643,7 @@
         function setTagAndSearch(tag) {
             const input = document.getElementById('keywordInput');
             input.value = tag;
+            setSearchError('');
             fetchMentions();
         }
 
@@ -630,16 +672,74 @@
             });
         });
 
+        function setSearchError(message) {
+            const errorNode = document.getElementById('searchError');
+            if (errorNode) {
+                errorNode.textContent = message || '';
+            }
+        }
+
+        function formatDateInput(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        function applyLast90Days() {
+            const endInput = document.getElementById('endDateInput');
+            const startInput = document.getElementById('startDateInput');
+            const today = new Date();
+            const start = new Date();
+            start.setDate(today.getDate() - 89);
+            if (startInput) startInput.value = formatDateInput(start);
+            if (endInput) endInput.value = formatDateInput(today);
+            setSearchError('');
+        }
+
+        async function extractValidationMessage(response) {
+            const fallback = 'Invalid request. Please check the filters and try again.';
+            try {
+                const text = await response.text();
+                if (!text) {
+                    return fallback;
+                }
+                try {
+                    const parsed = JSON.parse(text);
+                    if (parsed && parsed.message) {
+                        return parsed.message;
+                    }
+                } catch (ignored) {
+                    // ignore JSON parse errors, fall back to raw text
+                }
+                return text;
+            } catch (error) {
+                console.error('Unable to read validation response', error);
+                return fallback;
+            }
+        }
+
         async function fetchMentions() {
             const keyword = document.getElementById('keywordInput').value.trim();
+            const startDate = document.getElementById('startDateInput').value;
+            const endDate = document.getElementById('endDateInput').value;
+            setSearchError('');
             if (!keyword) {
-                alert('Please enter a keyword.');
+                setSearchError('Please enter a keyword.');
                 return;
             }
 
+            const params = new URLSearchParams();
+            if (startDate) params.append('startDate', startDate);
+            if (endDate) params.append('endDate', endDate);
+            const query = params.toString();
+            const url = `/api/mentions/${encodeURIComponent(keyword)}${query ? `?${query}` : ''}`;
+
             try {
-                const response = await fetch(`/api/mentions/${encodeURIComponent(keyword)}`);
+                const response = await fetch(url);
                 if (!response.ok) {
+                    if (response.status === 400) {
+                        const message = await extractValidationMessage(response);
+                        setSearchError(message);
+                        return;
+                    }
                     throw new Error('Failed to fetch mentions');
                 }
                 const data = await response.json();
@@ -651,20 +751,24 @@
         }
     </script>
 </head>
+
 <body>
     <div class="container">
         <h1>Digestwave</h1>
         <div class="search-container">
             <input type="text" id="keywordInput" placeholder="Enter keyword">
-            <button onclick="fetchMentions()">Search</button>
+            <input type="date" id="startDateInput" aria-label="Start date">
+            <input type="date" id="endDateInput" aria-label="End date">
+            <button type="button" onclick="fetchMentions()">Search</button>
+        </div>
+        <div class="search-secondary">
+            <button type="button" class="preset-button" onclick="applyLast90Days()">Last 90 days</button>
+            <span id="searchError" class="form-error" aria-live="polite"></span>
         </div>
         <div id="resultContainer"></div>
         <div id="article-list"></div>
         <div class="carousel-wrapper">
-            <ul class="tag-cloud"
-                hx-get="/api/keywords"
-                hx-trigger="load"
-                hx-swap="innerHTML">
+            <ul class="tag-cloud" hx-get="/api/keywords" hx-trigger="load" hx-swap="innerHTML">
                 <!-- Tags will be loaded here -->
                 <li onclick="setTagAndSearch(this.textContent)">Example Tag</li>
             </ul>
@@ -672,4 +776,5 @@
         <!-- .carousel-rows will be injected here by JS -->
     </div>
 </body>
+
 </html>
