@@ -121,7 +121,7 @@
             padding: 3rem 2.5rem;
             border: 1px solid var(--secondary-200);
             position: relative;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .container::before {
@@ -317,9 +317,78 @@
             border: 1px solid var(--secondary-200);
         }
 
+        .chart-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            text-align: left;
+        }
+
+        .chart-controls__labels {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--secondary-600);
+            font-weight: 500;
+        }
+
+        .chart-controls input[type="range"] {
+            -webkit-appearance: none;
+            height: 0.4rem;
+            border-radius: var(--border-radius-lg);
+            background: var(--secondary-200);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .chart-controls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background: var(--primary-500);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chart-controls input[type="range"]::-moz-range-thumb {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background: var(--primary-500);
+            border: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chart-scroll {
+            margin-top: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-300) var(--secondary-100);
+        }
+
+        .chart-scroll::-webkit-scrollbar {
+            height: 0.5rem;
+        }
+
+        .chart-scroll::-webkit-scrollbar-track {
+            background: var(--secondary-100);
+            border-radius: var(--border-radius-lg);
+        }
+
+        .chart-scroll::-webkit-scrollbar-thumb {
+            background: var(--primary-300);
+            border-radius: var(--border-radius-lg);
+        }
+
+        .chart-scroll-inner {
+            min-height: 22rem;
+        }
+
         canvas {
-            max-width: 100%;
             border-radius: var(--border-radius-md);
+            width: 100%;
         }
 
         .no-results {
@@ -496,9 +565,76 @@
         });
 
         let mentionsData = [];
+        let mentionsChart = null;
+        const ZOOM_CONFIG = {
+            minPercent: 40,
+            maxPercent: 180,
+            stepPercent: 5,
+            presetPercent: 55,
+            pxPerPoint: 26,
+            minWidth: 960
+        };
+        let chartScale = ZOOM_CONFIG.presetPercent / 100;
+
+        function destroyMentionsChart() {
+            if (mentionsChart) {
+                mentionsChart.destroy();
+                mentionsChart = null;
+            }
+        }
+
+        function computeChartWidth() {
+            if (!mentionsData || mentionsData.length === 0) {
+                return ZOOM_CONFIG.minWidth * chartScale;
+            }
+            const baseWidth = Math.max(ZOOM_CONFIG.minWidth, mentionsData.length * ZOOM_CONFIG.pxPerPoint);
+            return baseWidth * chartScale;
+        }
+
+        function applyChartWidth() {
+            const inner = document.getElementById('chartScrollInner');
+            if (!inner) return;
+            const width = computeChartWidth();
+            inner.style.width = width + 'px';
+        }
+
+        function updateZoomLabel(value) {
+            const label = document.getElementById('chartZoomValue');
+            if (label) {
+                label.textContent = value + '%';
+            }
+        }
+
+        function handleZoomChange(event) {
+            const rawValue = Number(event?.target?.value);
+            if (Number.isNaN(rawValue)) return;
+            chartScale = rawValue / 100;
+            updateZoomLabel(rawValue);
+            applyChartWidth();
+            if (mentionsChart) {
+                mentionsChart.resize();
+            }
+        }
+
+        function initializeZoomControls() {
+            const slider = document.getElementById('chartZoomSlider');
+            if (!slider) return;
+            slider.min = ZOOM_CONFIG.minPercent;
+            slider.max = ZOOM_CONFIG.maxPercent;
+            slider.step = ZOOM_CONFIG.stepPercent;
+            slider.value = ZOOM_CONFIG.presetPercent;
+            chartScale = ZOOM_CONFIG.presetPercent / 100;
+            updateZoomLabel(ZOOM_CONFIG.presetPercent);
+            slider.addEventListener('input', handleZoomChange);
+            applyChartWidth();
+        }
+
         function renderChart(data) {
-            const ctx = document.getElementById('mentionsChart').getContext('2d');
-            new Chart(ctx, {
+            const canvas = document.getElementById('mentionsChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            destroyMentionsChart();
+            mentionsChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: data.map(item => new Date(item.publishedAt).toLocaleDateString('en-US')),
@@ -522,6 +658,7 @@
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             display: true,
@@ -598,6 +735,8 @@
                     }
                 }
             });
+            applyChartWidth();
+            mentionsChart.resize();
         }
 
         function renderArticleList(mention) {
@@ -633,8 +772,21 @@
             } else {
                 const chartContainer = document.createElement('div');
                 chartContainer.className = 'chart-container';
-                chartContainer.innerHTML = '<canvas id="mentionsChart"></canvas>';
+                chartContainer.innerHTML = `
+                    <div class="chart-controls" aria-label="Chart zoom controls">
+                        <div class="chart-controls__labels">
+                            <span>Time scale</span>
+                            <span id="chartZoomValue">${ZOOM_CONFIG.presetPercent}%</span>
+                        </div>
+                        <input type="range" id="chartZoomSlider" aria-label="Adjust time scale">
+                    </div>
+                    <div class="chart-scroll" id="chartScrollShell">
+                        <div class="chart-scroll-inner" id="chartScrollInner">
+                            <canvas id="mentionsChart"></canvas>
+                        </div>
+                    </div>`;
                 resultContainer.appendChild(chartContainer);
+                initializeZoomControls();
                 renderChart(data);
             }
             document.getElementById('article-list').innerHTML = '';
