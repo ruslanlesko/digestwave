@@ -14,28 +14,31 @@ import org.springframework.stereotype.Service;
 @Service
 public class MetadataExtractor {
     private static final String SYSTEM_PROMPT = """
-        You are a helpful assistant that processes news titles. Your task is to extract keywords and determine the sentiment of the article.
+            You are a helpful assistant that processes news titles. Your task is to extract keywords and determine the sentiment of the article.
 
-        Avoid extracting numbers out of context such as versions 2.0 or 3.5. Focus on meaningful keywords that capture the essence of the news.
-        
-        Respond with a JSON object containing the following fields: keywords (array of strings) and sentiment (string: "positive", "negative", "neutral").
-        For example:
-        
-        {
-            "keywords": ["Google", "AI"],
-            "sentiment": "positive"
-        }
-        
-        {
-            "keywords": ["Layoffs", "Meta"],
-            "sentiment": "negative"
-        }
-        
-        {
-            "keywords": ["GenAI", "Law"],
-            "sentiment": "neutral"
-        }
-        """;
+            Avoid extracting numbers out of context such as versions 2.0 or 3.5. Focus on meaningful keywords that capture the essence of the news.
+
+            Respond with a JSON object containing the following fields: keywords (array of strings) and sentiment (string: "positive", "negative", "neutral").
+
+            Make sure you use only 3 options for sentiment: "positive", "negative", or "neutral". It is an enum.
+
+            For example:
+
+            {
+                "keywords": ["Google", "AI"],
+                "sentiment": "positive"
+            }
+
+            {
+                "keywords": ["Layoffs", "Meta"],
+                "sentiment": "negative"
+            }
+
+            {
+                "keywords": ["GenAI", "Law"],
+                "sentiment": "neutral"
+            }
+            """;
 
     private final OllamaChatModel ollamaChatModel;
     private final ObjectMapper objectMapper;
