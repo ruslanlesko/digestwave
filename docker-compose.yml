@@ -8,6 +8,10 @@ services:
     volumes:
       - ./data:/var/lib/cassandra
     restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 8G
 
   ai:
     image: ollama/ollama:0.6.2
@@ -15,6 +19,10 @@ services:
     ports:
       - "11434:11434"
     restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 2G
 
   app:
     build: .
