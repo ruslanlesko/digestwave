@@ -1,4 +1,19 @@
-# Digestwave
+<p align="center">
+    <img 
+        src="https://github.com/ruslanlesko/digestwave/raw/main/src/main/resources/static/assets/android-icon-192x192.png" 
+        alt="Digestwave logo"
+        width="216"
+        height="216"
+    />
+</p>
+
+<h1 align="center">Digestwave</h1>
+
+<p align="center">
+    <a href="https://github.com/ruslanlesko/digestwave/actions/workflows/ci.yml">
+        <img src="https://github.com/ruslanlesko/digestwave/actions/workflows/ci.yml/badge.svg" alt="Continuous Integration for Digestwave" />
+    </a>
+</p>
 
 Digestwave is a news analytics application designed to process RSS feeds, extract keywords from news titles and their sentiments.
 
