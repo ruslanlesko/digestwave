@@ -2,6 +2,7 @@ package com.leskor.digestwave;
 
 import com.leskor.digestwave.cache.Bookkeeper;
 import com.leskor.digestwave.config.FeedProperties;
+import com.leskor.digestwave.model.Article;
 import com.leskor.digestwave.service.ArticleProcessor;
 import com.leskor.digestwave.service.FeedLoader;
 import java.io.IOException;
@@ -9,10 +10,10 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,6 @@ public class NewsProcessor {
     private final Bookkeeper bookkeeper;
     private final ArticleProcessor articleProcessor;
 
-    @Autowired
     public NewsProcessor(
             FeedProperties feedProperties,
             FeedLoader feedLoader,
@@ -54,11 +54,14 @@ public class NewsProcessor {
         Instant lastFetchTime = bookkeeper.lastFetchTime(uri).orElse(Instant.EPOCH);
 
         try (InputStream is = uri.toURL().openStream()) {
-            feedLoader.loadArticles(is, lastFetchTime)
-                    .stream()
+            logger.info("Processing feed: {}", uri);
+            List<Article> articles = feedLoader.loadArticles(is, lastFetchTime);
+            articles.stream()
                     .map(articleProcessor::processArticle)
                     .max(Instant::compareTo)
                     .ifPresent(latestPublished -> bookkeeper.saveFetchTime(uri, latestPublished));
+
+            logger.info("Processed {} new articles from {}", articles.size(), uri);
         }
     }
 }
