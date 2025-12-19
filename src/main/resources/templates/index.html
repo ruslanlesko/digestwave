@@ -94,7 +94,7 @@
         .surface {
             background: var(--surface);
             border-radius: var(--radius-xl);
-            padding: 1.75rem;
+            padding: clamp(1.25rem, 4vw, 1.75rem);
             box-shadow: var(--shadow-soft);
             border: 1px solid var(--border-soft);
         }
@@ -173,6 +173,10 @@
             display: flex;
             gap: 0.85rem;
             align-items: flex-end;
+        }
+
+        .search-bar .btn {
+            padding-inline: 1.75rem;
         }
 
         .field {
@@ -531,32 +535,152 @@
         }
 
         @media (max-width: 900px) {
+            body {
+                padding: 1.1rem;
+            }
+
+            .page-shell {
+                gap: 1.2rem;
+            }
+
+            .hero {
+                align-items: center;
+                text-align: center;
+            }
+
+            .surface__heading {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.35rem;
+            }
+
             .search-bar {
                 flex-direction: column;
                 align-items: stretch;
+            }
+
+            .search-bar .btn {
+                width: 100%;
+            }
+
+            .search-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.35rem;
             }
 
             .chart-toolbar {
                 flex-direction: column;
                 align-items: stretch;
             }
-        }
 
-        @media (max-width: 640px) {
-            body {
-                padding: 1rem;
+            .toolbar-group,
+            .toolbar-group--actions {
+                width: 100%;
             }
 
-            .surface {
+            .toolbar-group--actions {
+                justify-content: flex-start;
+            }
+
+            .chart-container {
                 padding: 1.25rem;
             }
 
-            .hero__content h1 {
-                font-size: 2.1rem;
+            .chart-placeholder {
+                width: 100%;
             }
 
             .carousel-wrapper {
                 height: auto;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 0.85rem;
+            }
+
+            .hero {
+                align-items: flex-start;
+                text-align: left;
+            }
+
+            .hero__content h1 {
+                font-size: 2rem;
+            }
+
+            .hero__content p {
+                font-size: 0.98rem;
+            }
+
+            .chart-placeholder {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .chart-stage {
+                min-height: 240px;
+            }
+
+            .chart-container {
+                padding: 1.1rem;
+            }
+
+            .chart-toolbar label.field {
+                width: 100%;
+            }
+
+            .search-bar .btn,
+            .btn {
+                width: 100%;
+            }
+
+            .carousel-wrapper {
+                mask-image: none;
+                -webkit-mask-image: none;
+            }
+
+            ul.tag-cloud {
+                animation: none;
+                flex-wrap: wrap;
+                gap: 0.9rem;
+                justify-content: flex-start;
+            }
+
+            ul.tag-cloud li {
+                font-size: 0.82rem;
+                padding: 0.45rem 1rem;
+            }
+
+            .page-footer {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0.75rem;
+            }
+
+            .surface {
+                border-radius: var(--radius-lg);
+            }
+
+            .surface__heading h2 {
+                font-size: 1.3rem;
+            }
+
+            .chart-container {
+                padding: 1rem;
+            }
+
+            .chart-scroll-inner {
+                min-height: 18rem;
+            }
+
+            .page-footer {
+                padding: 0.75rem;
             }
         }
 
