@@ -45,10 +45,12 @@ services:
     environment:
       - CASSANDRA_HOST=cassandra
       - CASSANDRA_PORT=9042
+      - REDIS_HOST=redis
       - OLLAMA_BASE_URL=http://ollama:11434
     depends_on:
       - db
       - ai
+      - cache
     profiles:
       - app
     restart: on-failure
