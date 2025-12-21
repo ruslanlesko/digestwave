@@ -18,10 +18,3 @@ CREATE TABLE digestwave.monthly_keywords
     count      counter,
     PRIMARY KEY (month_year, keyword)
 ) WITH CLUSTERING ORDER BY (keyword ASC);
-
-CREATE TABLE digestwave.last_fetch_times
-(
-    uri        TEXT,
-    fetch_time TIMESTAMP,
-    PRIMARY KEY (uri)
-);

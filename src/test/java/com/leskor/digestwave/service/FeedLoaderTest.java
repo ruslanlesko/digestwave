@@ -4,17 +4,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.leskor.digestwave.model.Article;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import com.leskor.digestwave.model.Article;
 
 class FeedLoaderTest {
     private FeedLoader feedLoader;
@@ -25,7 +24,7 @@ class FeedLoaderTest {
     }
 
     @Test
-    void loadArticles_returnsArticlesAfterGivenInstant() throws IOException {
+    void loadArticles_returnsArticles() throws IOException {
         String rss = """
                 <?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
                 	xmlns:content="http://purl.org/rss/1.0/modules/content/"
@@ -35,7 +34,7 @@ class FeedLoaderTest {
                 	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
                 	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
                 	>
-                
+
                 <channel>
                 	<title>TechCrunch</title>
                 	<atom:link href="https://techcrunch.com/feed/" rel="self" type="application/rss+xml" />
@@ -65,15 +64,18 @@ class FeedLoaderTest {
                 """;
         InputStream is = new ByteArrayInputStream(rss.getBytes(StandardCharsets.UTF_8));
 
-        Instant from = Instant.parse("2025-04-06T00:00:00Z");
+        List<Article> articles = feedLoader.loadArticles(is);
 
-        List<Article> articles = feedLoader.loadArticles(is, from);
-
-        assertEquals(1, articles.size());
+        assertEquals(2, articles.size());
         assertIterableEquals(List.of(new Article(URI.create(
                 "https://techcrunch.com/2025/04/07/meta-exec-denies-the-company-artificially-boosted-llama-4s-benchmark-scores/"),
                 "Meta exec denies the company artificially boosted Llama 4’s benchmark scores",
-                ZonedDateTime.parse("2025-04-07T18:45:07Z"))), articles);
+                ZonedDateTime.parse("2025-04-07T18:45:07Z")),
+                new Article(URI.create(
+                        "https://techcrunch.com/2025/04/07/former-tesla-exec-drew-baglinos-new-startup-is-rethinking-the-electrical-transformer/"),
+                        "Former Tesla exec Drew Baglino’s new startup is rethinking the electrical transformer",
+                        ZonedDateTime.parse("2025-04-05T17:54:48Z"))),
+                articles);
     }
 
     @Test
@@ -87,7 +89,7 @@ class FeedLoaderTest {
                 	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
                 	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
                 	>
-                
+
                 <channel>
                 	<title>TechCrunch</title>
                 	<atom:link href="https://techcrunch.com/feed/" rel="self" type="application/rss+xml" />
@@ -116,7 +118,7 @@ class FeedLoaderTest {
                 """;
         InputStream is = new ByteArrayInputStream(rss.getBytes(StandardCharsets.UTF_8));
 
-        List<Article> articles = feedLoader.loadArticles(is, Instant.EPOCH);
+        List<Article> articles = feedLoader.loadArticles(is);
 
         assertEquals(1, articles.size());
         assertIterableEquals(List.of(new Article(URI.create(
@@ -130,6 +132,6 @@ class FeedLoaderTest {
         String unknownFeedFormat = "<unknown>";
         InputStream is = new ByteArrayInputStream(unknownFeedFormat.getBytes(StandardCharsets.UTF_8));
 
-        assertThrows(IOException.class, () -> feedLoader.loadArticles(is, Instant.EPOCH));
+        assertThrows(IOException.class, () -> feedLoader.loadArticles(is));
     }
 }

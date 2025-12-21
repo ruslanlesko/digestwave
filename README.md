@@ -29,6 +29,7 @@ Digestwave is a news analytics application designed to process RSS feeds, extrac
 - **Spring Boot**: Framework for building the application.
 - **Gradle**: Build tool for dependency management and project configuration.
 - **Cassandra**: NoSQL database for storing mentions and keyword statistics.
+- **Redis**: Caching layer for already processed articles.
 - **AI Integration**: Uses the Ollama AI model for metadata extraction.
 - **Docker Compose**: Manages the Cassandra and AI services.
 

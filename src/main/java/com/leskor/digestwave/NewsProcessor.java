@@ -1,6 +1,6 @@
 package com.leskor.digestwave;
 
-import com.leskor.digestwave.cache.Bookkeeper;
+import com.leskor.digestwave.cache.ArticleCache;
 import com.leskor.digestwave.config.FeedProperties;
 import com.leskor.digestwave.model.Article;
 import com.leskor.digestwave.service.ArticleProcessor;
@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
@@ -23,18 +22,18 @@ public class NewsProcessor {
 
     private final FeedProperties feedProperties;
     private final FeedLoader feedLoader;
-    private final Bookkeeper bookkeeper;
     private final ArticleProcessor articleProcessor;
+    private final ArticleCache articleCache;
 
     public NewsProcessor(
             FeedProperties feedProperties,
             FeedLoader feedLoader,
-            Bookkeeper bookkeeper,
-            ArticleProcessor articleProcessor) {
+            ArticleProcessor articleProcessor,
+            ArticleCache articleCache) {
         this.feedProperties = feedProperties;
         this.feedLoader = feedLoader;
-        this.bookkeeper = bookkeeper;
         this.articleProcessor = articleProcessor;
+        this.articleCache = articleCache;
     }
 
     @Scheduled(fixedDelay = 2, timeUnit = TimeUnit.HOURS)
@@ -51,15 +50,18 @@ public class NewsProcessor {
     private void processUrl(String url) throws URISyntaxException, IOException {
         URI uri = new URI(url);
 
-        Instant lastFetchTime = bookkeeper.lastFetchTime(uri).orElse(Instant.EPOCH);
-
         try (InputStream is = uri.toURL().openStream()) {
             logger.info("Processing feed: {}", uri);
-            List<Article> articles = feedLoader.loadArticles(is, lastFetchTime);
-            articles.stream()
-                    .map(articleProcessor::processArticle)
-                    .max(Instant::compareTo)
-                    .ifPresent(latestPublished -> bookkeeper.saveFetchTime(uri, latestPublished));
+            List<Article> articles = feedLoader.loadArticles(is).stream()
+                    .filter(article -> {
+                        boolean exists = articleCache.exists(article);
+                        if (exists) {
+                            logger.info("Skipping article as it is already processed: {}", article.uri());
+                        }
+                        return !exists;
+                    }).toList();
+
+            articles.forEach(articleProcessor::processArticle);
 
             logger.info("Processed {} new articles from {}", articles.size(), uri);
         }
