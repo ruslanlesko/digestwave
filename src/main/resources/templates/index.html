@@ -8,8 +8,13 @@
     <meta name="keywords" content="Digestwave, Digest, News, Monitoring, Analytics, Technology, Tech">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 
-    <meta name="og:title" property="og:title" content="Digestwave">
-    <meta name="og:locale" property="og:locale" content="en_US">
+    <!-- Add theme/status-bar meta tags for mobile (iOS Safari & Android) -->
+    <meta name="theme-color" content="#1a2742">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1a2742">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link
@@ -17,7 +22,8 @@
         rel="stylesheet">
     <style>
         :root {
-            --page-bg: #05060d;
+            /* changed: use the dark blue as the canonical page background fallback */
+            --page-bg: #1a2742;
             --page-gradient: radial-gradient(120% 120% at 50% 0%, #1a2742 0%, #05060d 60%);
             --surface: #fdfdfb;
             --surface-muted: #f4f5f7;
@@ -48,6 +54,11 @@
 
         html {
             -webkit-text-size-adjust: 100%;
+            /* ensure the safe-area / status-bar region matches the page background */
+            height: 100%;
+            background: var(--page-gradient);
+            background-color: var(--page-bg);
+            /* fallback / solid color for status bar area */
         }
 
         body {
